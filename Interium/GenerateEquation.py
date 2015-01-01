@@ -204,6 +204,7 @@ def find_X_Axis():
     min_XAxis_Ycordinate = arr[min_X_axis_cordinate][1] 
     cv.line(cdstP, (arr[min_X_axis_cordinate][0], arr[min_X_axis_cordinate][1]), (arr[min_X_axis_cordinate][2], arr[min_X_axis_cordinate][3]), (255,0,0), 2, cv.LINE_AA)
     
+    print(" Identify x using Shortest line  =  " +str(min_X_axis_cordinate))
 
     # for h in range(0, len(linesP)):
     #     if (X_arr[h][1] <= (minLen_X_Axis +5) and  (X_arr[h][0] <= (min_XAxis_Ycordinate+3)) and (X_arr[h][0] >= (min_XAxis_Ycordinate-3))) : 
@@ -963,7 +964,8 @@ def main(argv):
      
     # Probabilistic Line Transform
     # linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 0, 10) 
-    linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 4, 15) 
+    # linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 4, 15) 
+    linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 0, 15) 
     noOfLines = len(linesP) 
     
     if linesP is not None: # Check there are lines
