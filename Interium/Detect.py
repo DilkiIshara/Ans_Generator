@@ -13,8 +13,7 @@ import re
 def main(argv):
 
     ## [load]
-    default_file = 'Capture2.png'
-    #default_file = '29.png'
+    default_file = 'line.jpg' 
     filename = argv[0] if len(argv) > 0 else default_file
 
     # Loads an image
@@ -57,9 +56,6 @@ def main(argv):
                 cordinate2 = number2[1].replace(" ", "")
             else: 
                 cordinate2 = number2[1] 
-        else:
-            print("coodinates does not read properly")
-            return
 
         print(cordinate1)
         print(cordinate2)
@@ -86,12 +82,13 @@ def main(argv):
             c = li[1] - (m * li[0])
             print ("Equation is  :    y = " + str(m)+"x  + " + str(c))
         
+        else:
+            print("coodinates does not read properly")
     else:
         print("Text cannot Read")
-    
-   
+     
     # Probabilistic Line Transform
-    linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 100, None, 10, 10) 
+    linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 50, None, 10, 10) 
 
     # Draw the lines
     if linesP is not None:
@@ -105,9 +102,7 @@ def main(argv):
     cv.imshow("Source", src) 
     cv.imshow("Probabilistic Line Transform", cdstP)
     cv.waitKey()
-    return 0 
-
-    return 0 
+    return 0  
 
 if __name__ == "__main__":
     main(sys.argv[1:])
