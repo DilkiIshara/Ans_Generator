@@ -10,12 +10,8 @@ import pytesseract
 from PIL import Image 
 import re
 
-
 result = "" 
-linesP = cv.HoughLinesP(None, 1, np.pi / 180, 25, None, 10, 10) 
-cols = 4
-noOfLines = M = 0
-N = 5
+linesP = cv.HoughLinesP(None, 1, np.pi / 180, 25, None, 10, 10)  
 numberOf_Horizontal = numberOf_Vertical = numberOf_Graph = rows = reduce = 0
 maxlength_X = maxlength_Y = maxlength_Graph = 0
 X_axis_cordinate = Y_axis_cordinate = graph_cordinate = -1
@@ -23,8 +19,9 @@ arr = None             # 0-x1 1-Y1 2-x2 3-y2
 X_arr = Y_arr = None   # 0-a  1-length 2-arrIndex
 graphs_arr = None      # 0-m  1-C 2-length 3-arrIndex 
 cdstP = allLines = None
-
-
+noOfLines = 0
+origin_X = origin_Y = 0
+N = 4 # arr (x,y) (x,y) 
 
 def getEqationByUsingCoordinate():
     print("result       :  " + result) 
@@ -65,14 +62,14 @@ def getEqationByUsingCoordinate():
     else:
         print("coodinates does not read properly")
 
-
 def displayAlllines() :
     for i in range(0, len(linesP)):
             l = linesP[i][0]
             cv.line(allLines, (l[0], l[1]), (l[2], l[3]), (5,0,255), 2, cv.LINE_AA)
 
 def storeLineCoordinate() :
-    global reduce
+    global reduce, arr
+    arr = [[0] * N for i in range(noOfLines)] 
     for i in range(0, len(linesP)): 
         l = linesP[i][0] 
         #Store Values in a 2D array 
@@ -106,9 +103,10 @@ def storeLineCoordinate() :
                     arr[i-reduce][3] = value4
 
 def separateX_Y_Graph():
-    global numberOf_Horizontal
-    global numberOf_Vertical
-    global numberOf_Graph
+    global numberOf_Horizontal, numberOf_Vertical, numberOf_Graph, X_arr, Y_arr, graphs_arr
+    X_arr = [[0] * 3 for i in range(noOfLines)]
+    Y_arr = [[0] * 3 for i in range(noOfLines)]
+    graphs_arr = [[0] * 4 for i in range(noOfLines)] 
     for k in range(0, len(linesP)):  
         if not(arr[k][0] == 0 and arr[k][1] == 0 and arr[k][2] == 0 and arr[k][3] == 0) :
             x1 = arr[k][0]
@@ -140,7 +138,7 @@ def separateX_Y_Graph():
                 numberOf_Horizontal = numberOf_Horizontal + 1 
             # y axises 
             elif x_difference == 0:    
-                Y_arr[k][0] = y1
+                Y_arr[k][0] = x1
                 Y_arr[k][1] = lineLength
                 Y_arr[k][2] = k
                 numberOf_Vertical = numberOf_Vertical + 1 
@@ -157,24 +155,27 @@ def separateX_Y_Graph():
 def draw_X_Axis():
     global maxlength_X
     global X_axis_cordinate
-
+    global origin_Y, allLines
     for h in range(0, len(linesP)):
         l = X_arr[h][1]
         # print("Max axix Length  " + str(l))
         if l > maxlength_X : 
             X_axis_cordinate = h
-            maxlength_X = l 
+            maxlength_X = l  
     cv.line(cdstP, (arr[X_axis_cordinate][0], arr[X_axis_cordinate][1]), (arr[X_axis_cordinate][2], arr[X_axis_cordinate][3]), (50,0,255), 2, cv.LINE_AA)
+    print ("X  axis -------------->("+str(arr[X_axis_cordinate][0])+","+str(arr[X_axis_cordinate][1])+")       ("+str(arr[X_axis_cordinate][2])+","+str(arr[X_axis_cordinate][3])+")")
 
 def draw_Y_Axis():
     global maxlength_Y
+    global origin_X
     global Y_axis_cordinate
     for h in range(0, len(linesP)):
         l = Y_arr[h][1] 
         if l > maxlength_Y : 
             Y_axis_cordinate = h
-            maxlength_Y = Y_arr[h][1]  
+            maxlength_Y = Y_arr[h][1]   
     cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
+    print ("Y  axis ------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
 
 def draw_Graph():
     global maxlength_Graph
@@ -188,12 +189,25 @@ def draw_Graph():
     # Draw Graph
     cv.line(cdstP, (arr[graph_cordinate][0], arr[graph_cordinate][1]), (arr[graph_cordinate][2], arr[graph_cordinate][3]), (0,252,0), 2, cv.LINE_AA)
 
+def origin():
+    global origin_X, origin_Y
+    # generate y axis cordinate
+    origin_X = Y_arr[Y_axis_cordinate][0]
+    # generate x axis cordinate
+    origin_Y = X_arr[X_axis_cordinate][0]
+    
+    print(" Origin ---------->("+str(origin_X) +","+ str(origin_Y) +")")
+    for i in range(origin_X - 5 , origin_X + 5):
+        for j in range(origin_Y - 5, origin_Y +5):
+            allLines[j,i] = (255, 255, 255)
+            cdstP[j,i] = (255, 255, 255)
+
 def main(argv):
     
-    global cdstP, allLines, linesP, M, rows, arr, X_arr, Y_arr, graphs_arr
+    global cdstP, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y
 
     # Loads an image
-    default_file = '29.jpg' 
+    default_file = 'g1.jpg' 
     filename = argv[0] if len(argv) > 0 else default_file
 
     # Convert to gray Scale
@@ -207,14 +221,16 @@ def main(argv):
     
     # resize image
     scale_percent = 220 # percent of original size
-    width = int(src.shape[1] * scale_percent / 100)
-    height = int(src.shape[0] * scale_percent / 100)
+    # width = int(src.shape[1] * scale_percent / 100)
+    # height = int(src.shape[0] * scale_percent / 100)
+    width = int(500)
+    height = int(500)
     dim = (width, height)
     resized = cv.resize(src, dim, interpolation = cv.INTER_AREA)
 
     # Edge detection
-    dst = cv.Canny(src, 20, 200, None, 3) 
-    # dst = cv.Canny(resized, 20, 200, None, 3) 
+    #dst = cv.Canny(src, 20, 200, None, 3) 
+    dst = cv.Canny(resized, 20, 200, None, 3) 
 
     # Copy edges to the images that will display the results in BGR
     cdst = cv.cvtColor(dst, cv.COLOR_GRAY2BGR)
@@ -233,15 +249,8 @@ def main(argv):
      
     # Probabilistic Line Transform
     linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 10, 10) 
-
-    M = len(linesP)
+    noOfLines = len(linesP) 
     
-    X_arr = [[0] * 3 for i in range(M)]
-    Y_arr = [[0] * 3 for i in range(M)]
-    graphs_arr = [[0] * 4 for i in range(M)] 
-    rows = len(linesP)
-    arr = [[0] * N for i in range(M)] 
-
     if linesP is not None: # Check there are lines
 
         # Draw the lines
@@ -262,14 +271,30 @@ def main(argv):
         # Graph
         draw_Graph() 
 
+        # identify origin
+        origin()
+
+        # identify X axis intersection point
+        m = graphs_arr[graph_cordinate][0] 
+        c = graphs_arr[graph_cordinate][1]
+
+        intersection_Xaxis_Y = origin_Y
+        intersection_Xaxis_X = int((intersection_Xaxis_Y - c)/m)
+        
+        print(" X axis intersection ---------->("+str(intersection_Xaxis_X) +","+ str(intersection_Xaxis_Y) +")")
+        
+        for i in range(intersection_Xaxis_X - 10 , intersection_Xaxis_X + 10):
+            for j in range(intersection_Xaxis_Y - 10 , intersection_Xaxis_Y + 10):
+                allLines[j,i] = (255, 255, 255)
+
     print(arr)      
 
     cv.imshow("Resized image", resized) 
     cv.imshow("Source", src) 
-    cv.imshow("Probabilistic Line Transform", cdstP)
+    cv.imshow("Probabilistic Line Transform", cdstP) 
     cv.imshow("Detected All Lines" , allLines )
     cv.waitKey()
     return 0  
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main(sys.argv[1:]) 
