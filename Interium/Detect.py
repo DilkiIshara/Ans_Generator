@@ -20,7 +20,7 @@ X_arr = Y_arr = None   # 0-a  1-length 2-arrIndex
 graphs_arr = None      # 0-m  1-C 2-length 3-arrIndex 
 cdstP = allLines = None
 noOfLines = 0
-origin_X = origin_Y = 0
+origin_X = origin_Y = intersection_Xaxis_X = intersection_Xaxis_Y = intersection_Yaxis_X = intersection_Yaxis_Y = 0
 N = 4 # arr (x,y) (x,y) 
 
 def getEqationByUsingCoordinate():
@@ -202,6 +202,26 @@ def origin():
             allLines[j,i] = (255, 255, 255)
             cdstP[j,i] = (255, 255, 255)
 
+def identifyIntersection():
+    global intersection_Xaxis_Y, intersection_Xaxis_X, intersection_yaxis_Y, intersection_Yaxis_X
+    m = graphs_arr[graph_cordinate][0] 
+    c = graphs_arr[graph_cordinate][1] 
+    intersection_Xaxis_Y = origin_Y
+    intersection_Xaxis_X = int((intersection_Xaxis_Y - c)/m)  
+    intersection_Yaxis_X = origin_X  
+    intersection_Yaxis_Y = int((m* intersection_Yaxis_X) + c)
+    print(" Y axis intersection ---------->("+str(intersection_Yaxis_X) +","+ str(intersection_Yaxis_Y) +")")    
+    print(" X axis intersection ---------->("+str(intersection_Xaxis_X) +","+ str(intersection_Xaxis_Y) +")")
+        
+    for i in range(intersection_Xaxis_X - 10 , intersection_Xaxis_X + 10):
+        for j in range(intersection_Xaxis_Y - 10 , intersection_Xaxis_Y + 10):
+            allLines[j,i] = (255, 255, 255)
+
+    for i in range(intersection_Yaxis_X - 10 , intersection_Yaxis_X + 10):
+        for j in range(intersection_Yaxis_Y - 10 , intersection_Yaxis_Y + 10):
+            allLines[j,i] = (255, 255, 255)
+
+
 def main(argv):
     
     global cdstP, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y
@@ -274,18 +294,9 @@ def main(argv):
         # identify origin
         origin()
 
-        # identify X axis intersection point
-        m = graphs_arr[graph_cordinate][0] 
-        c = graphs_arr[graph_cordinate][1]
-
-        intersection_Xaxis_Y = origin_Y
-        intersection_Xaxis_X = int((intersection_Xaxis_Y - c)/m)
+        # identify X and Y axis intersection point
+        identifyIntersection()
         
-        print(" X axis intersection ---------->("+str(intersection_Xaxis_X) +","+ str(intersection_Xaxis_Y) +")")
-        
-        for i in range(intersection_Xaxis_X - 10 , intersection_Xaxis_X + 10):
-            for j in range(intersection_Xaxis_Y - 10 , intersection_Xaxis_Y + 10):
-                allLines[j,i] = (255, 255, 255)
 
     print(arr)      
 
