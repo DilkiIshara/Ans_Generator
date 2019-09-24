@@ -173,7 +173,7 @@ def draw_Graph():
     global graph_cordinate
     for h in range(0, len(linesP)): 
         l = graphs_arr[h][2]
-        print("Max Graph Length  " + str(l))
+        # print("Max Graph Length  " + str(l))
         if l > maxlength_Graph : 
             graph_cordinate = h
             maxlength_Graph = l 
@@ -216,12 +216,15 @@ def identifyIntersection():
         for j in range(intersection_Yaxis_Y - 5 , intersection_Yaxis_Y + 5):
             allLines[j,i] = (0,252,0) 
 
+def take(elem):
+    return elem
+
 def main(argv):
     
     global cdstP, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y
 
     # Loads an image
-    default_file = 'c.png' 
+    default_file = 'g.png' 
     filename = argv[0] if len(argv) > 0 else default_file
 
     # Convert to gray Scale
@@ -241,6 +244,8 @@ def main(argv):
     height = int(500)
     dim = (width, height)
     resized = cv.resize(src, dim, interpolation = cv.INTER_AREA)
+
+    resized = src
 
     # Edge detection
     #dst = cv.Canny(src, 20, 200, None, 3) 
@@ -291,7 +296,139 @@ def main(argv):
         # identify X and Y axis intersection point
         identifyIntersection()
         
+        i = 0
+        # X_Axis_Intersections = [[0] * 1 for i in range(len(linesP))]
+        X_Axis_Intersections = np.arange(len(linesP))
 
+        for h in range(0, len(linesP)):
+            X_Axis_Intersections[h] = 0
+
+        for h in range(0, len(linesP)):
+            x = Y_arr[h][0] 
+            X_Axis_Intersections[0] = origin_X
+            if origin_X < x :
+                i = i + 1
+                X_Axis_Intersections[i] = x  
+
+        print("88888888888888888888" + str(i))
+        array_sort =  np.sort(X_Axis_Intersections) 
+        print(array_sort)
+
+
+        distance = np.arange(i+1)
+        for h in range(0, i+1):
+            distance[h] = 0
+
+        j = 0
+        for h in range(0, len(linesP)):
+            d = array_sort[h]
+
+            # if (d == 113) :
+            #     distance[j] = 0
+            #     j = j + 1
+            # elif (d > 113) :
+            #     d1 = array_sort[h-1]
+            #     d2 = d - d1
+            #     if (d2 > 10) :
+            #         distance[j] = d2
+            #         j = j + 1
+ 
+            if (d > 113) :
+                d1 = array_sort[h-1]
+                d2 = d - d1
+                if (d2 > 10) :
+                    distance[j] = d2
+                    j = j + 1
+
+        print(distance)
+
+        count_arr = [[0] * 2 for i in range(j)]
+        average_dis = 0
+
+        for h in range(0, j ):
+            d = distance[h]
+            # exist = false
+            if (d != 0) : 
+                count = 0
+                for i in range(0, j ): 
+                    # if ((distance[i] >= d - 10) and (distance[i] <= d + 10) )  :
+                    if ((distance[i] >= d - 10) and (distance[i] <= d + 10) )  :
+                        # exist = True
+                        count = count +1
+                count_arr[h][0]  = d
+                count_arr[h][1]  = count
+        print(count_arr)
+ 
+        # Check max count
+        maxCount = 0
+        for h in range(0, len(count_arr) ): 
+            c = count_arr[h][1]
+            print("cccccccccccccccccc" + str(c))
+            if (c > maxCount) : 
+                maxCount = c  
+        print("Max Count" + str(maxCount))
+        
+        
+        equalCount = [[0] * 3 for i in range(j)] 
+        index = 0
+        m = 0
+        for h in range(0, len(count_arr) ):
+            total = 0
+            c = count_arr[h][1] 
+            value = count_arr[h][0]
+            if c == maxCount:
+                equalCount[m][0] = value
+                equalCount[m][1] = c
+                for k in range(0, len(count_arr) ):
+                    val =  count_arr[k][0]  
+                    if (val > (value - 10))  and (val < (value + 10)):
+                        total = total + val
+                print("Total           ============ "+ str(total))
+                equalCount[m][2] = total/c
+                m = m+1
+        print(equalCount)
+
+        total_avg = 0
+        for h in range(0, m ):
+            total_avg = total_avg + equalCount[h][2]
+            # print("count           ============ "+ str(equalCount[h][1]))
+            # print("value           ============ "+ str(equalCount[h][0]))
+            # print("Avg           ============ "+ str(equalCount[h][2])) 
+        
+        if total_avg != 0 :
+            aveg = total_avg/m
+            pixcelFotTicMark_X = int(aveg) 
+            print(" pixcelFotTicMark_X = int((total/count))" + str(aveg))
+
+            ticMark = 1
+            for ticMark in range(1 , 6):
+                for i in range(origin_Y-20 , origin_Y+20) : 
+                    x = origin_X + (pixcelFotTicMark_X*ticMark)
+                    for j in range(x - 5 , x+5):
+                        allLines[i,x] = (0,252,0) 
+  
+
+        # for h in range(0, len(count_arr) ): 
+        #     val = count_arr[h][0]
+        #     print("vvvvvvvvvvvvvvvvvvvvvvvvv"+ str(value))
+        #     print("vvvvvvvvvvvvvvvvvvvvvvvvv"+ str(val))
+        #     if (val > (value - 10))  and (val < (value + 10)):
+        #         total = total + val
+
+
+        # pixcelFotTicMark_X = int((total/count)) 
+        # pixcelFotTicMark_X = int(aveg) 
+        # print(" pixcelFotTicMark_X = int((total/count))" + str(aveg))
+
+        # ticMark = 1
+        # for ticMark in range(1 , 4):
+        #     for i in range(origin_Y-20 , origin_Y+20) : 
+        #         x = origin_X + (pixcelFotTicMark_X*ticMark)
+        #         for j in range(x - 5 , x+5):
+        #             allLines[i,x] = (0,252,0) 
+  
+        # print(distance)
+    
     # print(arr)      
 
     cv.imshow("Resized image", resized) 
