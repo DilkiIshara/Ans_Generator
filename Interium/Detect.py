@@ -112,18 +112,10 @@ def separateX_Y_Graph():
             x1 = arr[k][0]
             y1 = arr[k][1]
             x2 = arr[k][2]
-            y2 = arr[k][3]
+            y2 = arr[k][3] 
 
-            #print ("("+str(x1)+","+str(y1)+")       ("+str(x2)+","+str(y2)+")")
-            y_difference =  y2 - y1
-            if y_difference < 0 :
-                y_difference = -1 * y_difference
-            #print("y difference       " + str(y_difference))
-
-            x_difference = x2 - x1
-            if x_difference < 0 :
-                x_difference = -1 * x_difference
-            #print("X difference" + str(x_difference))
+            y_difference =  y2 - y1 
+            x_difference = x2 - x1 
 
             slide_1 = pow(y_difference, 2) 
             slide_2 = pow(x_difference, 2)
@@ -157,8 +149,7 @@ def draw_X_Axis():
     global X_axis_cordinate
     global origin_Y, allLines
     for h in range(0, len(linesP)):
-        l = X_arr[h][1]
-        # print("Max axix Length  " + str(l))
+        l = X_arr[h][1] 
         if l > maxlength_X : 
             X_axis_cordinate = h
             maxlength_X = l  
@@ -204,8 +195,12 @@ def origin():
 
 def identifyIntersection():
     global intersection_Xaxis_Y, intersection_Xaxis_X, intersection_yaxis_Y, intersection_Yaxis_X
+    y1 = -(arr[graph_cordinate][1])
+    y2 = -(arr[graph_cordinate][3])
+
     m = graphs_arr[graph_cordinate][0] 
     c = graphs_arr[graph_cordinate][1] 
+    print(" Y axis intersection ---------->("+str(m) +","+ str(c) +")")    
     intersection_Xaxis_Y = origin_Y
     intersection_Xaxis_X = int((intersection_Xaxis_Y - c)/m)  
     intersection_Yaxis_X = origin_X  
@@ -213,21 +208,20 @@ def identifyIntersection():
     print(" Y axis intersection ---------->("+str(intersection_Yaxis_X) +","+ str(intersection_Yaxis_Y) +")")    
     print(" X axis intersection ---------->("+str(intersection_Xaxis_X) +","+ str(intersection_Xaxis_Y) +")")
         
-    for i in range(intersection_Xaxis_X - 10 , intersection_Xaxis_X + 10):
-        for j in range(intersection_Xaxis_Y - 10 , intersection_Xaxis_Y + 10):
-            allLines[j,i] = (255, 255, 255)
+    for i in range(intersection_Xaxis_X - 5 , intersection_Xaxis_X + 5):
+        for j in range(intersection_Xaxis_Y - 5 , intersection_Xaxis_Y + 5):
+            allLines[j,i] = (255, 255, 255) 
 
-    for i in range(intersection_Yaxis_X - 10 , intersection_Yaxis_X + 10):
-        for j in range(intersection_Yaxis_Y - 10 , intersection_Yaxis_Y + 10):
-            allLines[j,i] = (255, 255, 255)
-
+    for i in range(intersection_Yaxis_X - 5 , intersection_Yaxis_X + 5):
+        for j in range(intersection_Yaxis_Y - 5 , intersection_Yaxis_Y + 5):
+            allLines[j,i] = (0,252,0) 
 
 def main(argv):
     
     global cdstP, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y
 
     # Loads an image
-    default_file = 'g1.jpg' 
+    default_file = 'c.png' 
     filename = argv[0] if len(argv) > 0 else default_file
 
     # Convert to gray Scale
@@ -298,7 +292,7 @@ def main(argv):
         identifyIntersection()
         
 
-    print(arr)      
+    # print(arr)      
 
     cv.imshow("Resized image", resized) 
     cv.imshow("Source", src) 
