@@ -405,9 +405,10 @@ def main(argv):
                 for i in range(origin_Y-20 , origin_Y+20) : 
                     x = origin_X + (pixcelFotTicMark_X*ticMark)
                     for j in range(x - 5 , x+5):
-                        allLines[i,x] = (0,252,0) 
-  
-
+                        allLines[i,x] = (0,252,0)  
+                        cdstP[i,x] = (200,252,0) 
+                print(x)
+        print(Y_arr)
         # for h in range(0, len(count_arr) ): 
         #     val = count_arr[h][0]
         #     print("vvvvvvvvvvvvvvvvvvvvvvvvv"+ str(value))
