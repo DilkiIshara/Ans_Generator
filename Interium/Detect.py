@@ -224,7 +224,7 @@ def main(argv):
     global cdstP, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y
 
     # Loads an image
-    default_file = 'g.png' 
+    default_file = 'x2.png' 
     filename = argv[0] if len(argv) > 0 else default_file
 
     # Convert to gray Scale
@@ -298,11 +298,15 @@ def main(argv):
         
         i = 0
         # X_Axis_Intersections = [[0] * 1 for i in range(len(linesP))]
+
+        # Create Array
         X_Axis_Intersections = np.arange(len(linesP))
 
+        # assign value to zero
         for h in range(0, len(linesP)):
             X_Axis_Intersections[h] = 0
 
+        # Insert values to array
         for h in range(0, len(linesP)):
             x = Y_arr[h][0] 
             X_Axis_Intersections[0] = origin_X
@@ -311,15 +315,21 @@ def main(argv):
                 X_Axis_Intersections[i] = x  
 
         print("88888888888888888888" + str(i))
+
+        # sort array
         array_sort =  np.sort(X_Axis_Intersections) 
         print(array_sort)
 
-
+        # create array to store distance from origin to tic mark
         distance = np.arange(i+1)
+
+        # assign value to 0
         for h in range(0, i+1):
             distance[h] = 0
 
         j = 0
+
+
         for h in range(0, len(linesP)):
             d = array_sort[h]
 
@@ -333,7 +343,7 @@ def main(argv):
             #         distance[j] = d2
             #         j = j + 1
  
-            if (d > 113) :
+            if (d > origin_X) :
                 d1 = array_sort[h-1]
                 d2 = d - d1
                 if (d2 > 10) :
@@ -343,6 +353,8 @@ def main(argv):
         print(distance)
 
         count_arr = [[0] * 2 for i in range(j)]
+
+
         average_dis = 0
 
         for h in range(0, j ):
@@ -352,7 +364,7 @@ def main(argv):
                 count = 0
                 for i in range(0, j ): 
                     # if ((distance[i] >= d - 10) and (distance[i] <= d + 10) )  :
-                    if ((distance[i] >= d - 10) and (distance[i] <= d + 10) )  :
+                    if ((distance[i] >= d - 5) and (distance[i] <= d + 5) )  :
                         # exist = True
                         count = count +1
                 count_arr[h][0]  = d
