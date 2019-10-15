@@ -296,7 +296,7 @@ def main(argv):
         # identify X and Y axis intersection point
         identifyIntersection()
         
-        i = 0
+       
         # X_Axis_Intersections = [[0] * 1 for i in range(len(linesP))]
 
         # Create Array
@@ -307,18 +307,29 @@ def main(argv):
             X_Axis_Intersections[h] = 0
 
         # Insert values to array
+        i = 0
         for h in range(0, len(linesP)):
             x = Y_arr[h][0] 
-            X_Axis_Intersections[0] = origin_X
-            if origin_X < x :
-                i = i + 1
-                X_Axis_Intersections[i] = x  
-
+            X_Axis_Intersections[i] = x 
+            i = i + 1
+            #X_Axis_Intersections[0] = origin_X
+            
+             
+            # if origin_X < x :
+            #     i = i + 1
+            #     X_Axis_Intersections[i] = x  
+           
         print("88888888888888888888" + str(i))
 
         # sort array
         array_sort =  np.sort(X_Axis_Intersections) 
         print(array_sort)
+
+        indexOfOriginX = 0
+        for h in range(0, i):
+            if(array_sort[h] == origin_X) :
+                indexOfOriginX = h
+
 
         # create array to store distance from origin to tic mark
         distance = np.arange(i+1)
@@ -332,6 +343,13 @@ def main(argv):
 
         for h in range(0, len(linesP)):
             d = array_sort[h]
+            
+            if(h > 0):
+                d1 = array_sort[h-1]
+                d2 = d - d1
+                if (d2 > 10) :
+                    distance[j] = d2
+                    j = j + 1
 
             # if (d == 113) :
             #     distance[j] = 0
@@ -343,12 +361,12 @@ def main(argv):
             #         distance[j] = d2
             #         j = j + 1
  
-            if (d > origin_X) :
-                d1 = array_sort[h-1]
-                d2 = d - d1
-                if (d2 > 10) :
-                    distance[j] = d2
-                    j = j + 1
+            # if (d > origin_X) :
+            #     d1 = array_sort[h-1]
+            #     d2 = d - d1
+            #     if (d2 > 10) :
+            #         distance[j] = d2
+            #         j = j + 1
 
         print(distance)
 
@@ -364,11 +382,13 @@ def main(argv):
                 count = 0
                 for i in range(0, j ): 
                     # if ((distance[i] >= d - 10) and (distance[i] <= d + 10) )  :
-                    if ((distance[i] >= d - 5) and (distance[i] <= d + 5) )  :
+                    if ((distance[i] >= d - 10) and (distance[i] <= d + 10) )  :
                         # exist = True
                         count = count +1
                 count_arr[h][0]  = d
                 count_arr[h][1]  = count
+
+
         print(count_arr)
  
         # Check max count
@@ -378,26 +398,34 @@ def main(argv):
             print("cccccccccccccccccc" + str(c))
             if (c > maxCount) : 
                 maxCount = c  
+
+        # get the distance between tic marks       
         print("Max Count" + str(maxCount))
         
         
         equalCount = [[0] * 3 for i in range(j)] 
         index = 0
         m = 0
+
         for h in range(0, len(count_arr) ):
             total = 0
-            c = count_arr[h][1] 
-            value = count_arr[h][0]
+            c = count_arr[h][1]                 # count
+            value = count_arr[h][0]             # value
             if c == maxCount:
-                equalCount[m][0] = value
-                equalCount[m][1] = c
+                equalCount[m][0] = value        # value
+                equalCount[m][1] = c            # count
+
                 for k in range(0, len(count_arr) ):
                     val =  count_arr[k][0]  
+                    #if (val > (value - 10))  and (val < (value + 10)):
                     if (val > (value - 10))  and (val < (value + 10)):
                         total = total + val
                 print("Total           ============ "+ str(total))
-                equalCount[m][2] = total/c
+
+                equalCount[m][2] = total/c  # average value
                 m = m+1
+
+
         print(equalCount)
 
         total_avg = 0
@@ -421,6 +449,9 @@ def main(argv):
                         cdstP[i,x] = (200,252,0) 
                 print(x)
         print(Y_arr)
+
+
+
         # for h in range(0, len(count_arr) ): 
         #     val = count_arr[h][0]
         #     print("vvvvvvvvvvvvvvvvvvvvvvvvv"+ str(value))
