@@ -70,6 +70,8 @@ def displayAlllines() :
 def storeLineCoordinate() :
     global reduce, arr
     arr = [[0] * N for i in range(noOfLines)] 
+
+    index = 1
     for i in range(0, len(linesP)): 
         l = linesP[i][0] 
         #Store Values in a 2D array 
@@ -89,19 +91,26 @@ def storeLineCoordinate() :
             x = i - reduce
 
             for j in range(0,x): 
-                if arr[j][0]-3 <= value1 and value1 <= arr[j][0]+3 and arr[j][1]-3 <= value2 and value2 <= arr[j][1]+3 and arr[j][2]-3 <= value3 and value3 <= arr[j][2]+3 and arr[j][3]-3 <= value4 and value4 <= arr[j][3]+3 : 
+                if arr[j][0]-5 <= value1 and value1 <= arr[j][0]+5 and arr[j][1]-5 <= value2 and value2 <= arr[j][1]+5 and arr[j][2]-5 <= value3 and value3 <= arr[j][2]+5 and arr[j][3]-5 <= value4 and value4 <= arr[j][3]+5 : 
                     arr[j][0] = int((value1+arr[j][0])/2)
                     arr[j][1] = int((value2+arr[j][1])/2)
                     arr[j][2] = int((value3+arr[j][2])/2)
                     arr[j][3] = int((value4+arr[j][3])/2)
                     reduce = reduce+1
-                    duplicate = 1  
-                if duplicate == 0: 
-                    arr[i-reduce][0] = value1
-                    arr[i-reduce][1] = value2
-                    arr[i-reduce][2] = value3
-                    arr[i-reduce][3] = value4
+                    duplicate = 1
+            
 
+            if duplicate == 0: 
+                    # arr[i-reduce][0] = value1
+                    # arr[i-reduce][1] = value2
+                    # arr[i-reduce][2] = value3
+                    # arr[i-reduce][3] = value4
+                arr[index][0] = value1
+                arr[index][1] = value2
+                arr[index][2] = value3
+                arr[index][3] = value4
+                index = index + 1
+                    
 def separateX_Y_Graph():
     global numberOf_Horizontal, numberOf_Vertical, numberOf_Graph, X_arr, Y_arr, graphs_arr
     X_arr = [[0] * 3 for i in range(noOfLines)]
@@ -299,6 +308,20 @@ def main(argv):
        
         # X_Axis_Intersections = [[0] * 1 for i in range(len(linesP))]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         # Create Array
         X_Axis_Intersections = np.arange(len(linesP))
 
@@ -311,15 +334,9 @@ def main(argv):
         for h in range(0, len(linesP)):
             x = Y_arr[h][0] 
             X_Axis_Intersections[i] = x 
-            i = i + 1
-            #X_Axis_Intersections[0] = origin_X
-            
-             
-            # if origin_X < x :
-            #     i = i + 1
-            #     X_Axis_Intersections[i] = x  
+            i = i + 1 
            
-        print("88888888888888888888" + str(i))
+        # print("88888888888888888888" + str(i))
 
         # sort array
         array_sort =  np.sort(X_Axis_Intersections) 
@@ -338,41 +355,47 @@ def main(argv):
         for h in range(0, i+1):
             distance[h] = 0
 
-        j = 0
+        modify_array_sort =  np.arange(len(linesP)) 
 
-
+         # assign value to zero
+        for h in range(0, len(linesP)):
+            modify_array_sort[h] = 0
+        
+        increment = 1
         for h in range(0, len(linesP)):
             d = array_sort[h]
-            
-            if(h > 0):
-                d1 = array_sort[h-1]
-                d2 = d - d1
-                if (d2 > 10) :
-                    distance[j] = d2
-                    j = j + 1
+            if(h == 0):
+                modify_array_sort[h] = d
+            else : 
+                dup = 0
+                for k in range(0, len(linesP)):
+                    val = modify_array_sort[k]
+                    if(((val-7) <= d) and ((val+7)>= d)):
+                        modify_array_sort[k] = int((val+d)/2)
+                        dup = 1
+                
+                if (dup == 0 ):
+                    modify_array_sort[increment] = d
+                    increment = increment + 1
 
-            # if (d == 113) :
-            #     distance[j] = 0
-            #     j = j + 1
-            # elif (d > 113) :
-            #     d1 = array_sort[h-1]
-            #     d2 = d - d1
-            #     if (d2 > 10) :
-            #         distance[j] = d2
-            #         j = j + 1
- 
-            # if (d > origin_X) :
-            #     d1 = array_sort[h-1]
-            #     d2 = d - d1
-            #     if (d2 > 10) :
-            #         distance[j] = d2
-            #         j = j + 1
+        print(modify_array_sort)
+
+
+        j = 0
+        for h in range(0, len(linesP)):
+            d = modify_array_sort[h]
+            if(h > 0):
+                d1 = modify_array_sort[h-1]
+                if (d1 > 0) : 
+                    d2 = d - d1
+                    if (d2 > 10) :
+                        distance[j] = d2
+                        j = j + 1 
+
 
         print(distance)
 
         count_arr = [[0] * 2 for i in range(j)]
-
-
         average_dis = 0
 
         for h in range(0, j ):
@@ -389,18 +412,18 @@ def main(argv):
                 count_arr[h][1]  = count
 
 
-        print(count_arr)
+        # print(count_arr)
  
         # Check max count
         maxCount = 0
         for h in range(0, len(count_arr) ): 
             c = count_arr[h][1]
-            print("cccccccccccccccccc" + str(c))
+            # print("cccccccccccccccccc" + str(c))
             if (c > maxCount) : 
                 maxCount = c  
 
         # get the distance between tic marks       
-        print("Max Count" + str(maxCount))
+        # print("Max Count" + str(maxCount))
         
         
         equalCount = [[0] * 3 for i in range(j)] 
@@ -420,13 +443,13 @@ def main(argv):
                     #if (val > (value - 10))  and (val < (value + 10)):
                     if (val > (value - 10))  and (val < (value + 10)):
                         total = total + val
-                print("Total           ============ "+ str(total))
+                # print("Total           ============ "+ str(total))
 
                 equalCount[m][2] = total/c  # average value
                 m = m+1
 
 
-        print(equalCount)
+        # print(equalCount)
 
         total_avg = 0
         for h in range(0, m ):
@@ -438,17 +461,21 @@ def main(argv):
         if total_avg != 0 :
             aveg = total_avg/m
             pixcelFotTicMark_X = int(aveg) 
-            print(" pixcelFotTicMark_X = int((total/count))" + str(aveg))
+            #  print(" pixcelFotTicMark_X = int((total/count))" + str(aveg))
 
             ticMark = 1
             for ticMark in range(1 , 6):
-                for i in range(origin_Y-20 , origin_Y+20) : 
-                    x = origin_X + (pixcelFotTicMark_X*ticMark)
-                    for j in range(x - 5 , x+5):
-                        allLines[i,x] = (0,252,0)  
-                        cdstP[i,x] = (200,252,0) 
-                print(x)
-        print(Y_arr)
+                for i in range(origin_Y-15 , origin_Y+15) : 
+                    x1 = origin_X + (pixcelFotTicMark_X*ticMark)
+                    x2 = origin_X - (pixcelFotTicMark_X*ticMark)
+                    if(x1 > 0):
+                        allLines[i,x1] = (0,252,0)  
+                        cdstP[i,x1] = (200,252,0)  
+                    if(x2 > 0):
+                        allLines[i,x2] = (0,252,0)  
+                        cdstP[i,x2] = (200,252,0) 
+                # print(x)
+        # print(Y_arr)
 
 
 
