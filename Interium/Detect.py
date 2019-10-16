@@ -216,7 +216,7 @@ def identifyIntersection():
 
     m = graphs_arr[graph_cordinate][0] 
     c = graphs_arr[graph_cordinate][1] 
-    print(" Y axis intersection ---------->("+str(m) +","+ str(c) +")")    
+    # print(" Y axis intersection ---------->("+str(m) +","+ str(c) +")")    
     intersection_Xaxis_Y = origin_Y
     intersection_Xaxis_X = int(round((intersection_Xaxis_Y - c)/m))
     intersection_Yaxis_X = origin_X  
@@ -253,7 +253,7 @@ def identifyTicMarks_X_Axis():
 
     # sort array
     array_sort =  np.sort(X_Axis_Intersections) 
-    print(array_sort)
+    # print(array_sort)
 
     indexOfOriginX = 0
     for h in range(0, i):
@@ -290,7 +290,7 @@ def identifyTicMarks_X_Axis():
                 modify_array_sort[increment] = d
                 increment = increment + 1
 
-    print(modify_array_sort)
+    # print(modify_array_sort)
     j = 0
     for h in range(0, len(linesP)):
         d = modify_array_sort[h]
@@ -302,7 +302,7 @@ def identifyTicMarks_X_Axis():
                     distance[j] = d2
                     j = j + 1 
 
-    print(distance)
+    # print(distance)
     count_arr = [[0] * 2 for i in range(j)]
     average_dis = 0
 
@@ -385,7 +385,7 @@ def identifyTicMarks_Y_Axis():
 
     # sort array
     array_sort =  np.sort(Y_Axis_Intersections) 
-    print(array_sort)
+    # print(array_sort)
 
     indexOfOriginY = 0
     for h in range(0, i):
@@ -422,7 +422,7 @@ def identifyTicMarks_Y_Axis():
                 modify_array_sort[increment] = d
                 increment = increment + 1
 
-    print(modify_array_sort)
+    # print(modify_array_sort)
     j = 0
     for h in range(0, len(linesP)):
         d = modify_array_sort[h]
@@ -434,7 +434,7 @@ def identifyTicMarks_Y_Axis():
                     distance[j] = d2
                     j = j + 1 
 
-    print(distance)
+    # print(distance)
     count_arr = [[0] * 2 for i in range(j)]
     average_dis = 0
 
@@ -504,8 +504,8 @@ def getRealCoordianatesWithoutOCR():
     global intersection_Xaxis_X, intersection_Yaxis_Y
     global real_intersection_Xaxis_X, real_intersection_Yaxis_Y
 
-    print("Pixcels between Tic marks (Y axis)  : " + str(pixcelForTicMark_Y))
-    print("Pixcels between Tic marks (X axis)  : " + str(pixcelForTicMark_X))
+    # print("Pixcels between Tic marks (Y axis)  : " + str(pixcelForTicMark_Y))
+    # print("Pixcels between Tic marks (X axis)  : " + str(pixcelForTicMark_X))
 
     if((origin_X <= intersection_Xaxis_X + 5) and (origin_X >= intersection_Xaxis_X - 5)): 
         real_intersection_Xaxis_X = 0
@@ -519,9 +519,7 @@ def getRealCoordianatesWithoutOCR():
         real_intersection_Yaxis_Y = 0 
     elif (origin_Y < intersection_Yaxis_Y):  
         real_intersection_Yaxis_Y = int(round((intersection_Yaxis_Y - origin_Y)/ pixcelForTicMark_Y)*(-1))
-    else:
-        print("Origin y " + str(origin_Y))  
-        print("intersection_Yaxis_Y " + str(intersection_Yaxis_Y))  
+    else:  
         real_intersection_Yaxis_Y = int(round((origin_Y - intersection_Yaxis_Y)/ pixcelForTicMark_Y))
 
     print(" Real Coordinates of X intersectio Point  = " + str(real_intersection_Xaxis_X))
