@@ -27,7 +27,7 @@ pixcelForTicMark_Y = pixcelForTicMark_X = 0
 N = 4 # arr (x,y) (x,y) 
 
 def getEqationByUsingCoordinate():
-    print("result       :  " + result) 
+    # print("result       :  " + result) 
     number2 = re.findall('\(([^)]+)', result)
     length = len(number2)  
     if length > 1:
@@ -61,7 +61,7 @@ def getEqationByUsingCoordinate():
         if x!=0 and y!=0:
             m = y/x
             c = li[1] - (m * li[0])
-            #print ("Equation is  :    y = " + str(m)+"x  + " + str(c))  
+            print ("Equation is  :    y = " + str(m)+"x  + " + str(c))  
     else:
         print("coodinates does not read properly")
 
@@ -391,7 +391,7 @@ def identifyTicMarks_Y_Axis():
 
     # sort array
     array_sort =  np.sort(Y_Axis_Intersections) 
-    print(array_sort)
+    # print(array_sort)
 
     indexOfOriginY = 0
     for h in range(0, i):
@@ -428,7 +428,7 @@ def identifyTicMarks_Y_Axis():
                 modify_array_sort[increment] = d
                 increment = increment + 1
 
-    print(modify_array_sort)
+    # print(modify_array_sort)
     j = 0
     for h in range(0, len(linesP)):
         d = modify_array_sort[h]
@@ -440,7 +440,7 @@ def identifyTicMarks_Y_Axis():
                     distance[j] = d2
                     j = j + 1 
 
-    print(distance)
+    # print(distance)
     count_arr = [[0] * 2 for i in range(j)]
     average_dis = 0
 
@@ -453,7 +453,7 @@ def identifyTicMarks_Y_Axis():
                     count = count +1
             count_arr[h][0]  = d
             count_arr[h][1]  = count
-    print(count_arr)
+    # print(count_arr)
  
     # Check max count
     maxCount = 0
@@ -497,12 +497,13 @@ def identifyTicMarks_Y_Axis():
             for i in range(origin_X-15 , origin_X+15) : 
                 y1 = origin_Y + (pixcelForTicMark_Y*ticMark)
                 y2 = origin_Y - (pixcelForTicMark_Y*ticMark)
-                if((y1 > 0) and (y1<height) and (i > 0) and (i< width)):
-                    allLines[y1,i] = (0,252,0)  
-                    cdstP[y1,i] = (200,252,0)  
-                if((y2 > 0) and (y2<height) and (i > 0) and (i< width)):
-                    allLines[y2,i] = (0,252,0)  
-                    cdstP[y2,i] = (200,252,0)  
+                if( i > 0 and i < width):
+                    if((y1 > 0) and (y1<height) and (i > 0) and (i< width)):
+                        allLines[y1,i] = (0,252,0)  
+                        cdstP[y1,i] = (200,252,0)  
+                    if((y2 > 0) and (y2<height) and (i > 0) and (i< width)):
+                        allLines[y2,i] = (0,252,0)  
+                        cdstP[y2,i] = (200,252,0)  
     print("Pixcels between Tic marks (Y axis)  ------------->   : " + str(pixcelForTicMark_Y))
 
 def getRealCoordianatesWithoutOCR():
@@ -528,13 +529,13 @@ def getRealCoordianatesWithoutOCR():
     elif (origin_Y < intersection_Yaxis_Y):  
         if (pixcelForTicMark_Y != 0) :
             real_intersection_Yaxis_Y = int(round((intersection_Yaxis_Y - origin_Y)/ pixcelForTicMark_Y)*(-1))
-            print("origin " + str(origin_Y))
-            print("y  " + str(intersection_Yaxis_Y))
+            # print("origin " + str(origin_Y))
+            # print("y  " + str(intersection_Yaxis_Y))
     else: 
         if (pixcelForTicMark_Y != 0) : 
             real_intersection_Yaxis_Y = int(round((origin_Y - intersection_Yaxis_Y)/ pixcelForTicMark_Y))
-            print("origin " + str(origin_Y))
-            print("y  " + str(intersection_Yaxis_Y))
+            # print("origin " + str(origin_Y))
+            # print("y  " + str(intersection_Yaxis_Y))
 
     print(" Real Coordinates of X intersectio Point  = " + str(real_intersection_Xaxis_X))
     print(" Real Coordinates of Y intersectio Point  = " + str(real_intersection_Yaxis_Y))
@@ -551,7 +552,9 @@ def main(argv):
     filename = argv[0] if len(argv) > 0 else default_file
 
     # Convert to gray Scale
-    src = cv.imread(cv.samples.findFile(filename), cv.IMREAD_GRAYSCALE)
+    # src = cv.imread(cv.samples.findFile(filename), cv.IMREAD_GRAYSCALE)
+    img = cv.imread(cv.samples.findFile(filename))
+    src = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
     # Check if image is loaded fine or not
     if src is None:
@@ -585,7 +588,8 @@ def main(argv):
     
     # Get Text
     global result
-    result = pytesseract.image_to_string(Image.open(default_file))
+    result = pytesseract.image_to_string(Image.open(cv.samples.findFile(filename)))
+    print(" Result : " + str(result))
 
     if result: 
         # Generate Eqation Using Given Coodinates
