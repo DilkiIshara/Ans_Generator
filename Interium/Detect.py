@@ -139,19 +139,20 @@ def separateX_Y_Graph():
             lineLength = pow(total, 0.5)
 
             # x axises
-            if y_difference == 0:     
+            if (((y_difference >= -5) and (y_difference <= 5))  and (x_difference != 0)) :     
                 X_arr[k][0] = y1
                 X_arr[k][1] = lineLength
                 X_arr[k][2] = k
                 numberOf_Horizontal = numberOf_Horizontal + 1 
             # y axises 
-            elif x_difference == 0:    
+            elif (((x_difference >= -5) and (x_difference <= 5)) and (y_difference != 0)) :    
                 Y_arr[k][0] = x1
                 Y_arr[k][1] = lineLength
                 Y_arr[k][2] = k
                 numberOf_Vertical = numberOf_Vertical + 1 
             # graph
-            else :
+            else:
+            # elif ((x_difference != 0) and (y_difference != 0)):
                 m = y_difference/x_difference
                 c = y1 - (x1*m) 
                 graphs_arr[k][0] = m
@@ -188,6 +189,7 @@ def draw_Graph():
     global maxlength_Graph
     global graph_cordinate
     for h in range(0, len(linesP)): 
+
         l = graphs_arr[h][2]
         # print("Max Graph Length  " + str(l))
         if l > maxlength_Graph : 
@@ -195,6 +197,7 @@ def draw_Graph():
             maxlength_Graph = l 
     # Draw Graph
     cv.line(cdstP, (arr[graph_cordinate][0], arr[graph_cordinate][1]), (arr[graph_cordinate][2], arr[graph_cordinate][3]), (0,252,0), 2, cv.LINE_AA)
+    print ("Graph    ------------->("+str(arr[graph_cordinate][0])+","+str(arr[graph_cordinate][1])+")       ("+str(arr[graph_cordinate][2])+","+str(arr[graph_cordinate][3])+")")
 
 def origin():
     global origin_X, origin_Y
@@ -223,14 +226,17 @@ def identifyIntersection():
     intersection_Yaxis_Y = int(round((m* intersection_Yaxis_X) + c))
     print(" Y axis intersection ---------->("+str(intersection_Yaxis_X) +","+ str(intersection_Yaxis_Y) +")")    
     print(" X axis intersection ---------->("+str(intersection_Xaxis_X) +","+ str(intersection_Xaxis_Y) +")")
-        
+
+    
     for i in range(intersection_Xaxis_X - 5 , intersection_Xaxis_X + 5):
         for j in range(intersection_Xaxis_Y - 5 , intersection_Xaxis_Y + 5):
-            allLines[j,i] = (255, 255, 255) 
-
+            if(i > 0 and i < width and j > 0 and j < height ): 
+                allLines[j,i] = (255, 255, 255) 
+    
     for i in range(intersection_Yaxis_X - 5 , intersection_Yaxis_X + 5):
         for j in range(intersection_Yaxis_Y - 5 , intersection_Yaxis_Y + 5):
-            allLines[j,i] = (0,252,0) 
+            if(i > 0 and i < width and j > 0 and j < height ): 
+                allLines[j,i] = (0,252,0) 
 
 def take(elem):
     return elem
@@ -282,7 +288,7 @@ def identifyTicMarks_X_Axis():
             dup = 0
             for k in range(0, len(linesP)):
                 val = modify_array_sort[k]
-                if(((val-7) <= d) and ((val+7)>= d)):
+                if(((val-5) <= d) and ((val+5)>= d)):
                     modify_array_sort[k] = int(round((val+d)/2))
                     dup = 1
                 
@@ -332,7 +338,7 @@ def identifyTicMarks_X_Axis():
         total = 0
         c = count_arr[h][1]                 # count
         value = count_arr[h][0]             # value
-        if c == maxCount:
+        if c == maxCount  or c == (maxCount - 1) or c == (maxCount+1):
             equalCount[m][0] = value        # value
             equalCount[m][1] = c            # count
 
@@ -385,7 +391,7 @@ def identifyTicMarks_Y_Axis():
 
     # sort array
     array_sort =  np.sort(Y_Axis_Intersections) 
-    # print(array_sort)
+    print(array_sort)
 
     indexOfOriginY = 0
     for h in range(0, i):
@@ -414,7 +420,7 @@ def identifyTicMarks_Y_Axis():
             dup = 0
             for k in range(0, len(linesP)):
                 val = modify_array_sort[k]
-                if(((val-7) <= d) and ((val+7)>= d)):
+                if(((val-5) <= d) and ((val+5)>= d)):
                     modify_array_sort[k] = int(round((val+d)/2))
                     dup = 1
                 
@@ -422,7 +428,7 @@ def identifyTicMarks_Y_Axis():
                 modify_array_sort[increment] = d
                 increment = increment + 1
 
-    # print(modify_array_sort)
+    print(modify_array_sort)
     j = 0
     for h in range(0, len(linesP)):
         d = modify_array_sort[h]
@@ -434,7 +440,7 @@ def identifyTicMarks_Y_Axis():
                     distance[j] = d2
                     j = j + 1 
 
-    # print(distance)
+    print(distance)
     count_arr = [[0] * 2 for i in range(j)]
     average_dis = 0
 
@@ -447,7 +453,7 @@ def identifyTicMarks_Y_Axis():
                     count = count +1
             count_arr[h][0]  = d
             count_arr[h][1]  = count
-    # print(count_arr)
+    print(count_arr)
  
     # Check max count
     maxCount = 0
@@ -464,7 +470,7 @@ def identifyTicMarks_Y_Axis():
         total = 0
         c = count_arr[h][1]                 # count
         value = count_arr[h][0]             # value
-        if c == maxCount:
+        if c == maxCount or c == (maxCount - 1) or c == (maxCount+1):
             equalCount[m][0] = value        # value
             equalCount[m][1] = c            # count
 
@@ -491,10 +497,10 @@ def identifyTicMarks_Y_Axis():
             for i in range(origin_X-15 , origin_X+15) : 
                 y1 = origin_Y + (pixcelForTicMark_Y*ticMark)
                 y2 = origin_Y - (pixcelForTicMark_Y*ticMark)
-                if((y1 > 0) and (y1<height)):
+                if((y1 > 0) and (y1<height) and (i > 0) and (i< width)):
                     allLines[y1,i] = (0,252,0)  
                     cdstP[y1,i] = (200,252,0)  
-                if((y2 > 0) and (y1<height)):
+                if((y2 > 0) and (y2<height) and (i > 0) and (i< width)):
                     allLines[y2,i] = (0,252,0)  
                     cdstP[y2,i] = (200,252,0)  
     print("Pixcels between Tic marks (Y axis)  ------------->   : " + str(pixcelForTicMark_Y))
@@ -510,20 +516,31 @@ def getRealCoordianatesWithoutOCR():
     if((origin_X <= intersection_Xaxis_X + 5) and (origin_X >= intersection_Xaxis_X - 5)): 
         real_intersection_Xaxis_X = 0
     elif (origin_X < intersection_Xaxis_X): 
-        real_intersection_Xaxis_X = int(round((intersection_Xaxis_X - origin_X)/ pixcelForTicMark_X))
-    else: 
-        real_intersection_Xaxis_X = int(round((origin_X - intersection_Xaxis_X)/ pixcelForTicMark_X)*(-1))
+        if (pixcelForTicMark_X != 0) :
+            real_intersection_Xaxis_X = int(round((intersection_Xaxis_X - origin_X)/ pixcelForTicMark_X))
+    else:
+        if (pixcelForTicMark_X != 0) : 
+            real_intersection_Xaxis_X = int(round((origin_X - intersection_Xaxis_X)/ pixcelForTicMark_X)*(-1))
 
     
     if((origin_Y <= intersection_Yaxis_Y + 5) and (origin_Y >= intersection_Yaxis_Y - 5)) :
         real_intersection_Yaxis_Y = 0 
     elif (origin_Y < intersection_Yaxis_Y):  
-        real_intersection_Yaxis_Y = int(round((intersection_Yaxis_Y - origin_Y)/ pixcelForTicMark_Y)*(-1))
-    else:  
-        real_intersection_Yaxis_Y = int(round((origin_Y - intersection_Yaxis_Y)/ pixcelForTicMark_Y))
+        if (pixcelForTicMark_Y != 0) :
+            real_intersection_Yaxis_Y = int(round((intersection_Yaxis_Y - origin_Y)/ pixcelForTicMark_Y)*(-1))
+            print("origin " + str(origin_Y))
+            print("y  " + str(intersection_Yaxis_Y))
+    else: 
+        if (pixcelForTicMark_Y != 0) : 
+            real_intersection_Yaxis_Y = int(round((origin_Y - intersection_Yaxis_Y)/ pixcelForTicMark_Y))
+            print("origin " + str(origin_Y))
+            print("y  " + str(intersection_Yaxis_Y))
 
     print(" Real Coordinates of X intersectio Point  = " + str(real_intersection_Xaxis_X))
     print(" Real Coordinates of Y intersectio Point  = " + str(real_intersection_Yaxis_Y))
+
+def equationIP():
+    print("vvvvvvvvvvvvvvvvv")
 
 def main(argv):
     
@@ -613,7 +630,11 @@ def main(argv):
         identifyTicMarks_Y_Axis()
 
         # get real coordinates of y axis and X intersection point without OCR
-        getRealCoordianatesWithoutOCR()
+        if ( pixcelForTicMark_Y !=0 and pixcelForTicMark_X != 0) :
+            getRealCoordianatesWithoutOCR()
+
+        # generate equation using Image processing without OCR
+        equationIP()
 
     cv.imshow("Resized image", resized) 
     cv.imshow("Source", src) 
