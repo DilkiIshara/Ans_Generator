@@ -552,9 +552,9 @@ def main(argv):
     filename = argv[0] if len(argv) > 0 else default_file
 
     # Convert to gray Scale
-    # src = cv.imread(cv.samples.findFile(filename), cv.IMREAD_GRAYSCALE)
-    img = cv.imread(cv.samples.findFile(filename))
-    src = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    src = cv.imread(cv.samples.findFile(filename), cv.IMREAD_GRAYSCALE)
+    # img = cv.imread(cv.samples.findFile(filename))
+    # src = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
     # Check if image is loaded fine or not
     if src is None:
