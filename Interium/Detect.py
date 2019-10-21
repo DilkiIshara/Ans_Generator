@@ -365,12 +365,13 @@ def identifyTicMarks_X_Axis():
             for i in range(origin_Y-15 , origin_Y+15) : 
                 x1 = origin_X + (pixcelForTicMark_X*ticMark)
                 x2 = origin_X - (pixcelForTicMark_X*ticMark)
-                if((x1 > 0) and (x1<width)):
-                    allLines[i,x1] = (255,252,0)  
-                    cdstP[i,x1] = (255,252,0)  
-                if((x2 > 0) and (x2<width)):
-                    allLines[i,x2] = (255,252,0)  
-                    cdstP[i,x2] = (255,252,0) 
+                if ((i > 0) and (i < height)):
+                    if((x1 > 0) and (x1 < width)):
+                        allLines[i,x1] = (255,252,0)  
+                        cdstP[i,x1] = (255,252,0)  
+                    if((x2 > 0) and (x2<width)):
+                        allLines[i,x2] = (255,252,0)  
+                        cdstP[i,x2] = (255,252,0) 
     print("Pixcels between Tic marks (X axis)  ------------->   : " + str(pixcelForTicMark_X))
 
 def identifyTicMarks_Y_Axis():
