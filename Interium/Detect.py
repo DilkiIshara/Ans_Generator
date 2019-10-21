@@ -177,11 +177,27 @@ def draw_Y_Axis():
     global maxlength_Y
     global origin_X
     global Y_axis_cordinate
+    count = index = 0
     for h in range(0, len(linesP)):
-        l = Y_arr[h][1] 
+        l = Y_arr[h][1]  
         if l > maxlength_Y : 
             Y_axis_cordinate = h
-            maxlength_Y = Y_arr[h][1]   
+            maxlength_Y = Y_arr[h][1]  
+    for h in range(0, len(linesP)):
+        if (maxlength_Y == Y_arr[h][1]):
+            count = count + 1
+    
+    if (count > 1):
+        i = 0 
+        for h in range(0, len(linesP)):
+            if (maxlength_Y == Y_arr[h][1]): 
+                i = i + 1
+                if ((count%2)== 0):
+                    if (i == (count/2)):
+                        Y_axis_cordinate = h
+                else:
+                    if (i == ((count/2) + 1)):
+                        Y_axis_cordinate = h   
     cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
     print ("Y  axis ------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
 
