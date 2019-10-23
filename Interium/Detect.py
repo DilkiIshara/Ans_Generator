@@ -189,7 +189,6 @@ def draw_Graph():
     global maxlength_Graph
     global graph_cordinate
     for h in range(0, len(linesP)): 
-
         l = graphs_arr[h][2]
         # print("Max Graph Length  " + str(l))
         if l > maxlength_Graph : 
@@ -232,11 +231,13 @@ def identifyIntersection():
         for j in range(intersection_Xaxis_Y - 5 , intersection_Xaxis_Y + 5):
             if(i > 0 and i < width and j > 0 and j < height ): 
                 allLines[j,i] = (255, 255, 255) 
+                cdstP[j,i] = (255, 255, 255)  
     
     for i in range(intersection_Yaxis_X - 5 , intersection_Yaxis_X + 5):
         for j in range(intersection_Yaxis_Y - 5 , intersection_Yaxis_Y + 5):
             if(i > 0 and i < width and j > 0 and j < height ): 
-                allLines[j,i] = (0,252,0) 
+                allLines[j,i] = (0,252,0)
+                cdstP[j,i] = (255, 255, 255)   
 
 def take(elem):
     return elem
@@ -542,7 +543,10 @@ def getRealCoordianatesWithoutOCR():
     print(" Real Coordinates of Y intersectio Point  = " + str(real_intersection_Yaxis_Y))
 
 def equationIP():
-    print("vvvvvvvvvvvvvvvvv")
+    m = (real_intersection_Yaxis_Y/-(real_intersection_Xaxis_X))
+    c = real_intersection_Yaxis_Y
+    print(" Eqation : y =  " +str(m)+"x + " + str(c) )
+    # print("vvvvvvvvvvvvvvvvv")
 
 def main(argv):
     
