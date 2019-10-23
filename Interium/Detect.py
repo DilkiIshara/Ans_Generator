@@ -170,8 +170,56 @@ def draw_X_Axis():
         if l > maxlength_X : 
             X_axis_cordinate = h
             maxlength_X = l  
-    cv.line(cdstP, (arr[X_axis_cordinate][0], arr[X_axis_cordinate][1]), (arr[X_axis_cordinate][2], arr[X_axis_cordinate][3]), (50,0,255), 2, cv.LINE_AA)
-    print ("X  axis -------------->("+str(arr[X_axis_cordinate][0])+","+str(arr[X_axis_cordinate][1])+")       ("+str(arr[X_axis_cordinate][2])+","+str(arr[X_axis_cordinate][3])+")")
+    sameLine = 0
+    for h in range(0, len(linesP)):
+        l = Y_arr[h][1] 
+        if l == maxlength_Y : 
+            sameLine = sameLine + 1
+    print(" Same Lines : " + str(sameLine))
+
+    if (sameLine > 1):
+        find_X_Axis()
+        cv.line(cdstP, (arr[X_axis_cordinate][0], arr[X_axis_cordinate][1]), (arr[X_axis_cordinate][2], arr[X_axis_cordinate][3]), (50,0,255), 2, cv.LINE_AA)
+        print("---------------------------------------")
+        print ("X  axis -------------->("+str(arr[X_axis_cordinate][0])+","+str(arr[X_axis_cordinate][1])+")       ("+str(arr[X_axis_cordinate][2])+","+str(arr[X_axis_cordinate][3])+")")
+    else :
+        cv.line(cdstP, (arr[X_axis_cordinate][0], arr[X_axis_cordinate][1]), (arr[X_axis_cordinate][2], arr[X_axis_cordinate][3]), (50,0,255), 2, cv.LINE_AA)
+        print ("X  axis -------------->("+str(arr[X_axis_cordinate][0])+","+str(arr[X_axis_cordinate][1])+")       ("+str(arr[X_axis_cordinate][2])+","+str(arr[X_axis_cordinate][3])+")")
+
+def find_X_Axis():
+    global maxlength_X
+    global X_axis_cordinate
+    global pixcelForTicMark_X 
+ 
+    half_pixcelForTicMark_X = 10
+    minLen_X_Axis = maxlength_X
+    min_X_axis_cordinate = 0
+
+    for h in range(0, len(linesP)):
+        l = X_arr[h][1] 
+        if ((l < minLen_X_Axis) and (l != 0)) : 
+            min_X_axis_cordinate = h
+            minLen_X_Axis = X_arr[h][1]  
+    # x =  arr[min_X_axis_cordinate][0]  
+    # cv.line(cdstP, (arr[min_X_axis_cordinate][0], arr[min_X_axis_cordinate][1]), (arr[min_X_axis_cordinate][2], arr[min_X_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA) 
+    min_XAxis_Ycordinate = arr[min_X_axis_cordinate][1] 
+    
+    if (pixcelForTicMark_X == 0):
+        identifyTicMarks_X_Axis()
+    
+    if(pixcelForTicMark_X != 0):
+        half_pixcelForTicMark_X = pixcelForTicMark_X/2 
+
+    for h in range(0, len(linesP)):
+        X_axis_Y_cordinate = arr[h][1]
+        length_Of_X_Axis = X_arr[h][1]    
+        if ((X_axis_Y_cordinate <= (min_XAxis_Ycordinate+15)) and (X_axis_Y_cordinate >= (min_XAxis_Ycordinate-15))) :  
+            if (length_Of_X_Axis == maxlength_X): 
+                print("4444444444444444444444444444444444")
+                X_axis_cordinate = h
+    # cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
+    # print ("Y  axis ------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
+    
 
 def draw_Y_Axis():
     global maxlength_Y
@@ -188,7 +236,7 @@ def draw_Y_Axis():
         l = Y_arr[h][1] 
         if l == maxlength_Y : 
             sameLine = sameLine + 1
-    print(" Same Lines : " + str(sameLine))
+    # print(" Same Lines : " + str(sameLine))
     
     if (sameLine > 1):
         find_Y_Axis()
@@ -197,6 +245,7 @@ def draw_Y_Axis():
     else :
         cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
         print ("Y  axis ------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
+
 def find_Y_Axis():
     global maxlength_Y
     global Y_axis_cordinate
@@ -211,34 +260,28 @@ def find_Y_Axis():
         if ((l < minLen_Y_Axis) and (l != 0)) : 
             min_Y_axis_cordinate = h
             minLen_Y_Axis = Y_arr[h][1] 
-            print("start Find" + str(minLen_Y_Axis)) 
+            # print("start Find" + str(minLen_Y_Axis)) 
     x =  arr[min_Y_axis_cordinate][0] 
-    print("min_Y_axis_X_cordinate " + str(x))
-    cv.line(cdstP, (arr[min_Y_axis_cordinate][0], arr[min_Y_axis_cordinate][1]), (arr[min_Y_axis_cordinate][2], arr[min_Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA) 
-    
+    # print("min_Y_axis_X_cordinate " + str(x))
+    # cv.line(cdstP, (arr[min_Y_axis_cordinate][0], arr[min_Y_axis_cordinate][1]), (arr[min_Y_axis_cordinate][2], arr[min_Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA) 
     min_YAxis_Xcordinate = arr[min_Y_axis_cordinate][0]
-    print("max Length Value " + str(maxlength_Y))
+    # print("max Length Value " + str(maxlength_Y))
     
-    if (pixcelForTicMark_Y == 0):
-        identifyTicMarks_Y_Axis()
+    # if (pixcelForTicMark_Y == 0):
+    #     identifyTicMarks_Y_Axis()
     
     if(pixcelForTicMark_Y != 0):
-        half_pixcelForTicMark_Y = pixcelForTicMark_Y/2
-        print("half++++++++++++++++++++++++ " + str(half_pixcelForTicMark_Y))
+        half_pixcelForTicMark_Y = pixcelForTicMark_Y/2 
 
     for h in range(0, len(linesP)):
         Y_axis_X_cordinate = arr[h][0]
         length_Of_Y_Axis = Y_arr[h][1]    
-        if ((Y_axis_X_cordinate <= (min_YAxis_Xcordinate+half_pixcelForTicMark_Y)) and (Y_axis_X_cordinate >= (min_YAxis_Xcordinate-half_pixcelForTicMark_Y))) :  
-            print("*************** " + str(Y_axis_X_cordinate))
-            print("***************----------------------------------- " + str(length_Of_Y_Axis))
+        if ((Y_axis_X_cordinate <= (min_YAxis_Xcordinate+15)) and (Y_axis_X_cordinate >= (min_YAxis_Xcordinate-15))) :  
             if (length_Of_Y_Axis == maxlength_Y): 
-               
                 Y_axis_cordinate = h
-    cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
-    print ("Y  axis ------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
+    # cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
+    # print ("Y  axis ------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
     
-
 def draw_Graph():
     global maxlength_Graph
     global graph_cordinate
@@ -596,11 +639,11 @@ def getRealCoordianatesWithoutOCR():
     print(" Real Coordinates of X intersectio Point  = " + str(real_intersection_Xaxis_X))
     print(" Real Coordinates of Y intersectio Point  = " + str(real_intersection_Yaxis_Y))
 
-def equationIP():
-    m = (real_intersection_Yaxis_Y/-(real_intersection_Xaxis_X))
+def equationIP(): 
     c = real_intersection_Yaxis_Y
-    print(" Eqation : y =  " +str(m)+"x + " + str(c) )
-    # print("vvvvvvvvvvvvvvvvv")
+    if (real_intersection_Yaxis_Y != 0 and real_intersection_Xaxis_X != 0):
+        m = (real_intersection_Yaxis_Y/-(real_intersection_Xaxis_X))
+        print(" Eqation : y =  " +str(m)+"x + " + str(c) )
 
 def main(argv):
     
@@ -687,10 +730,12 @@ def main(argv):
         identifyIntersection()
         
         # identify X axis Ticmarks
-        identifyTicMarks_X_Axis()
+        if (pixcelForTicMark_X == 0 ):
+            identifyTicMarks_X_Axis()
         
         # identify Y axis Ticmarks
-        identifyTicMarks_Y_Axis()
+        if (pixcelForTicMark_Y == 0):
+            identifyTicMarks_Y_Axis()
 
         print("Tic Mark Distance " + str(pixcelForTicMark_Y))
 
