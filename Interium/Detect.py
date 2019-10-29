@@ -10,6 +10,7 @@ import pytesseract
 from PIL import Image 
 import re
 
+filename = None
 result = "" 
 linesP = cv.HoughLinesP(None, 1, np.pi / 180, 25, None, 10, 10)  
 numberOf_Horizontal = numberOf_Vertical = numberOf_Graph = rows = reduce = 0
@@ -18,7 +19,7 @@ X_axis_cordinate = Y_axis_cordinate = graph_cordinate = -1
 arr = None             # 0-x1 1-Y1 2-x2 3-y2
 X_arr = Y_arr = None   # 0-a  1-length 2-arrIndex
 graphs_arr = None      # 0-m  1-C 2-length 3-arrIndex 
-cdstP = allLines = None
+cdstP = allLines = textCoordinate = None
 noOfLines = 0
 width = height = 0
 origin_X = origin_Y = intersection_Xaxis_X = intersection_Xaxis_Y = intersection_Yaxis_X = intersection_Yaxis_Y = 0
@@ -61,7 +62,10 @@ def getEqationByUsingCoordinate():
         if x!=0 and y!=0:
             m = y/x
             c = li[1] - (m * li[0])
-            print ("Equation is  :    y = " + str(m)+"x  + " + str(c))  
+            print ("Equation is  :    y = " + str(m)+"x  + " + str(c)) 
+            getTextCoordinate() 
+        else:
+            getTextCoordinate()
     else:
         print("coodinates does not read properly")
 
@@ -694,9 +698,32 @@ def equationIP():
         m = (real_intersection_Yaxis_Y/-(real_intersection_Xaxis_X))
         print(" Eqation : y =  " +str(m)+"x + " + str(c) )
 
+def getTextCoordinate():
+    global textCoordinate, filename
+    # run tesseract, returning the bounding boxes
+    boxes = pytesseract.image_to_boxes(Image.open(filename)) # also include any config options you use
+    numberOfCharactor = int(len(boxes.splitlines()))
+    print("ccccccccccccccccccccccccccccccc" + str(int(len(boxes.splitlines()))))
+    textCoordinate = [[0] * 3 for i in range(numberOfCharactor)]
+    # store values into textCoordinate array
+    i = 0
+    for b in boxes.splitlines():
+        b = b.split(' ')
+        print("Charactor of  " + b[0] + "  =  "+b[1]+ ","+b[2]+ ","+b[3]+ ","+b[4])  # (x1, y1, X2, y2)
+        if ((b[0].isdigit()) and (b[0] != 0)):
+            textCoordinate[i][0] = int(b[0]) # store Charactor
+            textCoordinate[i][1] = round((int(b[1]) + int(b[3]))/2) # store X Coordinate
+            textCoordinate[i][2] = round((int(b[2]) + int(b[4]))/2) # store Y Coordinate
+            i = i + 1
+        # draw the bounding boxes on the image 
+        cv.rectangle(cdstP, (int(b[1]), height - int(b[2])), (int(b[3]), height - int(b[4])), (0, 255, 0), 2)
+
+    for h in range(0, i ):
+        print(" Charactor  = "+ str(textCoordinate[h][0]) + " X Coordinate = " + str(textCoordinate[h][1]) + " Y coordinate = " + str(textCoordinate[h][2]))
+
 def main(argv):
     
-    global cdstP, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y, height, width 
+    global cdstP, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y, height, width, filename
 
     # Loads an image
     default_file = 'x2.png' 
