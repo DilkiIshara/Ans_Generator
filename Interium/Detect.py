@@ -710,7 +710,7 @@ def getTextCoordinate():
     for b in boxes.splitlines():
         b = b.split(' ')
         print("Charactor of  " + b[0] + "  =  "+b[1]+ ","+b[2]+ ","+b[3]+ ","+b[4])  # (x1, y1, X2, y2)
-        if ((b[0].isdigit()) and (b[0] != 0)):
+        if ((b[0].isdigit()) and (int(b[0]) != 0)):
             textCoordinate[i][0] = int(b[0]) # store Charactor
             textCoordinate[i][1] = round((int(b[1]) + int(b[3]))/2) # store X Coordinate
             textCoordinate[i][2] = round((int(b[2]) + int(b[4]))/2) # store Y Coordinate
