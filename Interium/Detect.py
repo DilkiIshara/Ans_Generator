@@ -210,9 +210,15 @@ def find_X_Axis():
             min_X_axis_cordinate = h
             minLen_X_Axis = X_arr[h][1]   
     min_XAxis_Ycordinate = arr[min_X_axis_cordinate][1] 
-    # cv.line(cdstP, (arr[min_X_axis_cordinate][0], arr[min_X_axis_cordinate][1]), (arr[min_X_axis_cordinate][2], arr[min_X_axis_cordinate][3]), (255,0,0), 2, cv.LINE_AA)
+    cv.line(cdstP, (arr[min_X_axis_cordinate][0], arr[min_X_axis_cordinate][1]), (arr[min_X_axis_cordinate][2], arr[min_X_axis_cordinate][3]), (255,0,0), 2, cv.LINE_AA)
 
     # print("min_XAxis_Ycordinate " + str(min_XAxis_Ycordinate))
+    # print("minLen_X_Axis " + str(minLen_X_Axis))
+
+    for h in range(0, len(linesP)):
+        if (X_arr[h][1] <= (minLen_X_Axis +5) and  (X_arr[h][0] <= (min_XAxis_Ycordinate+3)) and (X_arr[h][0] >= (min_XAxis_Ycordinate-3))) : 
+            min_XAxis_Ycordinate = (X_arr[h][0] + min_XAxis_Ycordinate)/2
+            print("check")
     
     if (pixcelForTicMark_X == 0):
         identifyTicMarks_X_Axis()
@@ -220,17 +226,20 @@ def find_X_Axis():
     if(pixcelForTicMark_X != 0):
         half_pixcelForTicMark_X = pixcelForTicMark_X/2 
     
+    # print(" half_pixcelForTicMark_X " + str(half_pixcelForTicMark_X))
+
     count = 0
     for h in range(0, len(linesP)):
         X_axis_Y_cordinate = arr[h][1]
         length_Of_X_Axis = X_arr[h][1]   
-        if ((X_axis_Y_cordinate <= (min_XAxis_Ycordinate+half_pixcelForTicMark_X)) and (X_axis_Y_cordinate >= (min_XAxis_Ycordinate-half_pixcelForTicMark_X))) :   
+        if ((X_axis_Y_cordinate <= (min_XAxis_Ycordinate+half_pixcelForTicMark_X) + 5) and (X_axis_Y_cordinate >= (min_XAxis_Ycordinate-half_pixcelForTicMark_X - 5))) :   
             # print("Y_cordinate " + str(X_axis_Y_cordinate)) 
             if ((length_Of_X_Axis == maxlength_X)) : 
                 count = count + 1
-                print("Y_cordinate " + str(X_axis_Y_cordinate)) 
                 X_axis_cordinate = h
-    print (" Count = " + str(count))
+                # print("Y_cordinate " + str(X_axis_Y_cordinate)) 
+               
+    # print (" Count = " + str(count))
     if (count > 1):
         for h in range(0, len(linesP)):
             X_axis_Y_cordinate = arr[h][1]
@@ -238,8 +247,9 @@ def find_X_Axis():
             if ((X_axis_Y_cordinate <= (min_XAxis_Ycordinate+20)) and (X_axis_Y_cordinate >= (min_XAxis_Ycordinate-20))) :   
                 # print("Y_cordinate " + str(X_axis_Y_cordinate)) 
                 if ((length_Of_X_Axis == maxlength_X) and (X_axis_Y_cordinate <= (min_XAxis_Ycordinate)) ) :  
-                    print("Y_cordinate " + str(X_axis_Y_cordinate)) 
-                    X_axis_cordinate = h
+                     X_axis_cordinate = h
+                    # print("Y_cordinate " + str(X_axis_Y_cordinate)) 
+                   
 
     # cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
     # print ("Y  axis ------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
@@ -336,11 +346,64 @@ def origin():
 
 def identifyIntersection():
     global intersection_Xaxis_Y, intersection_Xaxis_X, intersection_Yaxis_Y, intersection_Yaxis_X, graphCrossOrigin
-    y1 = -(arr[graph_cordinate][1])
-    y2 = -(arr[graph_cordinate][3])
+
+    
+
+
+    y1 = arr[graph_cordinate][1]
+    y2 = arr[graph_cordinate][3]
+    x1 = arr[graph_cordinate][0]
+    x2 = arr[graph_cordinate][2]
+
+    xy1 = arr[X_axis_cordinate][1]
+    xy2 = arr[X_axis_cordinate][3]
+    xx1 = arr[X_axis_cordinate][0]
+    xx2 = arr[X_axis_cordinate][2]
+
+    yy1 = arr[Y_axis_cordinate][1]
+    yy2 = arr[Y_axis_cordinate][3]
+    yx1 = arr[Y_axis_cordinate][0]
+    yx2 = arr[Y_axis_cordinate][2]
+
+    # print ("Graph    ------------->("+str(x1)+","+str(y1)+")       ("+str(x2)+","+str(y2)+")")
+    # print ("X Axis    ------------->("+str(xx1)+","+str(xy1)+")       ("+str(xx2)+","+str(xy2)+")")
+    # print ("Y Axis    ------------->("+str(yx1)+","+str(yy1)+")       ("+str(yx2)+","+str(yy2)+")")
+
+
+    print ("Graph c     ------------->("+str(graphs_arr[graph_cordinate][1])+")         ,  ")
+ 
+
+    # for i in range(yx1 - 5 , yx1 + 5):
+    #     for j in range(yy1 - 5, yy1 +5):
+    #         if(i > 0 and i < width and j > 0 and j < height ): 
+    #             allLines[j,i] = (240, 95, 100)
+    #             cdstP[j,i] = (240, 95, 100)
+
+    # for i in range(yx2 - 5 , yx2 + 5):
+    #     for j in range(yy2 - 5, yy2 +5):
+    #         if(i > 0 and i < width and j > 0 and j < height ): 
+    #             allLines[j,i] = (240, 95, 100)
+    #             cdstP[j,i] = (240, 95, 100)
+
 
     m = graphs_arr[graph_cordinate][0] 
     c = graphs_arr[graph_cordinate][1] 
+    
+    y_dif = y2 - y1
+    x_dif = x2 - x1
+    m2 = y_dif/x_dif
+
+    print ("Graph    ------------->("+str(x1)+","+str(y1)+")       ("+str(x2)+","+str(y2)+")")
+    print ("Y difference    ------------->("+str(y_dif)+")")
+    print ("X difference    ------------->("+str(x_dif)+")")
+    print ("mmmmmm   ------------->("+str(m2)+")")
+
+    print ("Y Axis    ------------->("+str(yx1)+","+str(yy1)+")       ("+str(yx2)+","+str(yy2)+")")
+    m1 = (y2 - y1)/(x2 - x1)
+
+
+    print("           m = " + str(m) + "          m1 = " + str(m1))
+    
     # print(" Y axis intersection ---------->("+str(m) +","+ str(c) +")")    
     intersection_Xaxis_Y = origin_Y
     intersection_Xaxis_X = int(round((intersection_Xaxis_Y - c)/m))
@@ -359,18 +422,18 @@ def identifyIntersection():
     print(" Y axis intersection ---------->("+str(intersection_Yaxis_X) +","+ str(intersection_Yaxis_Y) +")")    
     print(" X axis intersection ---------->("+str(intersection_Xaxis_X) +","+ str(intersection_Xaxis_Y) +")")
 
-    
+    # draw intersection of x axis
     for i in range(intersection_Xaxis_X - 5 , intersection_Xaxis_X + 5):
         for j in range(intersection_Xaxis_Y - 5 , intersection_Xaxis_Y + 5):
             if(i > 0 and i < width and j > 0 and j < height ): 
-                allLines[j,i] = (255, 255, 255) 
-                cdstP[j,i] = (255, 255, 255)  
+                allLines[j,i] = (200, 20, 100) 
+                cdstP[j,i] = (200, 20, 100)  
     
     for i in range(intersection_Yaxis_X - 5 , intersection_Yaxis_X + 5):
         for j in range(intersection_Yaxis_Y - 5 , intersection_Yaxis_Y + 5):
             if(i > 0 and i < width and j > 0 and j < height ): 
-                allLines[j,i] = (0,252,0)
-                cdstP[j,i] = (255, 255, 255)   
+                allLines[j,i] = (0,50,100)
+                cdstP[j,i] = (0, 50, 100 )   
 
 def take(elem):
     return elem
@@ -765,7 +828,7 @@ def main(argv):
     dim = (width, height)
     resized = cv.resize(src, dim, interpolation = cv.INTER_AREA)
 
-    #resized = src
+    resized = src
     height = np.size(resized, 0)
     width = np.size(resized, 1)
     print("Image width : " + str(width))
