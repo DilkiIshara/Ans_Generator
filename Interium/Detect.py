@@ -26,6 +26,7 @@ origin_X = origin_Y = intersection_Xaxis_X = intersection_Xaxis_Y = intersection
 real_intersection_Xaxis_X = real_intersection_Yaxis_Y = 0
 pixcelForTicMark_Y = pixcelForTicMark_X = 0
 N = 4 # arr (x,y) (x,y) 
+graphCrossOrigin = False
 
 def getEqationByUsingCoordinate():
     # print("result       :  " + result) 
@@ -155,8 +156,7 @@ def separateX_Y_Graph():
                 Y_arr[k][2] = k
                 numberOf_Vertical = numberOf_Vertical + 1 
             # graph
-            else:
-            # elif ((x_difference != 0) and (y_difference != 0)):
+            elif ((x_difference != 0) and (y_difference != 0)):
                 m = y_difference/x_difference
                 c = y1 - (x1*m) 
                 graphs_arr[k][0] = m
@@ -164,6 +164,10 @@ def separateX_Y_Graph():
                 graphs_arr[k][2] = lineLength
                 graphs_arr[k][3] = k
                 numberOf_Graph = numberOf_Graph + 1
+            # else:
+            #     print("x_difference =  " + str(x_difference))
+            #     print("y_difference =  " + str(y_difference))
+            
 
 def draw_X_Axis():
     global maxlength_X
@@ -226,7 +230,7 @@ def find_X_Axis():
                 count = count + 1
                 print("Y_cordinate " + str(X_axis_Y_cordinate)) 
                 X_axis_cordinate = h
-
+    print (" Count = " + str(count))
     if (count > 1):
         for h in range(0, len(linesP)):
             X_axis_Y_cordinate = arr[h][1]
@@ -260,6 +264,7 @@ def draw_Y_Axis():
     
     if (sameLine > 1):
         find_Y_Axis()
+        print("fing Y ")
         cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
         print ("Y  axis ------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
     else :
@@ -325,11 +330,12 @@ def origin():
     print(" Origin ---------->("+str(origin_X) +","+ str(origin_Y) +")")
     for i in range(origin_X - 5 , origin_X + 5):
         for j in range(origin_Y - 5, origin_Y +5):
-            allLines[j,i] = (255, 255, 255)
-            cdstP[j,i] = (255, 255, 255)
+            if(i > 0 and i < width and j > 0 and j < height ): 
+                allLines[j,i] = (255, 255, 255)
+                cdstP[j,i] = (255, 255, 255)
 
 def identifyIntersection():
-    global intersection_Xaxis_Y, intersection_Xaxis_X, intersection_Yaxis_Y, intersection_Yaxis_X
+    global intersection_Xaxis_Y, intersection_Xaxis_X, intersection_Yaxis_Y, intersection_Yaxis_X, graphCrossOrigin
     y1 = -(arr[graph_cordinate][1])
     y2 = -(arr[graph_cordinate][3])
 
@@ -340,6 +346,16 @@ def identifyIntersection():
     intersection_Xaxis_X = int(round((intersection_Xaxis_Y - c)/m))
     intersection_Yaxis_X = origin_X  
     intersection_Yaxis_Y = int(round((m* intersection_Yaxis_X) + c))
+
+    if ( (intersection_Yaxis_X <= (origin_X + 3)) and (intersection_Yaxis_X >= (origin_X - 3)) and (intersection_Yaxis_Y <= (origin_Y + 3)) and (intersection_Yaxis_Y >= (origin_Y - 3)) ):
+        graphCrossOrigin = True
+        print(" Go through Origin")
+    
+    elif((intersection_Xaxis_X <= (origin_X + 3)) and (intersection_Xaxis_X >= (origin_X - 3)) and (intersection_Xaxis_Y <= (origin_Y + 3)) and (intersection_Xaxis_Y >= (origin_Y - 3))):
+        graphCrossOrigin = True
+        print(" Go through Origin")
+
+
     print(" Y axis intersection ---------->("+str(intersection_Yaxis_X) +","+ str(intersection_Yaxis_Y) +")")    
     print(" X axis intersection ---------->("+str(intersection_Xaxis_X) +","+ str(intersection_Xaxis_Y) +")")
 
@@ -749,7 +765,7 @@ def main(argv):
     dim = (width, height)
     resized = cv.resize(src, dim, interpolation = cv.INTER_AREA)
 
-    resized = src
+    #resized = src
     height = np.size(resized, 0)
     width = np.size(resized, 1)
     print("Image width : " + str(width))
@@ -776,7 +792,8 @@ def main(argv):
         print("Text cannot Read")
      
     # Probabilistic Line Transform
-    linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 0, 10) 
+    # linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 0, 10) 
+    linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 0, 20) 
     noOfLines = len(linesP) 
     
     if linesP is not None: # Check there are lines
@@ -801,9 +818,6 @@ def main(argv):
 
         # identify origin
         origin()
-
-        # identify X and Y axis intersection point
-        identifyIntersection()
         
         # identify X axis Ticmarks
         if (pixcelForTicMark_X == 0 ):
@@ -812,7 +826,7 @@ def main(argv):
         # identify Y axis Ticmarks
         if (pixcelForTicMark_Y == 0):
             identifyTicMarks_Y_Axis()
-
+        
         print("Tic Mark Distance " + str(pixcelForTicMark_Y))
         
         # draw tic mark of Y axis
@@ -821,12 +835,15 @@ def main(argv):
         # draw tic mark of X axis
         draw_TicMark_X_Axis()
 
+         # identify X and Y axis intersection point
+        identifyIntersection()
+
         # get real coordinates of y axis and X intersection point without OCR
-        if ( pixcelForTicMark_Y !=0 and pixcelForTicMark_X != 0) :
-            getRealCoordianatesWithoutOCR()
+        #if ( pixcelForTicMark_Y !=0 and pixcelForTicMark_X != 0) :
+           # getRealCoordianatesWithoutOCR()
 
         # generate equation using Image processing without OCR
-        equationIP()
+        # equationIP()
 
     cv.imshow("Resized image", resized) 
     cv.imshow("Source", src) 
