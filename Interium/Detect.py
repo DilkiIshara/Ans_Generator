@@ -27,6 +27,7 @@ real_intersection_Xaxis_X = real_intersection_Yaxis_Y = 0
 pixcelForTicMark_Y = pixcelForTicMark_X = 0
 N = 4 # arr (x,y) (x,y) 
 graphCrossOrigin = False
+ratio_Y_Axis_Value = ratio_X_Axis_Value = 1
 
 def getEqationByUsingCoordinate():
     # print("result       :  " + result) 
@@ -662,35 +663,35 @@ def getRealCoordianatesWithoutOCR():
         real_intersection_Xaxis_X = 0
     elif (origin_X < intersection_Xaxis_X): 
         if (pixcelForTicMark_X != 0) :
-            real_intersection_Xaxis_X = int(round((intersection_Xaxis_X - origin_X)/ pixcelForTicMark_X))
+            real_intersection_Xaxis_X = int(round((intersection_Xaxis_X - origin_X)/ pixcelForTicMark_X)) * ratio_X_Axis_Value 
     else:
         if (pixcelForTicMark_X != 0) : 
-            real_intersection_Xaxis_X = int(round((origin_X - intersection_Xaxis_X)/ pixcelForTicMark_X)*(-1))
+            real_intersection_Xaxis_X = int(round((origin_X - intersection_Xaxis_X)/ pixcelForTicMark_X)*(-1)) * ratio_X_Axis_Value
     
     if((origin_Y <= intersection_Yaxis_Y + 5) and (origin_Y >= intersection_Yaxis_Y - 5)) :
         real_intersection_Yaxis_Y = 0 
     elif (origin_Y < intersection_Yaxis_Y):  
         if (pixcelForTicMark_Y != 0) :
-            real_intersection_Yaxis_Y = int(round((intersection_Yaxis_Y - origin_Y)/ pixcelForTicMark_Y)*(-1))
+            real_intersection_Yaxis_Y = int(round((intersection_Yaxis_Y - origin_Y)/ pixcelForTicMark_Y)*(-1)) * ratio_Y_Axis_Value
     else: 
         if (pixcelForTicMark_Y != 0) : 
-            real_intersection_Yaxis_Y = int(round((origin_Y - intersection_Yaxis_Y)/ pixcelForTicMark_Y))
+            real_intersection_Yaxis_Y = int(round((origin_Y - intersection_Yaxis_Y)/ pixcelForTicMark_Y)) * ratio_Y_Axis_Value
 
     print(" Real Coordinates of X intersectio Point  = " + str(real_intersection_Xaxis_X))
     print(" Real Coordinates of Y intersectio Point  = " + str(real_intersection_Yaxis_Y))
 
 def equationIP(): 
-    c = real_intersection_Yaxis_Y
+    c = real_intersection_Yaxis_Y 
     if (real_intersection_Yaxis_Y != 0 and real_intersection_Xaxis_X != 0):
         m = (real_intersection_Yaxis_Y/-(real_intersection_Xaxis_X))
         print(" Eqation : y =  " +str(m)+"x + " + str(c) )
 
 def getTextCoordinate():
-    global textCoordinate, filename
+    global textCoordinate, filename, ratio_Y_Axis_Value, ratio_X_Axis_Value
 
-    ratio_X_Axis_Value_Array =  np.arange(5) 
-    ratio_Y_Axis_Value_Array =  np.arange(5)
-    ratio_X_Axis_Index = ratio_Y_Axis_Index = total_ratio_X_Axis_Value = total_ratio_Y_Axis_Value = 0
+    ratio_X_Axis_Value_Array = ratio_Y_Axis_Value_Array = np.arange(5) 
+    # ratio_Y_Axis_Value_Array =  np.arange(5) 
+    total_ratio_X_Axis_Value = total_ratio_Y_Axis_Value = ratio_Y_Axis_Index = ratio_X_Axis_Index = 0
 
     # run tesseract, returning the bounding boxes
     boxes = pytesseract.image_to_boxes(Image.open(filename)) # also include any config options you use
@@ -700,6 +701,7 @@ def getTextCoordinate():
     
     # store values into textCoordinate array
     i = 0
+    ratio_X_Axis_Value = ratio_Y_Axis_Value = 0
     numberOf_Tic_Mark_X_Axis = 0
     for b in boxes.splitlines():
         b = b.split(' ')
@@ -722,7 +724,6 @@ def getTextCoordinate():
                 
                print(" Number of Tic Marks : " + str(character_Y_Cordinate - origin_Y))
                if ((ratio_Y_Axis_Index < 5) and (numberOf_Tic_Mark_Y_Axis > 0)):
-                   
                 print(" X coodinate" + str(character_X_Cordinate))
                 ratio_y  = round(int(b[0]) / numberOf_Tic_Mark_Y_Axis )
                 if (ratio_y > 0) :
@@ -741,11 +742,9 @@ def getTextCoordinate():
 
                if ((ratio_X_Axis_Index < 5) and (numberOf_Tic_Mark_X_Axis > 0)):
                     ratio  = round(int(b[0]) / numberOf_Tic_Mark_X_Axis )
-                   
                     if (ratio > 0) : 
                         ratio_X_Axis_Value_Array[ratio_X_Axis_Index] = ratio
                         ratio_X_Axis_Index = ratio_X_Axis_Index + 1 
-              
             i = i + 1
         # draw the bounding boxes on the image 
         # cv.rectangle(cdstP, (int(b[1]), height - int(b[2])), (int(b[3]), height - int(b[4])), (255, 0, 0), 2)
@@ -766,6 +765,13 @@ def getTextCoordinate():
 
     for h in range(0, i ):
         print(" Charactor  = "+ str(textCoordinate[h][0]) + " X Coordinate = " + str(textCoordinate[h][1]) + " Y coordinate = " + str(textCoordinate[h][2]))
+    
+    if ((ratio_X_Axis_Value == 0) and (ratio_Y_Axis_Value == 0)):
+        ratio_X_Axis_Value = ratio_Y_Axis_Value = 1
+    elif ((ratio_X_Axis_Value == 0) and (ratio_Y_Axis_Value != 0)):
+        ratio_X_Axis_Value = ratio_Y_Axis_Value
+    elif ((ratio_X_Axis_Value != 0) and (ratio_Y_Axis_Value == 0)):
+        ratio_Y_Axis_Value = ratio_X_Axis_Value
 
 def main(argv):
     
