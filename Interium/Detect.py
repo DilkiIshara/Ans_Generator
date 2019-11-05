@@ -811,7 +811,7 @@ def getTextCoordinate():
         b = b.split(' ')
         print("Charactor of  " + b[0] + "  =  "+b[1]+ ","+b[2]+ ","+b[3]+ ","+b[4])  # (x1, y1, X2, y2)
         # if ((b[0].isdigit()) and (int(b[0]) != 0)):
-        if (b[0].isdigit()):
+        if (b[0].isdigit() and (int(b[0]) != 0) ):
             textCoordinate[i][0] = int(b[0]) # store Charactor
             textCoordinate[i][1] = round((int(b[1]) + int(b[3]))/2) # store X Coordinate
             textCoordinate[i][2] = round(((height - int(b[2])) + (height - int(b[4])))/2) # store Y Coordinate
@@ -820,32 +820,60 @@ def getTextCoordinate():
             if(((textCoordinate[i][1]) <= (origin_X+pixcelForTicMark_X)) and ((textCoordinate[i][1]) >= (origin_X-pixcelForTicMark_X))):
                textCoordinate[i][3] = -1  # Its is a tic mark coordinate of Y axis
                cv.rectangle(cdstP, (int(b[1]), height - int(b[2])), (int(b[3]), height - int(b[4])), (0, 255, 0), 2)
+               
+               if (character_Y_Cordinate > origin_Y):
+                numberOf_Tic_Mark_Y_Axis = round((character_Y_Cordinate - origin_Y)/ pixcelForTicMark_Y)
+
+               elif (character_Y_Cordinate < origin_Y):
+                numberOf_Tic_Mark_Y_Axis = round((origin_Y - character_Y_Cordinate)/ pixcelForTicMark_Y)
+                
+               print(" Number of Tic Marks : " + str(character_Y_Cordinate - origin_Y))
+               if ((ratio_Y_Axis_Index < 5) and (numberOf_Tic_Mark_Y_Axis > 0)):
+                   
+                print(" X coodinate" + str(character_X_Cordinate))
+                ratio_y  = round(int(b[0]) / numberOf_Tic_Mark_Y_Axis )
+                if (ratio_y > 0) :
+                    ratio_Y_Axis_Value_Array[ratio_Y_Axis_Index] = ratio_y
+                    ratio_Y_Axis_Index = ratio_Y_Axis_Index + 1
+
             elif(((character_Y_Cordinate) <= (origin_Y+pixcelForTicMark_Y)) and ((character_Y_Cordinate) >= (origin_Y-pixcelForTicMark_Y))):
                textCoordinate[i][3] = 1  # Its is a tic mark coordinate of X axis
                cv.rectangle(cdstP, (int(b[1]), height - int(b[2])), (int(b[3]), height - int(b[4])), (255, 0, 0), 2)
-               
+
                if(character_X_Cordinate > origin_X):
                 numberOf_Tic_Mark_X_Axis = round((character_X_Cordinate - origin_X)/ pixcelForTicMark_X)
+
                elif (character_X_Cordinate < origin_X):
                 numberOf_Tic_Mark_X_Axis = round((origin_X - character_X_Cordinate)/ pixcelForTicMark_X)
 
-               if (ratio_X_Axis_Index < 5):
-                    ratio_X_Axis_Value_Array[ratio_X_Axis_Index] = round((origin_X - character_X_Cordinate)/ pixcelForTicMark_X)
-                    ratio_X_Axis_Index = ratio_X_Axis_Index + 1
+               if ((ratio_X_Axis_Index < 5) and (numberOf_Tic_Mark_X_Axis > 0)):
+                    ratio  = round(int(b[0]) / numberOf_Tic_Mark_X_Axis )
+                   
+                    if (ratio > 0) :
+                        # print("Check.................." + str(ratio))
+                        ratio_X_Axis_Value_Array[ratio_X_Axis_Index] = ratio
+                        ratio_X_Axis_Index = ratio_X_Axis_Index + 1
                # ratio_X_Axis_Value = round((textCoordinate[i][0])/numberOf_Tic_Mark_X_Axis)
               
             i = i + 1
         # draw the bounding boxes on the image 
         # cv.rectangle(cdstP, (int(b[1]), height - int(b[2])), (int(b[3]), height - int(b[4])), (255, 0, 0), 2)
 
-    print ("ratio_X_Axis_Index " + str(ratio_X_Axis_Index)) 
+    
 
     for h in range(0, ratio_X_Axis_Index ):
-        total_ratio_X_Axis_Value = ratio_X_Axis_Value_Array[h] 
+        total_ratio_X_Axis_Value = total_ratio_X_Axis_Value + ratio_X_Axis_Value_Array[h] 
+
+    for h in range(0, ratio_Y_Axis_Index ):
+        total_ratio_Y_Axis_Value = total_ratio_X_Axis_Value + ratio_Y_Axis_Value_Array[h]     
     
     if (total_ratio_X_Axis_Value > 0):
-        ratio_X_Axis_Value = round(total_ratio_X_Axis_Value/(ratio_X_Axis_Index-1))
-        print("ratio_X_Axis_Value " + str(ratio_X_Axis_Value))
+        ratio_X_Axis_Value = round(total_ratio_X_Axis_Value/(ratio_X_Axis_Index))
+        print("Ratio_X_Axis_Value " + str(ratio_X_Axis_Value))
+
+    if (total_ratio_Y_Axis_Value > 0):
+        ratio_Y_Axis_Value = round(total_ratio_Y_Axis_Value/(ratio_Y_Axis_Index))
+        print("Ratio_Y_Axis_Value " + str(ratio_Y_Axis_Value))    
 
     for h in range(0, i ):
         print(" Charactor  = "+ str(textCoordinate[h][0]) + " X Coordinate = " + str(textCoordinate[h][1]) + " Y coordinate = " + str(textCoordinate[h][2]))
