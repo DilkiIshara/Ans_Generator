@@ -10,6 +10,7 @@ import pytesseract
 from PIL import Image 
 import re
 
+filename = None
 result = "" 
 linesP = cv.HoughLinesP(None, 1, np.pi / 180, 25, None, 10, 10)  
 numberOf_Horizontal = numberOf_Vertical = numberOf_Graph = rows = reduce = 0
@@ -18,13 +19,15 @@ X_axis_cordinate = Y_axis_cordinate = graph_cordinate = -1
 arr = None             # 0-x1 1-Y1 2-x2 3-y2
 X_arr = Y_arr = None   # 0-a  1-length 2-arrIndex
 graphs_arr = None      # 0-m  1-C 2-length 3-arrIndex 
-cdstP = allLines = None
+cdstP = allLines = textCoordinate = None
 noOfLines = 0
 width = height = 0
 origin_X = origin_Y = intersection_Xaxis_X = intersection_Xaxis_Y = intersection_Yaxis_X = intersection_Yaxis_Y = 0
 real_intersection_Xaxis_X = real_intersection_Yaxis_Y = 0
 pixcelForTicMark_Y = pixcelForTicMark_X = 0
 N = 4 # arr (x,y) (x,y) 
+graphCrossOrigin = False
+ratio_Y_Axis_Value = ratio_X_Axis_Value = 1
 
 def getEqationByUsingCoordinate():
     # print("result       :  " + result) 
@@ -61,8 +64,12 @@ def getEqationByUsingCoordinate():
         if x!=0 and y!=0:
             m = y/x
             c = li[1] - (m * li[0])
-            print ("Equation is  :    y = " + str(m)+"x  + " + str(c))  
+            print ("Equation is  :    y = " + str(m)+"x  + " + str(c)) 
+            # getTextCoordinate() 
+        # else:
+            # getTextCoordinate()
     else:
+        # getTextCoordinate()
         print("coodinates does not read properly")
 
 def displayAlllines() :
@@ -95,10 +102,6 @@ def storeLineCoordinate() :
 
             for j in range(0,x): 
                 if arr[j][0]-5 <= value1 and value1 <= arr[j][0]+5 and arr[j][1]-5 <= value2 and value2 <= arr[j][1]+5 and arr[j][2]-5 <= value3 and value3 <= arr[j][2]+5 and arr[j][3]-5 <= value4 and value4 <= arr[j][3]+5 : 
-                    # arr[j][0] = int((value1+arr[j][0])/2)
-                    # arr[j][1] = int((value2+arr[j][1])/2)
-                    # arr[j][2] = int((value3+arr[j][2])/2)
-                    # arr[j][3] = int((value4+arr[j][3])/2)
                     arr[j][0] = int(round((value1+arr[j][0])/2))
                     arr[j][1] = int(round((value2+arr[j][1])/2))
                     arr[j][2] = int(round((value3+arr[j][2])/2))
@@ -106,12 +109,7 @@ def storeLineCoordinate() :
                     reduce = reduce+1
                     duplicate = 1
             
-
             if duplicate == 0: 
-                    # arr[i-reduce][0] = value1
-                    # arr[i-reduce][1] = value2
-                    # arr[i-reduce][2] = value3
-                    # arr[i-reduce][3] = value4
                 arr[index][0] = value1
                 arr[index][1] = value2
                 arr[index][2] = value3
@@ -151,8 +149,7 @@ def separateX_Y_Graph():
                 Y_arr[k][2] = k
                 numberOf_Vertical = numberOf_Vertical + 1 
             # graph
-            else:
-            # elif ((x_difference != 0) and (y_difference != 0)):
+            elif ((x_difference != 0) and (y_difference != 0)):
                 m = y_difference/x_difference
                 c = y1 - (x1*m) 
                 graphs_arr[k][0] = m
@@ -160,31 +157,139 @@ def separateX_Y_Graph():
                 graphs_arr[k][2] = lineLength
                 graphs_arr[k][3] = k
                 numberOf_Graph = numberOf_Graph + 1
-
+            # else:
+            #     print("x_difference =  " + str(x_difference))
+            #     print("y_difference =  " + str(y_difference))
+            
 def draw_X_Axis():
     global maxlength_X
     global X_axis_cordinate
     global origin_Y, allLines
+
     for h in range(0, len(linesP)):
         l = X_arr[h][1] 
         if l > maxlength_X : 
             X_axis_cordinate = h
             maxlength_X = l  
-    cv.line(cdstP, (arr[X_axis_cordinate][0], arr[X_axis_cordinate][1]), (arr[X_axis_cordinate][2], arr[X_axis_cordinate][3]), (50,0,255), 2, cv.LINE_AA)
-    print ("X  axis -------------->("+str(arr[X_axis_cordinate][0])+","+str(arr[X_axis_cordinate][1])+")       ("+str(arr[X_axis_cordinate][2])+","+str(arr[X_axis_cordinate][3])+")")
+    # print(" Length of X Axis  : " + str(maxlength_X))
+    sameLine = 0
+    for h in range(0, len(linesP)):
+        l = X_arr[h][1] 
+        if l == maxlength_X : 
+            sameLine = sameLine + 1
+    # print(" Same Lines : " + str(sameLine))
+    if (sameLine > 1):
+        find_X_Axis()
+        cv.line(cdstP, (arr[X_axis_cordinate][0], arr[X_axis_cordinate][1]), (arr[X_axis_cordinate][2], arr[X_axis_cordinate][3]), (50,0,255), 2, cv.LINE_AA)
+        print ("X  axis -------------->("+str(arr[X_axis_cordinate][0])+","+str(arr[X_axis_cordinate][1])+")       ("+str(arr[X_axis_cordinate][2])+","+str(arr[X_axis_cordinate][3])+")")
+    else :
+        cv.line(cdstP, (arr[X_axis_cordinate][0], arr[X_axis_cordinate][1]), (arr[X_axis_cordinate][2], arr[X_axis_cordinate][3]), (50,0,255), 2, cv.LINE_AA)
+        print ("X  axis -------------->("+str(arr[X_axis_cordinate][0])+","+str(arr[X_axis_cordinate][1])+")       ("+str(arr[X_axis_cordinate][2])+","+str(arr[X_axis_cordinate][3])+")")
 
+def find_X_Axis():
+    global maxlength_X
+    global X_axis_cordinate
+    global pixcelForTicMark_X 
+ 
+    half_pixcelForTicMark_X = 10
+    minLen_X_Axis = maxlength_X
+    min_X_axis_cordinate = 0
+
+    for h in range(0, len(linesP)):
+        l = X_arr[h][1] 
+        if ((l < minLen_X_Axis) and (l != 0)) : 
+            min_X_axis_cordinate = h
+            minLen_X_Axis = X_arr[h][1]   
+    min_XAxis_Ycordinate = arr[min_X_axis_cordinate][1] 
+    cv.line(cdstP, (arr[min_X_axis_cordinate][0], arr[min_X_axis_cordinate][1]), (arr[min_X_axis_cordinate][2], arr[min_X_axis_cordinate][3]), (255,0,0), 2, cv.LINE_AA)
+
+    for h in range(0, len(linesP)):
+        if (X_arr[h][1] <= (minLen_X_Axis +5) and  (X_arr[h][0] <= (min_XAxis_Ycordinate+3)) and (X_arr[h][0] >= (min_XAxis_Ycordinate-3))) : 
+            min_XAxis_Ycordinate = (X_arr[h][0] + min_XAxis_Ycordinate)/2
+            print("check")
+    
+    if (pixcelForTicMark_X == 0):
+        identifyTicMarks_X_Axis()
+    
+    if(pixcelForTicMark_X != 0):
+        half_pixcelForTicMark_X = pixcelForTicMark_X/2 
+    
+    count = 0
+    for h in range(0, len(linesP)):
+        X_axis_Y_cordinate = arr[h][1]
+        length_Of_X_Axis = X_arr[h][1]   
+        if ((X_axis_Y_cordinate <= (min_XAxis_Ycordinate+half_pixcelForTicMark_X) + 5) and (X_axis_Y_cordinate >= (min_XAxis_Ycordinate-half_pixcelForTicMark_X - 5))) :   
+            if ((length_Of_X_Axis == maxlength_X)) : 
+                count = count + 1
+                X_axis_cordinate = h 
+               
+    if (count > 1):
+        for h in range(0, len(linesP)):
+            X_axis_Y_cordinate = arr[h][1]
+            length_Of_X_Axis = X_arr[h][1]   
+            if ((X_axis_Y_cordinate <= (min_XAxis_Ycordinate+20)) and (X_axis_Y_cordinate >= (min_XAxis_Ycordinate-20))) :   
+                if ((length_Of_X_Axis == maxlength_X) and (X_axis_Y_cordinate <= (min_XAxis_Ycordinate)) ) :  
+                     X_axis_cordinate = h 
+                   
 def draw_Y_Axis():
     global maxlength_Y
     global origin_X
     global Y_axis_cordinate
+    global pixcelForTicMark_Y
     for h in range(0, len(linesP)):
         l = Y_arr[h][1] 
         if l > maxlength_Y : 
             Y_axis_cordinate = h
             maxlength_Y = Y_arr[h][1]   
-    cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
-    print ("Y  axis ------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
+    sameLine = 0
+    for h in range(0, len(linesP)):
+        l = Y_arr[h][1] 
+        if l == maxlength_Y : 
+            sameLine = sameLine + 1
+    # print(" Same Lines : " + str(sameLine))
+    
+    if (sameLine > 1):
+        find_Y_Axis()
+        cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
+        print ("Y  axis ------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
+    else :
+        cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
+        print ("Y  axis ------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
 
+def find_Y_Axis():
+    global maxlength_Y
+    global Y_axis_cordinate
+    global pixcelForTicMark_Y 
+ 
+    half_pixcelForTicMark_Y = 10
+    minLen_Y_Axis = maxlength_Y
+    min_Y_axis_cordinate = 0
+
+    for h in range(0, len(linesP)):
+        l = Y_arr[h][1] 
+        if ((l < minLen_Y_Axis) and (l != 0)) : 
+            min_Y_axis_cordinate = h
+            minLen_Y_Axis = Y_arr[h][1] 
+            # print("start Find" + str(minLen_Y_Axis)) 
+    x =  arr[min_Y_axis_cordinate][0] 
+    # print("min_Y_axis_X_cordinate " + str(x))
+    # cv.line(cdstP, (arr[min_Y_axis_cordinate][0], arr[min_Y_axis_cordinate][1]), (arr[min_Y_axis_cordinate][2], arr[min_Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA) 
+    min_YAxis_Xcordinate = arr[min_Y_axis_cordinate][0]
+    # print("max Length Value " + str(maxlength_Y))
+    
+    if (pixcelForTicMark_Y == 0):
+        identifyTicMarks_Y_Axis()
+    
+    if(pixcelForTicMark_Y != 0):
+        half_pixcelForTicMark_Y = pixcelForTicMark_Y/2 
+
+    for h in range(0, len(linesP)):
+        Y_axis_X_cordinate = arr[h][0]
+        length_Of_Y_Axis = Y_arr[h][1]    
+        if ((Y_axis_X_cordinate <= (min_YAxis_Xcordinate+half_pixcelForTicMark_Y)) and (Y_axis_X_cordinate >= (min_YAxis_Xcordinate-half_pixcelForTicMark_Y))) :  
+            if (length_Of_Y_Axis == maxlength_Y): 
+                Y_axis_cordinate = h 
+                
 def draw_Graph():
     global maxlength_Graph
     global graph_cordinate
@@ -208,39 +313,44 @@ def origin():
     print(" Origin ---------->("+str(origin_X) +","+ str(origin_Y) +")")
     for i in range(origin_X - 5 , origin_X + 5):
         for j in range(origin_Y - 5, origin_Y +5):
-            allLines[j,i] = (255, 255, 255)
-            cdstP[j,i] = (255, 255, 255)
+            if(i > 0 and i < width and j > 0 and j < height ): 
+                allLines[j,i] = (255, 255, 255)
+                cdstP[j,i] = (255, 255, 255)         
 
 def identifyIntersection():
-    global intersection_Xaxis_Y, intersection_Xaxis_X, intersection_Yaxis_Y, intersection_Yaxis_X
-    y1 = -(arr[graph_cordinate][1])
-    y2 = -(arr[graph_cordinate][3])
-
+    global intersection_Xaxis_Y, intersection_Xaxis_X, intersection_Yaxis_Y, intersection_Yaxis_X, graphCrossOrigin
+  
     m = graphs_arr[graph_cordinate][0] 
     c = graphs_arr[graph_cordinate][1] 
-    # print(" Y axis intersection ---------->("+str(m) +","+ str(c) +")")    
+      
     intersection_Xaxis_Y = origin_Y
     intersection_Xaxis_X = int(round((intersection_Xaxis_Y - c)/m))
     intersection_Yaxis_X = origin_X  
     intersection_Yaxis_Y = int(round((m* intersection_Yaxis_X) + c))
+
+    if ( (intersection_Yaxis_X <= (origin_X + 3)) and (intersection_Yaxis_X >= (origin_X - 3)) and (intersection_Yaxis_Y <= (origin_Y + 3)) and (intersection_Yaxis_Y >= (origin_Y - 3))):
+        graphCrossOrigin = True
+        print(" Go through Origin")
+    
+    # elif((intersection_Xaxis_X <= (origin_X + 3)) and (intersection_Xaxis_X >= (origin_X - 3)) and (intersection_Xaxis_Y <= (origin_Y + 3)) and (intersection_Xaxis_Y >= (origin_Y - 3))):
+    #     graphCrossOrigin = True
+    #     print(" Go through Origin")
+
     print(" Y axis intersection ---------->("+str(intersection_Yaxis_X) +","+ str(intersection_Yaxis_Y) +")")    
     print(" X axis intersection ---------->("+str(intersection_Xaxis_X) +","+ str(intersection_Xaxis_Y) +")")
 
-    
+    # draw intersection of x axis
     for i in range(intersection_Xaxis_X - 5 , intersection_Xaxis_X + 5):
         for j in range(intersection_Xaxis_Y - 5 , intersection_Xaxis_Y + 5):
             if(i > 0 and i < width and j > 0 and j < height ): 
-                allLines[j,i] = (255, 255, 255) 
-                cdstP[j,i] = (255, 255, 255)  
+                allLines[j,i] = (200, 20, 100) 
+                cdstP[j,i] = (200, 20, 100)  
     
     for i in range(intersection_Yaxis_X - 5 , intersection_Yaxis_X + 5):
         for j in range(intersection_Yaxis_Y - 5 , intersection_Yaxis_Y + 5):
             if(i > 0 and i < width and j > 0 and j < height ): 
-                allLines[j,i] = (0,252,0)
-                cdstP[j,i] = (255, 255, 255)   
-
-def take(elem):
-    return elem
+                allLines[j,i] = (0,50,100)
+                cdstP[j,i] = (0, 50, 100 )   
 
 def identifyTicMarks_X_Axis():
     global pixcelForTicMark_X, width
@@ -361,18 +471,34 @@ def identifyTicMarks_X_Axis():
         aveg = total_avg/m
         pixcelForTicMark_X = int(round(aveg))
 
-        ticMark = 1
-        for ticMark in range(1 , 10):
-            for i in range(origin_Y-15 , origin_Y+15) : 
-                x1 = origin_X + (pixcelForTicMark_X*ticMark)
-                x2 = origin_X - (pixcelForTicMark_X*ticMark)
-                if ((i > 0) and (i < height)):
-                    if((x1 > 0) and (x1 < width)):
-                        allLines[i,x1] = (255,252,0)  
-                        cdstP[i,x1] = (255,252,0)  
-                    if((x2 > 0) and (x2<width)):
-                        allLines[i,x2] = (255,252,0)  
-                        cdstP[i,x2] = (255,252,0) 
+        # ticMark = 1
+        # for ticMark in range(1 , 10):
+        #     for i in range(origin_Y-15 , origin_Y+15) : 
+        #         x1 = origin_X + (pixcelForTicMark_X*ticMark)
+        #         x2 = origin_X - (pixcelForTicMark_X*ticMark)
+        #         if ((i > 0) and (i < height)):
+        #             if((x1 > 0) and (x1 < width)):
+        #                 allLines[i,x1] = (255,252,0)  
+        #                 cdstP[i,x1] = (255,252,0)  
+        #             if((x2 > 0) and (x2<width)):
+        #                 allLines[i,x2] = (255,252,0)  
+        #                 cdstP[i,x2] = (255,252,0) 
+    # print("Pixcels between Tic marks (X axis)  ------------->   : " + str(pixcelForTicMark_X))
+
+def draw_TicMark_X_Axis():
+    global origin_X, origin_Y, pixcelForTicMark_X, width, height
+    ticMark = 1
+    for ticMark in range(1 , 10):
+        for i in range(origin_Y-15 , origin_Y+15) : 
+            x1 = origin_X + (pixcelForTicMark_X*ticMark)
+            x2 = origin_X - (pixcelForTicMark_X*ticMark)
+            if ((i > 0) and (i < height)):
+                if((x1 > 0) and (x1 < width)):
+                    allLines[i,x1] = (255,252,0)  
+                    cdstP[i,x1] = (255,252,0)  
+                if((x2 > 0) and (x2<width)):
+                    allLines[i,x2] = (255,252,0)  
+                    cdstP[i,x2] = (255,252,0) 
     print("Pixcels between Tic marks (X axis)  ------------->   : " + str(pixcelForTicMark_X))
 
 def identifyTicMarks_Y_Axis():
@@ -494,19 +620,36 @@ def identifyTicMarks_Y_Axis():
         aveg = total_avg/m
         pixcelForTicMark_Y = int(round(aveg)) 
 
-        ticMark = 1
-        for ticMark in range(1 , 10):
-            for i in range(origin_X-15 , origin_X+15) : 
-                y1 = origin_Y + (pixcelForTicMark_Y*ticMark)
-                y2 = origin_Y - (pixcelForTicMark_Y*ticMark)
-                if( i > 0 and i < width):
-                    if((y1 > 0) and (y1<height) and (i > 0) and (i< width)):
-                        allLines[y1,i] = (0,252,0)  
-                        cdstP[y1,i] = (200,252,0)  
-                    if((y2 > 0) and (y2<height) and (i > 0) and (i< width)):
-                        allLines[y2,i] = (0,252,0)  
-                        cdstP[y2,i] = (200,252,0)  
+        # ticMark = 1
+        # for ticMark in range(1 , 10):
+        #     for i in range(origin_X-15 , origin_X+15) : 
+        #         y1 = origin_Y + (pixcelForTicMark_Y*ticMark)
+        #         y2 = origin_Y - (pixcelForTicMark_Y*ticMark)
+        #         if( i > 0 and i < width):
+        #             if((y1 > 0) and (y1<height) and (i > 0) and (i< width)):
+        #                 allLines[y1,i] = (0,252,0)  
+        #                 cdstP[y1,i] = (200,252,0)  
+        #             if((y2 > 0) and (y2<height) and (i > 0) and (i< width)):
+        #                 allLines[y2,i] = (0,252,0)  
+        #                 cdstP[y2,i] = (200,252,0)  
+    # print("Pixcels between Tic marks (Y axis)  ------------->   : " + str(pixcelForTicMark_Y))
+
+def draw_TicMark_Y_Axis():
+    global pixcelForTicMark_Y, origin_X, origin_Y, width, height
+    ticMark = 1
+    for ticMark in range(1 , 10):
+        for i in range(origin_X-15 , origin_X+15) : 
+            y1 = origin_Y + (pixcelForTicMark_Y*ticMark)
+            y2 = origin_Y - (pixcelForTicMark_Y*ticMark)
+            if( i > 0 and i < width):
+                if((y1 > 0) and (y1<height) and (i > 0) and (i< width)):
+                    allLines[y1,i] = (0,252,0)  
+                    cdstP[y1,i] = (200,252,0)  
+                if((y2 > 0) and (y2<height) and (i > 0) and (i< width)):
+                    allLines[y2,i] = (0,252,0)  
+                    cdstP[y2,i] = (200,252,0) 
     print("Pixcels between Tic marks (Y axis)  ------------->   : " + str(pixcelForTicMark_Y))
+
 
 def getRealCoordianatesWithoutOCR():
     global origin_X, origin_Y 
@@ -520,37 +663,119 @@ def getRealCoordianatesWithoutOCR():
         real_intersection_Xaxis_X = 0
     elif (origin_X < intersection_Xaxis_X): 
         if (pixcelForTicMark_X != 0) :
-            real_intersection_Xaxis_X = int(round((intersection_Xaxis_X - origin_X)/ pixcelForTicMark_X))
+            real_intersection_Xaxis_X = int(round((intersection_Xaxis_X - origin_X)/ pixcelForTicMark_X)) * ratio_X_Axis_Value 
     else:
         if (pixcelForTicMark_X != 0) : 
-            real_intersection_Xaxis_X = int(round((origin_X - intersection_Xaxis_X)/ pixcelForTicMark_X)*(-1))
-
+            real_intersection_Xaxis_X = int(round((origin_X - intersection_Xaxis_X)/ pixcelForTicMark_X)*(-1)) * ratio_X_Axis_Value
     
     if((origin_Y <= intersection_Yaxis_Y + 5) and (origin_Y >= intersection_Yaxis_Y - 5)) :
         real_intersection_Yaxis_Y = 0 
     elif (origin_Y < intersection_Yaxis_Y):  
         if (pixcelForTicMark_Y != 0) :
-            real_intersection_Yaxis_Y = int(round((intersection_Yaxis_Y - origin_Y)/ pixcelForTicMark_Y)*(-1))
-            # print("origin " + str(origin_Y))
-            # print("y  " + str(intersection_Yaxis_Y))
+            real_intersection_Yaxis_Y = int(round((intersection_Yaxis_Y - origin_Y)/ pixcelForTicMark_Y)*(-1)) * ratio_Y_Axis_Value
     else: 
         if (pixcelForTicMark_Y != 0) : 
-            real_intersection_Yaxis_Y = int(round((origin_Y - intersection_Yaxis_Y)/ pixcelForTicMark_Y))
-            # print("origin " + str(origin_Y))
-            # print("y  " + str(intersection_Yaxis_Y))
+            real_intersection_Yaxis_Y = int(round((origin_Y - intersection_Yaxis_Y)/ pixcelForTicMark_Y)) * ratio_Y_Axis_Value
 
     print(" Real Coordinates of X intersectio Point  = " + str(real_intersection_Xaxis_X))
     print(" Real Coordinates of Y intersectio Point  = " + str(real_intersection_Yaxis_Y))
 
-def equationIP():
-    m = (real_intersection_Yaxis_Y/-(real_intersection_Xaxis_X))
-    c = real_intersection_Yaxis_Y
-    print(" Eqation : y =  " +str(m)+"x + " + str(c) )
-    # print("vvvvvvvvvvvvvvvvv")
+def equationIP(): 
+    c = real_intersection_Yaxis_Y 
+    if (real_intersection_Yaxis_Y != 0 and real_intersection_Xaxis_X != 0):
+        m = (real_intersection_Yaxis_Y/-(real_intersection_Xaxis_X))
+        print(" Eqation : y =  " +str(m)+"x + " + str(c) )
+
+def getTextCoordinate():
+    global textCoordinate, filename, ratio_Y_Axis_Value, ratio_X_Axis_Value
+
+    ratio_X_Axis_Value_Array = ratio_Y_Axis_Value_Array = np.arange(5) 
+    # ratio_Y_Axis_Value_Array =  np.arange(5) 
+    total_ratio_X_Axis_Value = total_ratio_Y_Axis_Value = ratio_Y_Axis_Index = ratio_X_Axis_Index = 0
+
+    # run tesseract, returning the bounding boxes
+    boxes = pytesseract.image_to_boxes(Image.open(filename)) # also include any config options you use
+    numberOfCharactor = int(len(boxes.splitlines()))
+ 
+    textCoordinate = [[0] * 4 for i in range(numberOfCharactor)]
+    
+    # store values into textCoordinate array
+    i = 0
+    ratio_X_Axis_Value = ratio_Y_Axis_Value = 0
+    numberOf_Tic_Mark_X_Axis = 0
+    for b in boxes.splitlines():
+        b = b.split(' ')
+        print("Charactor of  " + b[0] + "  =  "+b[1]+ ","+b[2]+ ","+b[3]+ ","+b[4])  # (x1, y1, X2, y2) 
+        if (b[0].isdigit() and (int(b[0]) != 0) ):
+            textCoordinate[i][0] = int(b[0]) # store Charactor
+            textCoordinate[i][1] = round((int(b[1]) + int(b[3]))/2) # store X Coordinate
+            textCoordinate[i][2] = round(((height - int(b[2])) + (height - int(b[4])))/2) # store Y Coordinate
+            character_X_Cordinate = textCoordinate[i][1]
+            character_Y_Cordinate = textCoordinate[i][2]
+            if(((textCoordinate[i][1]) <= (origin_X+pixcelForTicMark_X)) and ((textCoordinate[i][1]) >= (origin_X-pixcelForTicMark_X))):
+               textCoordinate[i][3] = -1  # Its is a tic mark coordinate of Y axis
+               cv.rectangle(cdstP, (int(b[1]), height - int(b[2])), (int(b[3]), height - int(b[4])), (0, 255, 0), 2)
+               
+               if (character_Y_Cordinate > origin_Y):
+                numberOf_Tic_Mark_Y_Axis = round((character_Y_Cordinate - origin_Y)/ pixcelForTicMark_Y)
+
+               elif (character_Y_Cordinate < origin_Y):
+                numberOf_Tic_Mark_Y_Axis = round((origin_Y - character_Y_Cordinate)/ pixcelForTicMark_Y)
+                
+               print(" Number of Tic Marks : " + str(character_Y_Cordinate - origin_Y))
+               if ((ratio_Y_Axis_Index < 5) and (numberOf_Tic_Mark_Y_Axis > 0)):
+                print(" X coodinate" + str(character_X_Cordinate))
+                ratio_y  = round(int(b[0]) / numberOf_Tic_Mark_Y_Axis )
+                if (ratio_y > 0) :
+                    ratio_Y_Axis_Value_Array[ratio_Y_Axis_Index] = ratio_y
+                    ratio_Y_Axis_Index = ratio_Y_Axis_Index + 1
+
+            elif(((character_Y_Cordinate) <= (origin_Y+pixcelForTicMark_Y)) and ((character_Y_Cordinate) >= (origin_Y-pixcelForTicMark_Y))):
+               textCoordinate[i][3] = 1  # Its is a tic mark coordinate of X axis
+               cv.rectangle(cdstP, (int(b[1]), height - int(b[2])), (int(b[3]), height - int(b[4])), (255, 0, 0), 2)
+
+               if(character_X_Cordinate > origin_X):
+                numberOf_Tic_Mark_X_Axis = round((character_X_Cordinate - origin_X)/ pixcelForTicMark_X)
+
+               elif (character_X_Cordinate < origin_X):
+                numberOf_Tic_Mark_X_Axis = round((origin_X - character_X_Cordinate)/ pixcelForTicMark_X)
+
+               if ((ratio_X_Axis_Index < 5) and (numberOf_Tic_Mark_X_Axis > 0)):
+                    ratio  = round(int(b[0]) / numberOf_Tic_Mark_X_Axis )
+                    if (ratio > 0) : 
+                        ratio_X_Axis_Value_Array[ratio_X_Axis_Index] = ratio
+                        ratio_X_Axis_Index = ratio_X_Axis_Index + 1 
+            i = i + 1
+        # draw the bounding boxes on the image 
+        # cv.rectangle(cdstP, (int(b[1]), height - int(b[2])), (int(b[3]), height - int(b[4])), (255, 0, 0), 2)
+    
+    for h in range(0, ratio_X_Axis_Index ):
+        total_ratio_X_Axis_Value = total_ratio_X_Axis_Value + ratio_X_Axis_Value_Array[h] 
+
+    for h in range(0, ratio_Y_Axis_Index ):
+        total_ratio_Y_Axis_Value = total_ratio_X_Axis_Value + ratio_Y_Axis_Value_Array[h]     
+    
+    if (total_ratio_X_Axis_Value > 0):
+        ratio_X_Axis_Value = round(total_ratio_X_Axis_Value/(ratio_X_Axis_Index))
+        print("Ratio_X_Axis_Value " + str(ratio_X_Axis_Value))
+
+    if (total_ratio_Y_Axis_Value > 0):
+        ratio_Y_Axis_Value = round(total_ratio_Y_Axis_Value/(ratio_Y_Axis_Index))
+        print("Ratio_Y_Axis_Value " + str(ratio_Y_Axis_Value))    
+
+    for h in range(0, i ):
+        print(" Charactor  = "+ str(textCoordinate[h][0]) + " X Coordinate = " + str(textCoordinate[h][1]) + " Y coordinate = " + str(textCoordinate[h][2]))
+    
+    if ((ratio_X_Axis_Value == 0) and (ratio_Y_Axis_Value == 0)):
+        ratio_X_Axis_Value = ratio_Y_Axis_Value = 1
+    elif ((ratio_X_Axis_Value == 0) and (ratio_Y_Axis_Value != 0)):
+        ratio_X_Axis_Value = ratio_Y_Axis_Value
+    elif ((ratio_X_Axis_Value != 0) and (ratio_Y_Axis_Value == 0)):
+        ratio_Y_Axis_Value = ratio_X_Axis_Value
 
 def main(argv):
     
-    global cdstP, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y, height, width 
+    global cdstP, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y, height, width, filename
 
     # Loads an image
     default_file = 'x2.png' 
@@ -603,7 +828,8 @@ def main(argv):
         print("Text cannot Read")
      
     # Probabilistic Line Transform
-    linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 10, 10) 
+    # linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 0, 10) 
+    linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 0, 20) 
     noOfLines = len(linesP) 
     
     if linesP is not None: # Check there are lines
@@ -628,19 +854,30 @@ def main(argv):
 
         # identify origin
         origin()
-
-        # identify X and Y axis intersection point
-        identifyIntersection()
         
         # identify X axis Ticmarks
-        identifyTicMarks_X_Axis()
-        
+        if (pixcelForTicMark_X == 0 ):
+            identifyTicMarks_X_Axis() 
+
         # identify Y axis Ticmarks
-        identifyTicMarks_Y_Axis()
+        if (pixcelForTicMark_Y == 0):
+            identifyTicMarks_Y_Axis() 
+        
+        # draw tic mark of Y axis
+        draw_TicMark_Y_Axis()
+
+        # draw tic mark of X axis
+        draw_TicMark_X_Axis()
+
+         # identify X and Y axis intersection point
+        identifyIntersection()
+        
+        if result != "":
+            getTextCoordinate()
 
         # get real coordinates of y axis and X intersection point without OCR
         if ( pixcelForTicMark_Y !=0 and pixcelForTicMark_X != 0) :
-            getRealCoordianatesWithoutOCR()
+           getRealCoordianatesWithoutOCR()
 
         # generate equation using Image processing without OCR
         equationIP()
