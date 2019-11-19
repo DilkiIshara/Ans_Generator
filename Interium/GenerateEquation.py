@@ -180,7 +180,7 @@ def draw_X_Axis():
         l = X_arr[h][1] 
         if l == maxlength_X or (l > maxlength_X - (maxlength_X * 0.1)) : 
             sameLine = sameLine + 1
-    # print(" Same Lines : " + str(sameLine))
+    print(" Same Lines : " + str(sameLine))
 
     if (sameLine > 1):  
         find_X_Axis() 
@@ -220,35 +220,38 @@ def find_X_Axis():
     for h in range(0, len(linesP)):
         X_axis_Y_cordinate = arr[h][1]
         length_Of_X_Axis = X_arr[h][1]   
-        if ((X_axis_Y_cordinate <= (min_XAxis_Ycordinate+half_pixcelForTicMark_X) + 5) and (X_axis_Y_cordinate >= (min_XAxis_Ycordinate-half_pixcelForTicMark_X - 5))) :   
-            if ((length_Of_X_Axis == maxlength_X) or (length_Of_X_Axis > (maxlength_X-(maxlength_X*0.05))) : 
+        if ((X_axis_Y_cordinate <= (min_XAxis_Ycordinate+half_pixcelForTicMark_X) + 5) and (X_axis_Y_cordinate >= (min_XAxis_Ycordinate-half_pixcelForTicMark_X - 5))) :     
+            if ((length_Of_X_Axis == maxlength_X) or (length_Of_X_Axis > (maxlength_X-(maxlength_X*0.1)))) : 
                 count = count + 1
                 X_axis_cordinate = h 
-               
+
     if (count > 1):
         for h in range(0, len(linesP)):
             X_axis_Y_cordinate = arr[h][1]
             length_Of_X_Axis = X_arr[h][1]   
             if ((X_axis_Y_cordinate <= (min_XAxis_Ycordinate+20)) and (X_axis_Y_cordinate >= (min_XAxis_Ycordinate-20))) :   
-                if ((length_Of_X_Axis == maxlength_X) and (X_axis_Y_cordinate <= (min_XAxis_Ycordinate)) ) :  
-                     X_axis_cordinate = h 
+                if ((length_Of_X_Axis == maxlength_X  or (length_Of_X_Axis > (maxlength_X-(maxlength_X*0.05)))) and (X_axis_Y_cordinate <= (min_XAxis_Ycordinate)) ) :  
+                    X_axis_cordinate = h 
                    
 def draw_Y_Axis():
     global maxlength_Y
     global origin_X
     global Y_axis_cordinate
     global pixcelForTicMark_Y
-    for h in range(0, len(linesP)):
-        l = Y_arr[h][1] 
-        if l > maxlength_Y : 
-            Y_axis_cordinate = h
-            maxlength_Y = Y_arr[h][1]   
+
+    # find the maximum length
+    # for h in range(0, len(linesP)):
+    #     l = Y_arr[h][1] 
+    #     if l > maxlength_Y : 
+    #         Y_axis_cordinate = h
+    #         maxlength_Y = Y_arr[h][1]   
+
     sameLine = 0
     for h in range(0, len(linesP)):
         l = Y_arr[h][1] 
-        if l == maxlength_Y : 
+        if l == maxlength_Y  or (l > maxlength_Y - (maxlength_Y * 0.1)): 
             sameLine = sameLine + 1
-    # print(" Same Lines : " + str(sameLine))
+    print(" Same Lines : " + str(sameLine))
     
     if (sameLine > 1):
         find_Y_Axis() 
@@ -263,6 +266,7 @@ def find_Y_Axis():
     minLen_Y_Axis = maxlength_Y
     min_Y_axis_cordinate = 0
 
+    # identify verical line which has mimum length
     for h in range(0, len(linesP)):
         l = Y_arr[h][1] 
         if ((l < minLen_Y_Axis) and (l != 0)) : 
@@ -271,7 +275,7 @@ def find_Y_Axis():
             # print("start Find" + str(minLen_Y_Axis)) 
     x =  arr[min_Y_axis_cordinate][0] 
     # print("min_Y_axis_X_cordinate " + str(x))
-    # cv.line(cdstP, (arr[min_Y_axis_cordinate][0], arr[min_Y_axis_cordinate][1]), (arr[min_Y_axis_cordinate][2], arr[min_Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA) 
+    cv.line(cdstP, (arr[min_Y_axis_cordinate][0], arr[min_Y_axis_cordinate][1]), (arr[min_Y_axis_cordinate][2], arr[min_Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA) 
     min_YAxis_Xcordinate = arr[min_Y_axis_cordinate][0]
     # print("max Length Value " + str(maxlength_Y))
     
@@ -281,13 +285,25 @@ def find_Y_Axis():
     if(pixcelForTicMark_Y != 0):
         half_pixcelForTicMark_Y = pixcelForTicMark_Y/2 
 
+    # identify verical line which is near to shortest line
+    count = 0
     for h in range(0, len(linesP)):
         Y_axis_X_cordinate = arr[h][0]
         length_Of_Y_Axis = Y_arr[h][1]    
-        if ((Y_axis_X_cordinate <= (min_YAxis_Xcordinate+half_pixcelForTicMark_Y)) and (Y_axis_X_cordinate >= (min_YAxis_Xcordinate-half_pixcelForTicMark_Y))) :  
-            if (length_Of_Y_Axis == maxlength_Y): 
+        if ((Y_axis_X_cordinate <= (min_YAxis_Xcordinate+half_pixcelForTicMark_Y)) and (Y_axis_X_cordinate >= (min_YAxis_Xcordinate-half_pixcelForTicMark_Y))) :    
+            if (length_Of_Y_Axis == maxlength_Y or (length_Of_Y_Axis > maxlength_Y - (maxlength_Y * 0.1))): 
                 Y_axis_cordinate = h 
-                
+                count = count + 1 
+    
+    # get the left side line as Y axis
+    if (count > 1):
+        for h in range(0, len(linesP)):
+            Y_axis_X_cordinate = arr[h][0]
+            length_Of_Y_Axis = Y_arr[h][1]    
+            if ((Y_axis_X_cordinate <= (min_YAxis_Xcordinate+20)) and (Y_axis_X_cordinate >= (min_YAxis_Xcordinate-20))) :  
+                if ((length_Of_Y_Axis == maxlength_Y or (length_Of_Y_Axis > maxlength_Y - (maxlength_Y * 0.1))) and (Y_axis_X_cordinate < min_YAxis_Xcordinate )) : 
+                    Y_axis_cordinate = h  
+            
 def draw_Graph():
     global maxlength_Graph
     global graph_cordinate
@@ -322,7 +338,8 @@ def identifyIntersection():
     c = graphs_arr[graph_cordinate][1] 
       
     intersection_Xaxis_Y = origin_Y
-    intersection_Xaxis_X = int(round((intersection_Xaxis_Y - c)/m))
+    if (m != 0):
+        intersection_Xaxis_X = int(round((intersection_Xaxis_Y - c)/m))
     intersection_Yaxis_X = origin_X  
     intersection_Yaxis_Y = int(round((m* intersection_Yaxis_X) + c))
 
@@ -946,7 +963,7 @@ def main(argv):
      
     # Probabilistic Line Transform
     # linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 0, 10) 
-    linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 0, 15) 
+    linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 4, 15) 
     noOfLines = len(linesP) 
     
     if linesP is not None: # Check there are lines
@@ -982,36 +999,31 @@ def main(argv):
         cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
         print ("Y  axis -------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
 
-        # # Graph
-        # draw_Graph() 
+        # Graph
+        draw_Graph() 
 
-        # # identify origin
-        # origin()
+        # identify origin
+        origin()
 
-        # # identify X axis Ticmarks
-        # if (pixcelForTicMark_X == 0 ):
-        #     identifyTicMarks_X_Axis() 
+        # identify X axis Ticmarks
+        if (pixcelForTicMark_X == 0 ):
+            identifyTicMarks_X_Axis() 
 
-        # # identify Y axis Ticmarks
-        # if (pixcelForTicMark_Y == 0):
-        #     identifyTicMarks_Y_Axis() 
+        # identify Y axis Ticmarks
+        if (pixcelForTicMark_Y == 0):
+            identifyTicMarks_Y_Axis() 
         
-        # # draw tic mark of Y axis
-        # draw_TicMark_Y_Axis()
+        # draw tic mark of Y axis
+        draw_TicMark_Y_Axis()
 
-        # # draw tic mark of X axis
-        # draw_TicMark_X_Axis()
+        # draw tic mark of X axis
+        draw_TicMark_X_Axis()
 
-        # # identify X and Y axis intersection point
-        # identifyIntersection()
-        
-        # # indentify_X_Axis_UsingValues()
-        # indentify_Y_UsingValues()
+        # identify X and Y axis intersection point
+        identifyIntersection()
+         
         # identifyNumbersRelated_X_Y_Axis()
-        # # check()
-
         
-
         # get real coordinates of y axis and X intersection point without OCR
         if ( pixcelForTicMark_Y !=0 and pixcelForTicMark_X != 0) :
             getRealCoordianatesWithoutOCR()
