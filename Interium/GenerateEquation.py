@@ -161,7 +161,25 @@ def separateX_Y_Graph():
             # else:
             #     print("x_difference =  " + str(x_difference))
             #     print("y_difference =  " + str(y_difference))
-            
+
+def checkGraph():
+    if numberOf_Graph > 1 :
+        negativeG = positiveG = 0
+        for i in range(0, len(graphs_arr)):
+            m = graphs_arr[i][0]
+            if m != 0:
+                print(" graph m " + str(graphs_arr[i][0]))
+                if m < 0:
+                    negativeG = negativeG + 1
+                else: 
+                    positiveG = positiveG + 1
+        if ((positiveG >= 1) and (negativeG >=1)) :
+            print("Quadratic")
+        else:
+            print(" linear ")
+    else:
+        print(" linear ")       
+             
 def draw_X_Axis():
     global maxlength_X
     global X_axis_cordinate
@@ -982,6 +1000,9 @@ def main(argv):
             
         # Separate X axis Y axis and Graphs
         separateX_Y_Graph()
+
+        # Check graph is quadratic or Linear
+        checkGraph()
 
         # x axis
         check_X = indentify_X_Axis_UsingValues()
