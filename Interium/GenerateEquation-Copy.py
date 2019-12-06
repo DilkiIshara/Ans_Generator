@@ -28,7 +28,7 @@ pixcelForTicMark_Y = pixcelForTicMark_X = 0
 N = 4 # arr (x,y) (x,y) 
 graphCrossOrigin = False
 ratio_Y_Axis_Value = ratio_X_Axis_Value = 1
-found_X = False
+found_X = found_Y = False
 
 def getEqationByUsingCoordinate():
     # print("result       :  " + result) 
@@ -165,10 +165,9 @@ def separateX_Y_Graph():
 def draw_X_Axis():
     global maxlength_X
     global X_axis_cordinate
-    global origin_Y, allLines
+    global origin_Y, allLines 
 
-    print("         draw_X_Axis using line length           ")
-
+    # get the maxmum lenth horizontal line
     # for h in range(0, len(linesP)):
     #     l = X_arr[h][1] 
     #     if l > maxlength_X : 
@@ -179,20 +178,13 @@ def draw_X_Axis():
     sameLine = 0
     for h in range(0, len(linesP)):
         l = X_arr[h][1] 
-        if l == maxlength_X or (l > maxlength_X - (maxlength_X * 0.05)) : 
+        if l == maxlength_X or (l > maxlength_X - (maxlength_X * 0.1)) : 
             sameLine = sameLine + 1
-    # print(" Same Lines : " + str(sameLine))
+    print(" Same Lines : " + str(sameLine))
 
-    if (sameLine > 1): 
-        # indentify_X_Y_UsingValues()
-        # if found_X != 1 :
-        find_X_Axis()
-    #     cv.line(cdstP, (arr[X_axis_cordinate][0], arr[X_axis_cordinate][1]), (arr[X_axis_cordinate][2], arr[X_axis_cordinate][3]), (50,0,255), 2, cv.LINE_AA)
-    #     print ("X  axis -------------->("+str(arr[X_axis_cordinate][0])+","+str(arr[X_axis_cordinate][1])+")       ("+str(arr[X_axis_cordinate][2])+","+str(arr[X_axis_cordinate][3])+")")
-    # else :
-    #     # print(" new method =====================================")
-    #     cv.line(cdstP, (arr[X_axis_cordinate][0], arr[X_axis_cordinate][1]), (arr[X_axis_cordinate][2], arr[X_axis_cordinate][3]), (50,0,255), 2, cv.LINE_AA)
-    #     print ("X  axis -------------->("+str(arr[X_axis_cordinate][0])+","+str(arr[X_axis_cordinate][1])+")       ("+str(arr[X_axis_cordinate][2])+","+str(arr[X_axis_cordinate][3])+")")
+    if (sameLine > 1):  
+        find_X_Axis() 
+
 
 def find_X_Axis():
     global maxlength_X
@@ -201,9 +193,7 @@ def find_X_Axis():
  
     half_pixcelForTicMark_X = 10
     minLen_X_Axis = maxlength_X
-    min_X_axis_cordinate = 0
-
-    print("     find_X_Axis using shorted line           ")
+    min_X_axis_cordinate = 0 
     
     # Identify Shorted horizontal Line
     for h in range(0, len(linesP)):
@@ -213,13 +203,12 @@ def find_X_Axis():
             minLen_X_Axis = X_arr[h][1]   
     min_XAxis_Ycordinate = arr[min_X_axis_cordinate][1] 
     cv.line(cdstP, (arr[min_X_axis_cordinate][0], arr[min_X_axis_cordinate][1]), (arr[min_X_axis_cordinate][2], arr[min_X_axis_cordinate][3]), (255,0,0), 2, cv.LINE_AA)
-    cv.line(allLines, (arr[min_X_axis_cordinate][0], arr[min_X_axis_cordinate][1]), (arr[min_X_axis_cordinate][2], arr[min_X_axis_cordinate][3]), (255,0,0), 2, cv.LINE_AA)
     
+    print(" Identify x using Shortest line  =  " +str(min_X_axis_cordinate))
 
     # for h in range(0, len(linesP)):
     #     if (X_arr[h][1] <= (minLen_X_Axis +5) and  (X_arr[h][0] <= (min_XAxis_Ycordinate+3)) and (X_arr[h][0] >= (min_XAxis_Ycordinate-3))) : 
-    #         min_XAxis_Ycordinate = (X_arr[h][0] + min_XAxis_Ycordinate)/2
-    #         print("check")
+    #         min_XAxis_Ycordinate = (X_arr[h][0] + min_XAxis_Ycordinate)/2 
     
     if (pixcelForTicMark_X == 0):
         identifyTicMarks_X_Axis()
@@ -227,53 +216,47 @@ def find_X_Axis():
     if(pixcelForTicMark_X != 0):
         half_pixcelForTicMark_X = pixcelForTicMark_X/2 
     
-    # identify all the legthly lane which are near to the text
+    # identify all the legthly lane which are near
     count = 0
     for h in range(0, len(linesP)):
         X_axis_Y_cordinate = arr[h][1]
         length_Of_X_Axis = X_arr[h][1]   
-        if ((X_axis_Y_cordinate <= (min_XAxis_Ycordinate+half_pixcelForTicMark_X) + 5) and (X_axis_Y_cordinate >= (min_XAxis_Ycordinate-half_pixcelForTicMark_X - 5))) :   
-            if ((length_Of_X_Axis == maxlength_X) or (length_Of_X_Axis > (maxlength_X-(maxlength_X*0.1)))): 
+        if ((X_axis_Y_cordinate <= (min_XAxis_Ycordinate+half_pixcelForTicMark_X) + 5) and (X_axis_Y_cordinate >= (min_XAxis_Ycordinate-half_pixcelForTicMark_X - 5))) :     
+            if ((length_Of_X_Axis == maxlength_X) or (length_Of_X_Axis > (maxlength_X-(maxlength_X*0.1)))) : 
                 count = count + 1
                 X_axis_cordinate = h 
 
-    print(" Count               " + str(count) )
-    # if there are more than one line get the above line     
     if (count > 1):
         for h in range(0, len(linesP)):
             X_axis_Y_cordinate = arr[h][1]
             length_Of_X_Axis = X_arr[h][1]   
-            # if ((X_axis_Y_cordinate <= (min_XAxis_Ycordinate+20)) and (X_axis_Y_cordinate >= (min_XAxis_Ycordinate-20))) :  
-            if ((X_axis_Y_cordinate <= (min_XAxis_Ycordinate+half_pixcelForTicMark_X) + 5) and (X_axis_Y_cordinate >= (min_XAxis_Ycordinate-half_pixcelForTicMark_X - 5))) :    
-                if (((length_Of_X_Axis == maxlength_X) or (length_Of_X_Axis > (maxlength_X-(maxlength_X*0.1))))  and (X_axis_Y_cordinate <= (min_XAxis_Ycordinate)) ) :  
-                     X_axis_cordinate = h 
+            if ((X_axis_Y_cordinate <= (min_XAxis_Ycordinate+20)) and (X_axis_Y_cordinate >= (min_XAxis_Ycordinate-20))) :   
+                if ((length_Of_X_Axis == maxlength_X  or (length_Of_X_Axis > (maxlength_X-(maxlength_X*0.05)))) and (X_axis_Y_cordinate <= (min_XAxis_Ycordinate)) ) :  
+                    X_axis_cordinate = h 
                    
-    cv.line(cdstP, (arr[X_axis_cordinate][0], arr[X_axis_cordinate][1]), (arr[X_axis_cordinate][2], arr[X_axis_cordinate][3]), (255,0,0), 2, cv.LINE_AA)
-
 def draw_Y_Axis():
     global maxlength_Y
     global origin_X
     global Y_axis_cordinate
     global pixcelForTicMark_Y
-    for h in range(0, len(linesP)):
-        l = Y_arr[h][1] 
-        if l > maxlength_Y : 
-            Y_axis_cordinate = h
-            maxlength_Y = Y_arr[h][1]   
+
+    # find the maximum length
+    # for h in range(0, len(linesP)):
+    #     l = Y_arr[h][1] 
+    #     if l > maxlength_Y : 
+    #         Y_axis_cordinate = h
+    #         maxlength_Y = Y_arr[h][1]   
+
     sameLine = 0
     for h in range(0, len(linesP)):
         l = Y_arr[h][1] 
-        if l == maxlength_Y : 
+        if l == maxlength_Y  or (l > maxlength_Y - (maxlength_Y * 0.1)): 
             sameLine = sameLine + 1
-    # print(" Same Lines : " + str(sameLine))
+    print(" Same Lines : " + str(sameLine))
     
     if (sameLine > 1):
-        find_Y_Axis()
-        cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
-        print ("Y  axis ------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
-    else :
-        cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
-        print ("Y  axis ------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
+        find_Y_Axis() 
+
 
 def find_Y_Axis():
     global maxlength_Y
@@ -284,6 +267,7 @@ def find_Y_Axis():
     minLen_Y_Axis = maxlength_Y
     min_Y_axis_cordinate = 0
 
+    # identify verical line which has mimum length
     for h in range(0, len(linesP)):
         l = Y_arr[h][1] 
         if ((l < minLen_Y_Axis) and (l != 0)) : 
@@ -292,7 +276,7 @@ def find_Y_Axis():
             # print("start Find" + str(minLen_Y_Axis)) 
     x =  arr[min_Y_axis_cordinate][0] 
     # print("min_Y_axis_X_cordinate " + str(x))
-    # cv.line(cdstP, (arr[min_Y_axis_cordinate][0], arr[min_Y_axis_cordinate][1]), (arr[min_Y_axis_cordinate][2], arr[min_Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA) 
+    cv.line(cdstP, (arr[min_Y_axis_cordinate][0], arr[min_Y_axis_cordinate][1]), (arr[min_Y_axis_cordinate][2], arr[min_Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA) 
     min_YAxis_Xcordinate = arr[min_Y_axis_cordinate][0]
     # print("max Length Value " + str(maxlength_Y))
     
@@ -302,13 +286,25 @@ def find_Y_Axis():
     if(pixcelForTicMark_Y != 0):
         half_pixcelForTicMark_Y = pixcelForTicMark_Y/2 
 
+    # identify verical line which is near to shortest line
+    count = 0
     for h in range(0, len(linesP)):
         Y_axis_X_cordinate = arr[h][0]
         length_Of_Y_Axis = Y_arr[h][1]    
-        if ((Y_axis_X_cordinate <= (min_YAxis_Xcordinate+half_pixcelForTicMark_Y)) and (Y_axis_X_cordinate >= (min_YAxis_Xcordinate-half_pixcelForTicMark_Y))) :  
-            if (length_Of_Y_Axis == maxlength_Y): 
+        if ((Y_axis_X_cordinate <= (min_YAxis_Xcordinate+half_pixcelForTicMark_Y)) and (Y_axis_X_cordinate >= (min_YAxis_Xcordinate-half_pixcelForTicMark_Y))) :    
+            if (length_Of_Y_Axis == maxlength_Y or (length_Of_Y_Axis > maxlength_Y - (maxlength_Y * 0.1))): 
                 Y_axis_cordinate = h 
-                
+                count = count + 1 
+    
+    # get the left side line as Y axis
+    if (count > 1):
+        for h in range(0, len(linesP)):
+            Y_axis_X_cordinate = arr[h][0]
+            length_Of_Y_Axis = Y_arr[h][1]    
+            if ((Y_axis_X_cordinate <= (min_YAxis_Xcordinate+20)) and (Y_axis_X_cordinate >= (min_YAxis_Xcordinate-20))) :  
+                if ((length_Of_Y_Axis == maxlength_Y or (length_Of_Y_Axis > maxlength_Y - (maxlength_Y * 0.1))) and (Y_axis_X_cordinate < min_YAxis_Xcordinate )) : 
+                    Y_axis_cordinate = h  
+            
 def draw_Graph():
     global maxlength_Graph
     global graph_cordinate
@@ -343,7 +339,8 @@ def identifyIntersection():
     c = graphs_arr[graph_cordinate][1] 
       
     intersection_Xaxis_Y = origin_Y
-    intersection_Xaxis_X = int(round((intersection_Xaxis_Y - c)/m))
+    if (m != 0):
+        intersection_Xaxis_X = int(round((intersection_Xaxis_Y - c)/m))
     intersection_Yaxis_X = origin_X  
     intersection_Yaxis_Y = int(round((m* intersection_Yaxis_X) + c))
 
@@ -725,74 +722,14 @@ def getTextCoordinate():
 
     for b in boxes.splitlines():
         b = b.split(' ')
-        print("Charactor of  " + b[0] + "  =  "+b[1]+ ","+b[2]+ ","+b[3]+ ","+b[4])  # (x1, y1, X2, y2) 
+        # print("Charactor of  " + b[0] + "  =  "+b[1]+ ","+b[2]+ ","+b[3]+ ","+b[4])  # (x1, y1, X2, y2) 
         if (b[0].isdigit() and (int(b[0]) != 0) ):
             textCoordinate[i][0] = int(b[0]) # store Charactor
             textCoordinate[i][1] = round((int(b[1]) + int(b[3]))/2) # store X Coordinate
             textCoordinate[i][2] = round(((height - int(b[2])) + (height - int(b[4])))/2) # store Y Coordinate
-            # character_X_Cordinate = textCoordinate[i][1]
-            # character_Y_Cordinate = textCoordinate[i][2]
-            # if(((textCoordinate[i][1]) <= (origin_X+pixcelForTicMark_X)) and ((textCoordinate[i][1]) >= (origin_X-pixcelForTicMark_X))):
-            #    textCoordinate[i][3] = -1  # Its is a tic mark coordinate of Y axis
-            #    cv.rectangle(cdstP, (int(b[1]), height - int(b[2])), (int(b[3]), height - int(b[4])), (0, 255, 0), 2)
-               
-            #    if (character_Y_Cordinate > origin_Y):
-            #     numberOf_Tic_Mark_Y_Axis = round((character_Y_Cordinate - origin_Y)/ pixcelForTicMark_Y)
-
-            #    elif (character_Y_Cordinate < origin_Y):
-            #     numberOf_Tic_Mark_Y_Axis = round((origin_Y - character_Y_Cordinate)/ pixcelForTicMark_Y)
-                
-            #    print(" Number of Tic Marks : " + str(character_Y_Cordinate - origin_Y))
-            #    if ((ratio_Y_Axis_Index < 5) and (numberOf_Tic_Mark_Y_Axis > 0)):
-            #     print(" X coodinate" + str(character_X_Cordinate))
-            #     ratio_y  = round(int(b[0]) / numberOf_Tic_Mark_Y_Axis )
-            #     if (ratio_y > 0) :
-            #         ratio_Y_Axis_Value_Array[ratio_Y_Axis_Index] = ratio_y
-            #         ratio_Y_Axis_Index = ratio_Y_Axis_Index + 1
-
-            # elif(((character_Y_Cordinate) <= (origin_Y+pixcelForTicMark_Y)) and ((character_Y_Cordinate) >= (origin_Y-pixcelForTicMark_Y))):
-            #    textCoordinate[i][3] = 1  # Its is a tic mark coordinate of X axis
-            #    cv.rectangle(cdstP, (int(b[1]), height - int(b[2])), (int(b[3]), height - int(b[4])), (255, 0, 0), 2)
-
-            #    if(character_X_Cordinate > origin_X):
-            #     numberOf_Tic_Mark_X_Axis = round((character_X_Cordinate - origin_X)/ pixcelForTicMark_X)
-
-            #    elif (character_X_Cordinate < origin_X):
-            #     numberOf_Tic_Mark_X_Axis = round((origin_X - character_X_Cordinate)/ pixcelForTicMark_X)
-
-            #    if ((ratio_X_Axis_Index < 5) and (numberOf_Tic_Mark_X_Axis > 0)):
-            #         ratio  = round(int(b[0]) / numberOf_Tic_Mark_X_Axis )
-            #         if (ratio > 0) : 
-            #             ratio_X_Axis_Value_Array[ratio_X_Axis_Index] = ratio
-            #             ratio_X_Axis_Index = ratio_X_Axis_Index + 1 
             i = i + 1
             numberOfDigitValue = i
-        # draw the bounding boxes on the image 
-        # cv.rectangle(cdstP, (int(b[1]), height - int(b[2])), (int(b[3]), height - int(b[4])), (255, 0, 0), 2)
-    
-    # for h in range(0, ratio_X_Axis_Index ):
-    #     total_ratio_X_Axis_Value = total_ratio_X_Axis_Value + ratio_X_Axis_Value_Array[h] 
-
-    # for h in range(0, ratio_Y_Axis_Index ):
-    #     total_ratio_Y_Axis_Value = total_ratio_X_Axis_Value + ratio_Y_Axis_Value_Array[h]     
-    
-    # if (total_ratio_X_Axis_Value > 0):
-    #     ratio_X_Axis_Value = round(total_ratio_X_Axis_Value/(ratio_X_Axis_Index))
-    #     print("Ratio_X_Axis_Value " + str(ratio_X_Axis_Value))
-
-    # if (total_ratio_Y_Axis_Value > 0):
-    #     ratio_Y_Axis_Value = round(total_ratio_Y_Axis_Value/(ratio_Y_Axis_Index))
-    #     print("Ratio_Y_Axis_Value " + str(ratio_Y_Axis_Value))    
-
-    # for h in range(0, i ):
-    #     print(" Charactor  = "+ str(textCoordinate[h][0]) + " X Coordinate = " + str(textCoordinate[h][1]) + " Y coordinate = " + str(textCoordinate[h][2]))
-    
-    # if ((ratio_X_Axis_Value == 0) and (ratio_Y_Axis_Value == 0)):
-    #     ratio_X_Axis_Value = ratio_Y_Axis_Value = 1
-    # elif ((ratio_X_Axis_Value == 0) and (ratio_Y_Axis_Value != 0)):
-    #     ratio_X_Axis_Value = ratio_Y_Axis_Value
-    # elif ((ratio_X_Axis_Value != 0) and (ratio_Y_Axis_Value == 0)):
-    #     ratio_Y_Axis_Value = ratio_X_Axis_Value
+     
 
 def identifyNumbersRelated_X_Y_Axis():
     global  ratio_X_Axis_Value, ratio_Y_Axis_Value 
@@ -805,8 +742,6 @@ def identifyNumbersRelated_X_Y_Axis():
     if numberOfCharactor > 0:
         for i in range(0, numberOfCharactor):
         # for i in range(0, len(textCoordinate)):
-
-            print("tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt")
             character_X_Cordinate = textCoordinate[i][1]
             character_Y_Cordinate = textCoordinate[i][2]
             if(((textCoordinate[i][1]) <= (origin_X+pixcelForTicMark_X)) and ((textCoordinate[i][1]) >= (origin_X-pixcelForTicMark_X))):
@@ -817,9 +752,7 @@ def identifyNumbersRelated_X_Y_Axis():
                     numberOf_Tic_Mark_Y_Axis = round((character_Y_Cordinate - origin_Y)/ pixcelForTicMark_Y)
 
                 elif (character_Y_Cordinate < origin_Y):
-                    numberOf_Tic_Mark_Y_Axis = round((origin_Y - character_Y_Cordinate)/ pixcelForTicMark_Y)
-                
-                # print(" Number of Tic Marks : " + str(character_Y_Cordinate - origin_Y))
+                    numberOf_Tic_Mark_Y_Axis = round((origin_Y - character_Y_Cordinate)/ pixcelForTicMark_Y) 
 
                 if ((ratio_Y_Axis_Index < 5) and (numberOf_Tic_Mark_Y_Axis > 0)):
                     # print(" X coodinate" + str(character_X_Cordinate))
@@ -846,11 +779,11 @@ def identifyNumbersRelated_X_Y_Axis():
 
     for h in range(0, ratio_X_Axis_Index ):
         total_ratio_X_Axis_Value = total_ratio_X_Axis_Value + ratio_X_Axis_Value_Array[h] 
-        print(" total_ratio_X_Axis_Value " + str(total_ratio_X_Axis_Value))
+        # print(" total_ratio_X_Axis_Value " + str(total_ratio_X_Axis_Value))
 
     for h in range(0, ratio_Y_Axis_Index ):
         total_ratio_Y_Axis_Value = total_ratio_X_Axis_Value + ratio_Y_Axis_Value_Array[h]   
-        print(" total_ratio_X_Axis_Value " + str(total_ratio_Y_Axis_Value))  
+        # print(" total_ratio_X_Axis_Value " + str(total_ratio_Y_Axis_Value))  
     
     if (total_ratio_X_Axis_Value > 0):
         ratio_X_Axis_Value = round(total_ratio_X_Axis_Value/(ratio_X_Axis_Index))
@@ -859,9 +792,10 @@ def identifyNumbersRelated_X_Y_Axis():
     if (total_ratio_Y_Axis_Value > 0):
         ratio_Y_Axis_Value = round(total_ratio_Y_Axis_Value/(ratio_Y_Axis_Index))
         print("Ratio_Y_Axis_Value " + str(ratio_Y_Axis_Value))    
-
-    for h in range(0, numberOfCharactor ):
-        print(" Charactor  = "+ str(textCoordinate[h][0]) + " X Coordinate = " + str(textCoordinate[h][1]) + " Y coordinate = " + str(textCoordinate[h][2]))
+    
+    # print charactor X coodinate and Y coodinate
+    # for h in range(0, numberOfCharactor ):
+    #     print(" Charactor  = "+ str(textCoordinate[h][0]) + " X Coordinate = " + str(textCoordinate[h][1]) + " Y coordinate = " + str(textCoordinate[h][2]))
     
     if ((ratio_X_Axis_Value == 0) and (ratio_Y_Axis_Value == 0)):
         ratio_X_Axis_Value = ratio_Y_Axis_Value = 1
@@ -871,7 +805,7 @@ def identifyNumbersRelated_X_Y_Axis():
         ratio_Y_Axis_Value = ratio_X_Axis_Value
 
 def indentify_Y_UsingValues():
-    global Y_axis_cordinate, X_axis_cordinate, found_X, maxlength_Y, textCoordinate 
+    global Y_axis_cordinate, X_axis_cordinate, found_X, maxlength_Y, textCoordinate, found_Y
 
     count_X =  [[0] * 2 for i in range(numberOfCharactor)] # List  to store charactor X coordinate and frequency of that value
     maxlength_Y = max_Count_X = x_coordinate = maxlength_Y = 0
@@ -889,8 +823,8 @@ def indentify_Y_UsingValues():
         count_X[i][1] = count
 
     # print charactor X coordinate and frequency of that value
-    for i in range(0, numberOfCharactor ):
-        print(" =========== " + str(  count_X[i][0] ) + "_--------------------  " + str(count_X[i][1]))
+    # for i in range(0, numberOfCharactor ):
+    #     print(" =========== " + str(  count_X[i][0] ) + "_--------------------  " + str(count_X[i][1]))
 
     # get the maximum frequency of the x coordinate
     for i in range(0, numberOfCharactor):
@@ -898,7 +832,7 @@ def indentify_Y_UsingValues():
         if (c > max_Count_X):
             max_Count_X = c
             x_coordinate = count_X[i][0]
-    print(" X coordinate --------------------"+str(x_coordinate))
+    # print(" X coordinate --------------------"+str(x_coordinate))
 
     # get the vertical line which has maximum length
     for h in range(0, noOfLines):
@@ -906,31 +840,26 @@ def indentify_Y_UsingValues():
         if l > maxlength_Y : 
             Y_axis_cordinate = h
             maxlength_Y = l  
-    print(" Length of Y Axis  : " + str(maxlength_Y))
+    # print(" Length of Y Axis  : " + str(maxlength_Y))
     
      # identify y axis considering line length and text
     for h in range(0, noOfLines):
         len = Y_arr[h][1]
         x = arr[h][1]
         if (len == maxlength_Y) or (len >= maxlength_Y - (maxlength_Y * 0.1)):
-            if ( (x_coordinate <= x + 15) and ( x_coordinate >= x-15)):    
-                print("1111111111111111111111111111111111111111111111111111111111111111")
+            if ( (x_coordinate <= x + 15) and ( x_coordinate >= x-15)):     
                 Y_axis_cordinate = h
-               
-    cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (50,240,255), 2, cv.LINE_AA)
-    print ("Y  axis -------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
+                found_Y = True
+                return found_Y
+    return found_Y        
 
 def indentify_X_Axis_UsingValues():
     global Y_axis_cordinate, X_axis_cordinate, found_X, maxlength_X, numberOfDigitValue
 
     count_Y =  [[0] * 2 for i in range(numberOfCharactor)]  # List  to store charactor Y coordinate and frequency of that value  
-    max_Count_Y = y_coordinate = 0
-    
-    print("                      indentify_X_Axis_UsingValues                 ")
-    print("11111111111111111        " + str(found_X))
+    max_Count_Y = y_coordinate = 0 
 
-    # store charactor Y coordinate and frequency of that value
-    # for i in range(0, len(textCoordinate)):
+    # store charactor Y coordinate and frequency of that value 
     for i in range(0, numberOfDigitValue):
         y_val = textCoordinate[i][2]
         count = 0
@@ -943,17 +872,16 @@ def indentify_X_Axis_UsingValues():
         count_Y[i][1] = count
 
     # print charactor Y coordinate and frequency of that value
-    for i in range(0, numberOfCharactor ):
-        print("      " + str(  count_Y[i][0] ) + "_--------------------  " + str(count_Y[i][1]))
+    # for i in range(0, numberOfCharactor ):
+    #     print("      " + str(  count_Y[i][0] ) + "_--------------------  " + str(count_Y[i][1]))
     
     # get the maximum frequency of the y coordinate
-    for i in range(0, numberOfCharactor):
-    # for i in range(0, len(textCoordinate)):
+    for i in range(0, numberOfCharactor): 
         c = count_Y[i][1]
         if (c > max_Count_Y):
             max_Count_Y = c
             y_coordinate = count_Y[i][0]
-    print(" Y coordinate --------------------"+str(y_coordinate))
+    # print(" Y coordinate --------------------"+str(y_coordinate))
 
     # get the horizontal line which has maximum length
     for h in range(0, noOfLines):
@@ -961,7 +889,7 @@ def indentify_X_Axis_UsingValues():
         if l > maxlength_X : 
             X_axis_cordinate = h
             maxlength_X = l  
-    print(" Length of X Axis  : " + str(maxlength_X))
+    # print(" Length of X Axis  : " + str(maxlength_X))
 
     # identify x axis considering line length and text
     if numberOfDigitValue > 0:
@@ -969,39 +897,11 @@ def indentify_X_Axis_UsingValues():
             len = X_arr[h][1]
             y = arr[h][1]
             if (len == maxlength_X) or (len >= maxlength_X - (maxlength_X * 0.1)):
-                if ( (y_coordinate <= y + 15) and ( y_coordinate >= y-15)):    
-                    # print("1111111111111111111111111111111111111111111111111111111111111111")
-                    X_axis_cordinate = h
-                    # print("11111111111111111        " + str(found_X))
+                if ( (y_coordinate <= y + 15) and ( y_coordinate >= y-15)):     
+                    X_axis_cordinate = h 
                     found_X = True
-                    return found_X
-    print("1111111111222222222222        " + str(found_X))
+                    return found_X 
     return found_X 
-
-def check():
-    global Y_axis_cordinate, X_axis_cordinate, found_X, maxlength_X
-
-    count_Y =  [[0] * 2 for i in range(numberOfCharactor)]  # List  to store charactor Y coordinate and frequency of that value  
-    maxlength_X = max_Count_Y = y_coordinate = maxlength_X = 0
-    
-    # store charactor Y coordinate and frequency of that value
-    for i in range(0, len(textCoordinate)):
-        y_val = textCoordinate[i][2]
-        count = 0
-        if y_val != 0 :
-            for h in range(0 , numberOfCharactor):
-                val = textCoordinate[h][2]
-                if ((val <= y_val+5 ) and (val >= y_val-5)):
-                    count = count + 1
-        count_Y[i][0] = y_val
-        count_Y[i][1] = count
-
-        print("check 9999999999999999999999999999999999999")
-
-
-
-
-
 
 def main(argv):
     
@@ -1034,8 +934,8 @@ def main(argv):
     resized = src
     height = np.size(resized, 0)
     width = np.size(resized, 1)
-    print("Image width : " + str(width))
-    print("Image height : " + str(height))
+    # print("Image width : " + str(width))
+    # print("Image height : " + str(height))
     
     # Edge detection
     #dst = cv.Canny(src, 20, 200, None, 3) 
@@ -1064,8 +964,8 @@ def main(argv):
      
     # Probabilistic Line Transform
     # linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 0, 10) 
-    # linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 0, 15) 
-    linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 4, 15) 
+    # linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 4, 15) 
+    linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 0, 15) 
     noOfLines = len(linesP) 
     
     if linesP is not None: # Check there are lines
@@ -1083,58 +983,55 @@ def main(argv):
         # Separate X axis Y axis and Graphs
         separateX_Y_Graph()
 
+        # x axis
         check_X = indentify_X_Axis_UsingValues()
         print(" Have we fond x axis using text : " + str(check_X))
-
         # Identify X Axis Considering lenth If X Axis not found using text
         if(check_X != True): 
-            # x axis
             draw_X_Axis()
-        
         # draw X axis 
         cv.line(cdstP, (arr[X_axis_cordinate][0], arr[X_axis_cordinate][1]), (arr[X_axis_cordinate][2], arr[X_axis_cordinate][3]), (50,0,255), 2, cv.LINE_AA)
         print ("X  axis -------------->("+str(arr[X_axis_cordinate][0])+","+str(arr[X_axis_cordinate][1])+")       ("+str(arr[X_axis_cordinate][2])+","+str(arr[X_axis_cordinate][3])+")")
         
-        
-        # # y axis
-        draw_Y_Axis()
+        # y axis
+        check_Y = indentify_Y_UsingValues()
+        print(" Have we fond Y axis using text : " + str(check_Y))
+        if(check_Y != True): 
+            draw_Y_Axis()
+        cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
+        print ("Y  axis -------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
 
-        # # Graph
+        # Graph
         draw_Graph() 
 
-        # # identify origin
+        # identify origin
         origin()
 
-        # # identify X axis Ticmarks
-        # if (pixcelForTicMark_X == 0 ):
-        #     identifyTicMarks_X_Axis() 
+        # identify X axis Ticmarks
+        if (pixcelForTicMark_X == 0 ):
+            identifyTicMarks_X_Axis() 
 
-        # # identify Y axis Ticmarks
-        # if (pixcelForTicMark_Y == 0):
-        #     identifyTicMarks_Y_Axis() 
+        # identify Y axis Ticmarks
+        if (pixcelForTicMark_Y == 0):
+            identifyTicMarks_Y_Axis() 
         
-        # # draw tic mark of Y axis
-        # draw_TicMark_Y_Axis()
+        # draw tic mark of Y axis
+        draw_TicMark_Y_Axis()
 
-        # # draw tic mark of X axis
-        # draw_TicMark_X_Axis()
+        # draw tic mark of X axis
+        draw_TicMark_X_Axis()
 
-        # # identify X and Y axis intersection point
-        # identifyIntersection()
-        
-        # # indentify_X_Axis_UsingValues()
-        # indentify_Y_UsingValues()
+        # identify X and Y axis intersection point
+        identifyIntersection()
+         
         # identifyNumbersRelated_X_Y_Axis()
-        # # check()
-
         
+        # get real coordinates of y axis and X intersection point without OCR
+        if ( pixcelForTicMark_Y !=0 and pixcelForTicMark_X != 0) :
+            getRealCoordianatesWithoutOCR()
 
-        # # get real coordinates of y axis and X intersection point without OCR
-        # if ( pixcelForTicMark_Y !=0 and pixcelForTicMark_X != 0) :
-        #    getRealCoordianatesWithoutOCR()
-
-        # # generate equation using Image processing without OCR
-        # equationIP()
+        # generate equation using Image processing without OCR
+        equationIP()
 
     cv.imshow("Resized image", resized) 
     cv.imshow("Source", src) 
