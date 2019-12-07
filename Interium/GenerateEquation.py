@@ -188,18 +188,25 @@ def checkGraph():
 def getQuadraticGraphCoodinates():
     global graphType
     lengthNegative = lengthPositive = negativeIndex = positiveIndex = 0  
+    quadraticType = None
+    pm = pc = nm = nc = px = nx = 0
     for i in range(0, len(graphs_arr)):
         m = graphs_arr[i][0]
         lineLength = graphs_arr[i][2] 
+        c = graphs_arr[i][1] 
         if m != 0:
             # print(" graph m " + str(graphs_arr[i][0]))
             if m < 0:
                 if lengthNegative < lineLength :
                     lengthNegative = lineLength
+                    nm = m
+                    nc = c
                     negativeIndex = i
             else: 
                 if lengthPositive < lineLength :
                     lengthPositive = lineLength
+                    pm = m
+                    pc = c
                     positiveIndex = i
     print(" Positive Index = " + str(positiveIndex))
     print(" Negative Index = " + str(negativeIndex))
@@ -219,9 +226,47 @@ def getQuadraticGraphCoodinates():
         negativeXcoodinate = arr[negativeIndex][2]
     
     if (positiveXcoodinate < negativeXcoodinate):
+        quadraticType = "min"
         print(" Has Min Value")
     else:
+        quadraticType = "max"
         print(" Has MaX Value")
+
+    if quadraticType == "min":
+        print("min //////////////////////////////////////////")
+        py = ny = y = 0
+        if (arr[positiveIndex][1] < arr[positiveIndex][3]):
+            py = arr[positiveIndex][1]
+        else :
+            py = arr[positiveIndex][3]
+
+        if (arr[negativeIndex][1] < arr[negativeIndex][3]):
+            ny = arr[negativeIndex][1]
+        else :
+            ny = arr[negativeIndex][3]
+ 
+        if(ny > py):
+            y = ny
+        else:
+            y = py
+        px = int(round((y - pc )/pm))
+        nx = int(round((y - nc )/nm))
+        print(" px , nx " + str(px) +"fffffffffff" + str(nx))
+        sx = int(round((px+nx))/2)
+        print("sx = " + str(sx)) 
+        for i in range(0, width):
+            allLines[y,i] = (50, 55, 255)
+            cdstP[y,i] = (50, 55, 255) 
+        for i in range(0, height): 
+            allLines[i,sx] = (50, 55, 255)
+            cdstP[i,sx] = (50, 55, 255)
+        for i in range(0, height): 
+            allLines[i,px] = (50, 55, 255)
+            cdstP[i,px] = (50, 55, 255)
+        for i in range(0, height): 
+            allLines[i,nx] = (50, 55, 255)
+            cdstP[i,nx] = (50, 55, 255) 
+
 
 def draw_X_Axis():
     global maxlength_X
