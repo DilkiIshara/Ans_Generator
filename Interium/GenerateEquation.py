@@ -232,8 +232,7 @@ def getQuadraticGraphCoodinates():
         quadraticType = "max"
         print(" Has MaX Value")
 
-    if quadraticType == "min":
-        print("min //////////////////////////////////////////")
+    if quadraticType == "min": 
         py = ny = y = 0
         if (arr[positiveIndex][1] < arr[positiveIndex][3]):
             py = arr[positiveIndex][1]
@@ -266,6 +265,37 @@ def getQuadraticGraphCoodinates():
         for i in range(0, height): 
             allLines[i,nx] = (50, 55, 255)
             cdstP[i,nx] = (50, 55, 255) 
+    elif quadraticType == "max": 
+        print("Max")
+        py = ny = y = 0
+        if (arr[positiveIndex][1] < arr[positiveIndex][3]):
+            py = arr[positiveIndex][3]
+        else :
+            py = arr[positiveIndex][1]
+        if (arr[negativeIndex][1] < arr[negativeIndex][3]):
+            ny = arr[negativeIndex][3]
+        else :
+            ny = arr[negativeIndex][1]
+        if(ny > py):
+            y = py
+        else:
+            y = ny
+        px = int(round((y - pc )/pm))
+        nx = int(round((y - nc )/nm))
+        sx = int(round((px+nx))/2)
+        for i in range(0, width):
+            allLines[y,i] = (50, 55, 255)
+            cdstP[y,i] = (50, 55, 255) 
+        for i in range(0, height): 
+            allLines[i,sx] = (50, 55, 255)
+            cdstP[i,sx] = (50, 55, 255)
+        for i in range(0, height): 
+            allLines[i,px] = (50, 55, 255)
+            cdstP[i,px] = (50, 55, 255)
+        for i in range(0, height): 
+            allLines[i,nx] = (50, 55, 255)
+            cdstP[i,nx] = (50, 55, 255) 
+
 
 
 def draw_X_Axis():
@@ -677,7 +707,7 @@ def draw_TicMark_X_Axis():
                     allLines[i,x1] = (255,252,0)  
                     cdstP[i,x1] = (255,252,0)  
                 if((x2 > 0) and (x2<width)):
-                    allLines[i,x2] = (255,252,0)  
+                    allLines[i,x2] = (255,252,0)   
                     cdstP[i,x2] = (255,252,0) 
     print("Pixcels between Tic marks (X axis)  ------------->   : " + str(pixcelForTicMark_X))
 
@@ -1188,8 +1218,7 @@ def main(argv):
         # draw tic mark of X axis
         draw_TicMark_X_Axis()
 
-        if graphType == "Quadratic":
-            print (" Test ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
+        if graphType == "Quadratic": 
             getQuadraticGraphCoodinates()
 
         # identify X and Y axis intersection point
