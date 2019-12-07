@@ -231,9 +231,8 @@ def getQuadraticGraphCoodinates():
     else:
         quadraticType = "max"
         print(" Has MaX Value")
-
+    py = ny = y = 0
     if quadraticType == "min": 
-        py = ny = y = 0
         if (arr[positiveIndex][1] < arr[positiveIndex][3]):
             py = arr[positiveIndex][1]
         else :
@@ -243,31 +242,31 @@ def getQuadraticGraphCoodinates():
             ny = arr[negativeIndex][1]
         else :
             ny = arr[negativeIndex][3]
- 
         if(ny > py):
             y = ny
         else:
             y = py
-        px = int(round((y - pc )/pm))
-        nx = int(round((y - nc )/nm))
-        print(" px , nx " + str(px) +"fffffffffff" + str(nx))
-        sx = int(round((px+nx))/2)
-        print("sx = " + str(sx)) 
-        for i in range(0, width):
-            allLines[y,i] = (50, 55, 255)
-            cdstP[y,i] = (50, 55, 255) 
-        for i in range(0, height): 
-            allLines[i,sx] = (50, 55, 255)
-            cdstP[i,sx] = (50, 55, 255)
-        for i in range(0, height): 
-            allLines[i,px] = (50, 55, 255)
-            cdstP[i,px] = (50, 55, 255)
-        for i in range(0, height): 
-            allLines[i,nx] = (50, 55, 255)
-            cdstP[i,nx] = (50, 55, 255) 
+        # px = int(round((y - pc )/pm))
+        # nx = int(round((y - nc )/nm))
+        # print(" px , nx " + str(px) +"fffffffffff" + str(nx))
+        # sx = int(round((px+nx))/2)
+        # print("sx = " + str(sx)) 
+        # for i in range(0, width):
+        #     allLines[y,i] = (50, 55, 255)
+        #     cdstP[y,i] = (50, 55, 255) 
+        # for i in range(0, height): 
+        #     allLines[i,sx] = (50, 55, 255)
+        #     cdstP[i,sx] = (50, 55, 255)
+        # for i in range(0, height): 
+        #     allLines[i,px] = (50, 55, 255)
+        #     cdstP[i,px] = (50, 55, 255)
+        # for i in range(0, height): 
+        #     allLines[i,nx] = (50, 55, 255)
+        #     cdstP[i,nx] = (50, 55, 255) 
+
     elif quadraticType == "max": 
-        print("Max")
-        py = ny = y = 0
+        # print("Max")
+        # py = ny = y = 0
         if (arr[positiveIndex][1] < arr[positiveIndex][3]):
             py = arr[positiveIndex][3]
         else :
@@ -280,23 +279,42 @@ def getQuadraticGraphCoodinates():
             y = py
         else:
             y = ny
-        px = int(round((y - pc )/pm))
-        nx = int(round((y - nc )/nm))
-        sx = int(round((px+nx))/2)
-        for i in range(0, width):
-            allLines[y,i] = (50, 55, 255)
-            cdstP[y,i] = (50, 55, 255) 
-        for i in range(0, height): 
-            allLines[i,sx] = (50, 55, 255)
-            cdstP[i,sx] = (50, 55, 255)
-        for i in range(0, height): 
-            allLines[i,px] = (50, 55, 255)
-            cdstP[i,px] = (50, 55, 255)
-        for i in range(0, height): 
-            allLines[i,nx] = (50, 55, 255)
-            cdstP[i,nx] = (50, 55, 255) 
+    px = int(round((y - pc )/pm))
+    nx = int(round((y - nc )/nm))
+    sx = int(round((px+nx))/2)
+    for i in range(0, width):
+        allLines[y,i] = (50, 55, 255)
+        cdstP[y,i] = (50, 55, 255) 
+    for i in range(0, height): 
+        allLines[i,sx] = (50, 55, 255)
+        cdstP[i,sx] = (50, 55, 255)
+    for i in range(0, height): 
+        allLines[i,px] = (50, 55, 255)
+        cdstP[i,px] = (50, 55, 255)
+    for i in range(0, height): 
+        allLines[i,nx] = (50, 55, 255)
+        cdstP[i,nx] = (50, 55, 255) 
+    #cv.imshow("Mofology ------" , MofologyImg)
 
-
+    # Transform source image to gray if it is not already
+    if len(MofologyImg.shape) != 2:
+        gray = cv.cvtColor(MofologyImg, cv.COLOR_BGR2GRAY)
+    else:
+        gray = MofologyImg 
+    # Set threshold level
+    threshold_level = 10
+    # Find coordinates of all pixels below threshold
+    coords = np.column_stack(np.where(gray < threshold_level))
+    np.set_printoptions(threshold=np.inf)
+    #print(coords)
+    for i in range(0, len(coords)):
+        y = coords[i][0]
+        x = coords[i][1]  
+        # allLines[x,y] = (255, 255, 0)
+        if (x >= sx -3) and (x <= sx +3):
+            for j in range(0, 10):
+                cdstP[y+j,x] = ( 50 , 55, 255)
+                print(" X coodinate = " + str(coords[i][1]) + " Y coordinate " + str(coords[i][0]))
 
 def draw_X_Axis():
     global maxlength_X
@@ -323,6 +341,7 @@ def draw_X_Axis():
         find_X_Axis() 
 
 def addMofologyToImage():
+    global MofologyImg
     # Transform source image to gray if it is not already
     if len(src.shape) != 2:
         gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
@@ -377,7 +396,7 @@ def addMofologyToImage():
     # [smooth]
     # Show final result
     MofologyImg = graph
-    cv.imshow("Mofology ", graph) 
+    cv.imshow("Mofology ", MofologyImg) 
     # show_wait_destroy("smooth - final", graph)
 
 def find_X_Axis():
@@ -1170,6 +1189,9 @@ def main(argv):
 
         # Draw the lines
         displayAlllines()
+
+        # add mofology
+        addMofologyToImage()
 
         # Store Lines Coordinate
         storeLineCoordinate()
