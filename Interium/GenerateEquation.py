@@ -29,7 +29,7 @@ N = 4 # arr (x,y) (x,y)
 graphCrossOrigin = False
 ratio_Y_Axis_Value = ratio_X_Axis_Value = 1
 found_X = found_Y = False
-src = None
+src = MofologyImg = None
 
 def getEqationByUsingCoordinate():
     # print("result       :  " + result) 
@@ -205,7 +205,7 @@ def draw_X_Axis():
         find_X_Axis_Using_Mofology() 
         find_X_Axis() 
 
-def find_X_Axis_Using_Mofology():
+def addMofologyToImage():
     # Transform source image to gray if it is not already
     if len(src.shape) != 2:
         gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
@@ -259,6 +259,7 @@ def find_X_Axis_Using_Mofology():
     # show_wait_destroy("smooth - final", graph)
     # [smooth]
     # Show final result
+    MofologyImg = graph
     cv.imshow("Mofology ", graph) 
     # show_wait_destroy("smooth - final", graph)
 
