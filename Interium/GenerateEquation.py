@@ -29,6 +29,7 @@ N = 4 # arr (x,y) (x,y)
 graphCrossOrigin = False
 ratio_Y_Axis_Value = ratio_X_Axis_Value = 1
 found_X = found_Y = False
+src = MofologyImg = graphType = None
 
 def getEqationByUsingCoordinate():
     # print("result       :  " + result) 
@@ -163,6 +164,7 @@ def separateX_Y_Graph():
             #     print("y_difference =  " + str(y_difference))
 
 def checkGraph():
+    global graphType
     if numberOf_Graph > 1 :
         negativeG = positiveG = 0
         for i in range(0, len(graphs_arr)):
@@ -174,12 +176,53 @@ def checkGraph():
                 else: 
                     positiveG = positiveG + 1
         if ((positiveG >= 1) and (negativeG >=1)) :
+            graphType = "Quadratic"
             print("Quadratic")
         else:
+            graphType = "linear"
             print(" linear ")
     else:
-        print(" linear ")       
-             
+        graphType = "linear"
+        print(" linear ")   
+
+def getQuadraticGraphCoodinates():
+    global graphType
+    lengthNegative = lengthPositive = negativeIndex = positiveIndex = 0  
+    for i in range(0, len(graphs_arr)):
+        m = graphs_arr[i][0]
+        lineLength = graphs_arr[i][2] 
+        if m != 0:
+            # print(" graph m " + str(graphs_arr[i][0]))
+            if m < 0:
+                if lengthNegative < lineLength :
+                    lengthNegative = lineLength
+                    negativeIndex = i
+            else: 
+                if lengthPositive < lineLength :
+                    lengthPositive = lineLength
+                    positiveIndex = i
+    print(" Positive Index = " + str(positiveIndex))
+    print(" Negative Index = " + str(negativeIndex))
+    cv.line(cdstP, (arr[negativeIndex][0], arr[negativeIndex][1]), (arr[negativeIndex][2], arr[negativeIndex][3]), (5,0,255), 2, cv.LINE_AA)
+    cv.line(cdstP, (arr[positiveIndex][0], arr[positiveIndex][1]), (arr[positiveIndex][2], arr[positiveIndex][3]), (128, 0, 128), 2, cv.LINE_AA)
+    
+    positiveXcoodinate = 0
+    if ((arr[positiveIndex][0]) < (arr[positiveIndex][2])):
+        positiveXcoodinate = arr[positiveIndex][0]
+    else:
+        positiveXcoodinate = arr[positiveIndex][2]
+    
+    negativeXcoodinate = 0
+    if ((arr[negativeIndex][0]) < (arr[negativeIndex][2])):
+        negativeXcoodinate = arr[negativeIndex][0]
+    else:
+        negativeXcoodinate = arr[negativeIndex][2]
+    
+    if (positiveXcoodinate < negativeXcoodinate):
+        print(" Has Min Value")
+    else:
+        print(" Has MaX Value")
+
 def draw_X_Axis():
     global maxlength_X
     global X_axis_cordinate
@@ -200,9 +243,67 @@ def draw_X_Axis():
             sameLine = sameLine + 1
     print(" Same Lines : " + str(sameLine))
 
-    if (sameLine > 1):  
+    if (sameLine > 1): 
+        # find_X_Axis_Using_Mofology() 
         find_X_Axis() 
 
+def addMofologyToImage():
+    # Transform source image to gray if it is not already
+    if len(src.shape) != 2:
+        gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
+    else:
+        gray = src
+    # Apply adaptiveThreshold at the bitwise_not of gray, notice the ~ symbol
+    gray = cv.bitwise_not(gray)
+    bw = cv.adaptiveThreshold(gray, 255, cv.ADAPTIVE_THRESH_MEAN_C,  cv.THRESH_BINARY, 15, -2)
+    horizontal = np.copy(bw)
+    vertical = np.copy(bw)
+    # Specify size on horizontal axis
+    cols = horizontal.shape[1]
+    horizontal_size = cols // 10
+     # Create structure element for extracting horizontal lines through morphology operations
+    horizontalStructure = cv.getStructuringElement(cv.MORPH_RECT, (horizontal_size, 1))
+    # Apply morphology operations
+    horizontal = cv.erode(horizontal, horizontalStructure)
+    horizontal = cv.dilate(horizontal, horizontalStructure)
+    # [vert]
+    # Specify size on vertical axis
+    rows = vertical.shape[0]
+    verticalsize = rows // 10
+     # Create structure element for extracting vertical lines through morphology operations
+    verticalStructure = cv.getStructuringElement(cv.MORPH_RECT, (1, verticalsize))
+    # Apply morphology operations
+    vertical = cv.erode(vertical, verticalStructure)
+    vertical = cv.dilate(vertical, verticalStructure)
+    #  #////
+    # test1 = bw - horizontal
+    # show_wait_destroy("test1", test1)
+     #////////////////
+    test2 = bw - vertical - horizontal 
+
+
+    # [smooth]
+    # Inverse vertical image
+    graph = cv.bitwise_not(test2)
+    # Step 1
+    edges = cv.adaptiveThreshold(graph, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 3, -2)
+    # Step 2
+    kernel = np.ones((2, 2), np.uint8)
+    edges = cv.dilate(edges, kernel)
+    # Step 3
+    smooth = np.copy(graph)
+    # Step 4
+    smooth = cv.blur(smooth, (2, 2))
+    # Step 5
+    (rows, cols) = np.where(edges != 0)
+    graph[rows, cols] = smooth[rows, cols]
+    # Show final result
+    # show_wait_destroy("smooth - final", graph)
+    # [smooth]
+    # Show final result
+    MofologyImg = graph
+    cv.imshow("Mofology ", graph) 
+    # show_wait_destroy("smooth - final", graph)
 
 def find_X_Axis():
     global maxlength_X
@@ -923,7 +1024,7 @@ def indentify_X_Axis_UsingValues():
 
 def main(argv):
     
-    global cdstP, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y, height, width, filename
+    global cdstP, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y, height, width, filename, src
 
     # Loads an image
     default_file = 'x2.png' 
@@ -1041,6 +1142,10 @@ def main(argv):
 
         # draw tic mark of X axis
         draw_TicMark_X_Axis()
+
+        if graphType == "Quadratic":
+            print (" Test ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
+            getQuadraticGraphCoodinates()
 
         # identify X and Y axis intersection point
         identifyIntersection()
