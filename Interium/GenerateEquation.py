@@ -29,7 +29,7 @@ N = 4 # arr (x,y) (x,y)
 graphCrossOrigin = False
 ratio_Y_Axis_Value = ratio_X_Axis_Value = 1
 found_X = found_Y = False
-src = MofologyImg = None
+src = MofologyImg = graphType = None
 
 def getEqationByUsingCoordinate():
     # print("result       :  " + result) 
@@ -164,6 +164,7 @@ def separateX_Y_Graph():
             #     print("y_difference =  " + str(y_difference))
 
 def checkGraph():
+    global graphType
     if numberOf_Graph > 1 :
         negativeG = positiveG = 0
         for i in range(0, len(graphs_arr)):
@@ -175,12 +176,53 @@ def checkGraph():
                 else: 
                     positiveG = positiveG + 1
         if ((positiveG >= 1) and (negativeG >=1)) :
+            graphType = "Quadratic"
             print("Quadratic")
         else:
+            graphType = "linear"
             print(" linear ")
     else:
-        print(" linear ")       
-             
+        graphType = "linear"
+        print(" linear ")   
+
+def getQuadraticGraphCoodinates():
+    global graphType
+    lengthNegative = lengthPositive = negativeIndex = positiveIndex = 0  
+    for i in range(0, len(graphs_arr)):
+        m = graphs_arr[i][0]
+        lineLength = graphs_arr[i][2] 
+        if m != 0:
+            # print(" graph m " + str(graphs_arr[i][0]))
+            if m < 0:
+                if lengthNegative < lineLength :
+                    lengthNegative = lineLength
+                    negativeIndex = i
+            else: 
+                if lengthPositive < lineLength :
+                    lengthPositive = lineLength
+                    positiveIndex = i
+    print(" Positive Index = " + str(positiveIndex))
+    print(" Negative Index = " + str(negativeIndex))
+    cv.line(cdstP, (arr[negativeIndex][0], arr[negativeIndex][1]), (arr[negativeIndex][2], arr[negativeIndex][3]), (5,0,255), 2, cv.LINE_AA)
+    cv.line(cdstP, (arr[positiveIndex][0], arr[positiveIndex][1]), (arr[positiveIndex][2], arr[positiveIndex][3]), (128, 0, 128), 2, cv.LINE_AA)
+    
+    positiveXcoodinate = 0
+    if ((arr[positiveIndex][0]) < (arr[positiveIndex][2])):
+        positiveXcoodinate = arr[positiveIndex][0]
+    else:
+        positiveXcoodinate = arr[positiveIndex][2]
+    
+    negativeXcoodinate = 0
+    if ((arr[negativeIndex][0]) < (arr[negativeIndex][2])):
+        negativeXcoodinate = arr[negativeIndex][0]
+    else:
+        negativeXcoodinate = arr[negativeIndex][2]
+    
+    if (positiveXcoodinate < negativeXcoodinate):
+        print(" Has Min Value")
+    else:
+        print(" Has MaX Value")
+
 def draw_X_Axis():
     global maxlength_X
     global X_axis_cordinate
@@ -202,7 +244,7 @@ def draw_X_Axis():
     print(" Same Lines : " + str(sameLine))
 
     if (sameLine > 1): 
-        find_X_Axis_Using_Mofology() 
+        # find_X_Axis_Using_Mofology() 
         find_X_Axis() 
 
 def addMofologyToImage():
@@ -1100,6 +1142,10 @@ def main(argv):
 
         # draw tic mark of X axis
         draw_TicMark_X_Axis()
+
+        if graphType == "Quadratic":
+            print (" Test ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
+            getQuadraticGraphCoodinates()
 
         # identify X and Y axis intersection point
         identifyIntersection()
