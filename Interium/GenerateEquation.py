@@ -19,7 +19,7 @@ X_axis_cordinate = Y_axis_cordinate = graph_cordinate = -1
 arr = None             # 0-x1 1-Y1 2-x2 3-y2
 X_arr = Y_arr = None   # 0-a  1-length 2-arrIndex
 graphs_arr = None      # 0-m  1-C 2-length 3-arrIndex 
-cdstP = allLines = textCoordinate = None
+cdstP = cdstP2 = allLines = textCoordinate = None
 noOfLines = numberOfCharactor = 0
 width = height = 0
 origin_X = origin_Y = intersection_Xaxis_X = intersection_Xaxis_Y = intersection_Yaxis_X = intersection_Yaxis_Y = numberOfDigitValue = 0
@@ -186,10 +186,11 @@ def checkGraph():
         print(" linear ")   
 
 def getQuadraticGraphCoodinates():
-    global graphType
+    global graphType, cdstP2
     lengthNegative = lengthPositive = negativeIndex = positiveIndex = 0  
     quadraticType = None
     pm = pc = nm = nc = px = nx = 0
+    minMaxY = sx = 0
     for i in range(0, len(graphs_arr)):
         m = graphs_arr[i][0]
         lineLength = graphs_arr[i][2] 
@@ -307,14 +308,186 @@ def getQuadraticGraphCoodinates():
     coords = np.column_stack(np.where(gray < threshold_level))
     np.set_printoptions(threshold=np.inf)
     #print(coords)
+     
+    # create array to store distance from origin to tic mark
+    yCordinates = np.arange(height)
+
+    # assign value to 0
+    for h in range(0, height):
+        yCordinates[h] = 0
+
+    indexY = 0
     for i in range(0, len(coords)):
         y = coords[i][0]
         x = coords[i][1]  
         # allLines[x,y] = (255, 255, 0)
-        if (x >= sx -3) and (x <= sx +3):
-            for j in range(0, 10):
-                cdstP[y+j,x] = ( 50 , 55, 255)
-                print(" X coodinate = " + str(coords[i][1]) + " Y coordinate " + str(coords[i][0]))
+        if (x >= sx -2) and (x <= sx +2):
+            yCordinates[indexY] = y
+            indexY = indexY + 1
+            # for j in range(0, 10):
+            #     cdstP[y+j,x] = ( 50 , 55, 255)
+           #     print(" X coodinate = " + str(coords[i][1]) + " Y coordinate " + str(coords[i][0]))
+
+    # for i in range(0, (len(yCordinates)-1)):
+    # y_start = yCordinates[0]
+    # sort array
+    array_sort =  np.sort(yCordinates) 
+    # for i in range(0, (len(yCordinates))):
+        #print(" sort array " + str(array_sort[i]))
+
+    # find max 
+    max = 0  
+    for i in range(0, (len(yCordinates))): 
+        currentY = yCordinates[i]
+        if (currentY > max):
+            max = currentY
+
+    # find min value
+    min = max
+    for i in range(0, (len(yCordinates))): 
+        currentY = yCordinates[i]
+        if ((currentY != 0) and (currentY < min) ):
+            min = currentY
+
+    print(" max Current value ====  "+ str(max))
+    print(" min Current value ====  "+ str(min))
+    
+    if ((max - min) <= 10):
+        minMaxY = int(round((max+min)/2))
+
+    elif((max-min) > pixcelForTicMark_Y):
+        print (" sx -------------------" + str(sx))
+        xYCoodinareOfQuadraticGraph = [[0] * 2 for i in range(100)] 
+        yCordinatesOfQuadraticGraph = np.arange(height)
+
+        # assign value to 0
+        for h in range(0, height):
+            yCordinatesOfQuadraticGraph[h] = 0
+
+        index = 0
+        for i in range(sx-30, sx + 30):
+            cX = i
+            indexY = 0
+            for p in range(0, len(coords)):
+                y = coords[p][0]
+                x = coords[p][1]  
+                # allLines[x,y] = (255, 255, 0)
+                if (x == cX):
+                    yCordinatesOfQuadraticGraph[indexY] = y
+                    indexY = indexY + 1
+                    cdstP2[y,x] = (255, 0, 0)
+            
+            # print yCordinatesOfQuadraticGraph
+            # for u in range(0, height):
+            #     print(str( cX ) + " yCordinatesOfQuadraticGraph = " + str(yCordinatesOfQuadraticGraph[u]))
+            
+            # find max 
+            max = 0  
+            for q in range(0, 100): 
+                currentY = yCordinatesOfQuadraticGraph[q]
+                if (currentY > max):
+                    max = currentY
+
+            # find min value
+            min = max
+            for r in range(0, 100): 
+                currentY = yCordinatesOfQuadraticGraph[r]
+                if ((currentY != 0) and (currentY < min) ):
+                    min = currentY
+            
+            # print(str( cX ) + " Min  = " + str(min) + " Max  =" + str(max))
+
+            # assign value to 0
+            for h in range(0, height):
+                yCordinatesOfQuadraticGraph[h] = 0
+
+            if ((max-min) < 10 ):
+                xYCoodinareOfQuadraticGraph[index][0] = cX
+                xYCoodinareOfQuadraticGraph[index][1] =  int(round((max+min)/2))
+                index = index + 1
+        
+            print("quadraticType           ========================= " + quadraticType)
+        if(quadraticType == "max"):
+            yL = yR = xYCoodinareOfQuadraticGraph[0][1]
+            for s in range(0, 100):
+                x = xYCoodinareOfQuadraticGraph[s][0] 
+                y = xYCoodinareOfQuadraticGraph[s][1]
+                if ((x != 0) and (y !=0)):
+                    if(x <= sx ):
+                        d =  y - yL
+                        if d <= 10:
+                            yL = y
+            yR = yL
+            for s in range(0, 100):
+                x = xYCoodinareOfQuadraticGraph[s][0] 
+                y = xYCoodinareOfQuadraticGraph[s][1]
+                if ((x != 0) and (y !=0)):
+                    if (x> sx):
+                        d = yL - y
+                        if d < 15:
+                            yR = y
+                            # minMaxY = int(round(yR + yL)/2)
+                            # print("Testing..............................")
+                            break
+
+        elif (quadraticType == "min" ) :
+            print("--------------------------------------------------------------")
+            yL = yR = xYCoodinareOfQuadraticGraph[0][1]
+            for s in range(0, 100):
+                x = xYCoodinareOfQuadraticGraph[s][0] 
+                y = xYCoodinareOfQuadraticGraph[s][1]
+                if ((x != 0) and (y !=0)):
+                    if(x <= sx ):
+                        d = y - yL
+                        if d <= 10:
+                            yL = y
+            
+            yR = yL
+            for s in range(0, 100):
+                x = xYCoodinareOfQuadraticGraph[s][0] 
+                y = xYCoodinareOfQuadraticGraph[s][1]
+                if ((x != 0) and (y !=0)):
+                    if (x> sx):
+                        d = yL - y
+                        if d <= 10:
+                            yR = y
+                            # minMaxY = int(round(yR + yL)/2)
+                            # print("Testing..............................")
+                            break
+        minMaxY = int(round(yR + yL)/2)
+        print("Testing.............................. (" + str(sx) +", "+ str(minMaxY) +")")
+             
+
+            # print("check")
+            # print("X coodinate " + str(xYCoodinareOfQuadraticGraph[s][0]) + " Average Y Coodinate " + str(xYCoodinareOfQuadraticGraph[s][1]))
+    
+    for i in range(sx - 5 , sx + 5):
+        for j in range(minMaxY - 5, minMaxY +5):
+            if(i > 0 and i < width and j > 0 and j < height ): 
+                cdstP2[j,i] = (255, 0, 0)
+                cdstP2[j,i] = (255, 0, 0) 
+
+        # print(" min Current value ====  "+ str(min))
+
+        # yCordinatesLeft = np.arange(height)
+
+        # # assign value to 0
+        # for h in range(0, height):
+        #     yCordinatesLeft[h] = 0
+        
+        # indexY = 0
+        # for i in range(0, len(coords)):
+        #     y = coords[i][0]
+        #     x = coords[i][1]  
+        #     # allLines[x,y] = (255, 255, 0)
+        #     if (x >= sx -10) and (x <= sx - 5 ):
+        #         yCordinatesLeft[indexY] = y
+        #         indexY = indexY + 1
+        
+        # array_sort =  np.sort(yCordinatesLeft) 
+        # for i in range(0, (len(yCordinatesLeft))):
+        #     print(" sort array " + str(array_sort[i]))
+         
 
 def draw_X_Axis():
     global maxlength_X
@@ -1118,7 +1291,7 @@ def indentify_X_Axis_UsingValues():
 
 def main(argv):
     
-    global cdstP, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y, height, width, filename, src
+    global cdstP, cdstP2, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y, height, width, filename, src
 
     # Loads an image
     default_file = 'x2.png' 
@@ -1158,6 +1331,7 @@ def main(argv):
     cdst = cv.cvtColor(dst, cv.COLOR_GRAY2BGR)
     cdstP = np.copy(cdst)
     allLines = np.copy(cdst)  
+    cdstP2 = np.copy(cdst)
     
     # Get Text
     global result
@@ -1258,6 +1432,7 @@ def main(argv):
     cv.imshow("Resized image", resized) 
     cv.imshow("Source", src) 
     cv.imshow("Probabilistic Line Transform", cdstP) 
+    cv.imshow("Min Max", cdstP2) 
     cv.imshow("Detected All Lines" , allLines )
     cv.waitKey()
     return 0  
