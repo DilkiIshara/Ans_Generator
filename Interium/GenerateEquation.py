@@ -322,8 +322,9 @@ def getQuadraticGraphCoodinates():
         x = coords[i][1]  
         # allLines[x,y] = (255, 255, 0)
         if (x >= sx -2) and (x <= sx +2):
-            yCordinates[indexY] = y
-            indexY = indexY + 1
+            if (indexY < height):
+                yCordinates[indexY] = y
+                indexY = indexY + 1
             # for j in range(0, 10):
             #     cdstP[y+j,x] = ( 50 , 55, 255)
            #     print(" X coodinate = " + str(coords[i][1]) + " Y coordinate " + str(coords[i][0]))
