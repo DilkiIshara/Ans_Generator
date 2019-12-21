@@ -384,45 +384,26 @@ def getQuadraticGraphCoodinates():
 
         xYCoodinareOfQuadraticGraph = [[0] * 2 for i in range(100)] # 0- X coodinate 1- Y coodinate
         # yCordinatesOfQuadraticGraph = np.arange(height)
-        yCordinatesOfQuadraticGraph = np.arange(width)
-
+        yCordinatesOfQuadraticGraph = np.arange(height)
 
         # assign value to 0
-        for h in range(0, width):
+        for h in range(0, height):
             yCordinatesOfQuadraticGraph[h] = 0
 
         # get the y coodinate of Graphs by considering mor X coordinates
-        index = 0
-        # for i in range(sx-30, sx + 30):
-
-
-
-        # for i in range(sx-20, sx + 20):
-        #     cX = i
-        #     indexY = 0
-        #     for p in range(0, len(coords)):
-        #         y = coords[p][0]
-        #         x = coords[p][1]  
-        #         # allLines[x,y] = (255, 255, 0)
-        #         if (x == cX):
-        #             yCordinatesOfQuadraticGraph[indexY] = y
-        #             indexY = indexY + 1
-        #             cdstP2[y,x] = (255, 0, 0)
-
-
-      
+        index = 0 
+        indexY = 0
         for i in range(sx-30, sx + 30):
             cX = i
-            indexY = 0
             c = 1
             min = max = 0
+            total_Y = 0
+            count = 0
             for p in range(0, len(coords)):
-                total_Y = 0
-                count = 0
                 y = coords[p][0]
                 x = coords[p][1]  
                 # allLines[x,y] = (255, 255, 0)
-                if (x == cX):
+                if (x == cX and y != 0):
                     total_Y = total_Y + y
                     count = count + 1
                     if c == 1:
@@ -433,83 +414,129 @@ def getQuadraticGraphCoodinates():
                         if (y < min):
                             min = y
                     c = c + 1
-                    # yCordinatesOfQuadraticGraph[indexY] = y
-                    # indexY = indexY + 1
-                    # cdstP2[y,x] = (255, 0, 0)
-            if (count > 0 and total_Y > 0 and (max - min ) <= 10):
+            # print("Min ++++++++++++" + str(min) + "Max ++++++++++++" + str(max) )
+            #print (" Total Y " + str(total_Y ) + " Count " + str(count)+ "******** ")
+            if (count != 0 and total_Y != 0 and (max - min) < 10):
+                # print (" Total Y " + str(total_Y ) + " Count " + str(count))
                 yCordinatesOfQuadraticGraph[indexY] = int(round(total_Y/count))
                 indexY = indexY + 1
                 cdstP2[y,x] = (255, 0, 0)
-
-        for i in range(0, len(yCordinatesOfQuadraticGraph)):
+                print (" Y coodinate  " + str(int(round(total_Y/count))) + " ******" +" indexY " + str(indexY))
+       
+        # length = len(yCordinatesOfQuadraticGraph) 
+        # print(" Length " + str(length))
+    
+        for i in range(0, len(yCordinatesOfQuadraticGraph) ):
             y = yCordinatesOfQuadraticGraph[i]
-            if ( y != 0):
+            if (y != 0):
                 print("y coordinate   " + str(y) )
+        
+        # sort array
+        array_sort =  np.sort(yCordinatesOfQuadraticGraph) 
 
-        y_corinate = [[0] * 2 for i in range(len(yCordinatesOfQuadraticGraph))]
+        maxY = yCordinatesOfQuadraticGraph[0]
         for i in range(0, len(yCordinatesOfQuadraticGraph)):
             y = yCordinatesOfQuadraticGraph[i]
-            count = 0
-            if ( y != 0):
-                for j in range(0, len(yCordinatesOfQuadraticGraph)):
-                    current = yCordinatesOfQuadraticGraph[j]
-                    if ( current >= (y - 10)) and ( current <= (y + 10)):
-                        count = count + 1
-                y_corinate[i][0] = y
-                y_corinate[i][1] = count
-                print("y coordinate   " + str(y) + "count" + str(count))
-        
-        max_count = count = 0
-        for i in range(0, len(y_corinate)):
-            c = y_corinate[i][1]
-            if (c > 0):
-                count = count + 1
-                if (c > max_count): 
-                    max_count = c
-                # print(" Y Coordinate " + str(y_corinate[i][0]) + " count " + str(y_corinate[i][1]))
+            if ( y > maxY):
+                maxY = y
 
-        print(" Max  count " + str(max_count))
-
-        # create array to store distance from origin to tic mark
-        y_Cordinate_Array = np.arange(count)
-
-        # assign value to 0
-        for h in range(0, count):
-            y_Cordinate_Array[h] = 0
+        minY = maxY
+        for i in range(0, len(yCordinatesOfQuadraticGraph)):
+            y = yCordinatesOfQuadraticGraph[i]
+            if ( y < minY and y != 0):
+                minY = y
         
-        index_y_Cordinate_Array = 0
-        for i in range(0, len(y_corinate)):
-            c = y_corinate[i][1]
-            if ((c > 0) and ((c == max_count) or (c == max_count-1))):
-                y_Cordinate_Array[index_y_Cordinate_Array] = y_corinate[i][0]
-                index_y_Cordinate_Array = index_y_Cordinate_Array + 1
+        if quadraticType == "max": 
+            minMaxY = minY
+        elif quadraticType == "min":
+            minMaxY = maxY
         
-        for i in range(0, index_y_Cordinate_Array):
-            print(str(y_Cordinate_Array[i]))
-            y = y_Cordinate_Array[i]
-            for j in range (sx - 20, sx +20):
-                cdstP2[y,j] = (255, 0, 0)
+        # for i in range(0, len(array_sort +1 )):
+        #     y1 = array_sort[i]
+        #     y2 = array_sort[i+1]
+        #     if (y1 != 0 and y2 != 0):
+
+        
+        # if quadraticType == "max": 
+        #     minY = array_sort[0]
+        #     for i in range(0, len(array_sort)):
+        #         y = array_sort[i]
+        #         if ( y < minY):
+        #             minY = y
+        #     minMaxY = minY
+        # elif quadraticType == "min": 
+        #     maxY = array_sort[0]
+        #     for i in range(0, len(array_sort)):
+        #         y = array_sort[i]
+        #         if ( y > maxY):
+        #             maxY = y
+        #     minMaxY = maxY
+
+
+        # y_corinate = [[0] * 2 for i in range(len(yCordinatesOfQuadraticGraph))]
+        # for i in range(0, len(yCordinatesOfQuadraticGraph)):
+        #     y = yCordinatesOfQuadraticGraph[i]
+        #     count = 0
+        #     if ( y != 0):
+        #         for j in range(0, len(yCordinatesOfQuadraticGraph)):
+        #             current = yCordinatesOfQuadraticGraph[j]
+        #             if ( current >= (y - 10)) and ( current <= (y + 10)):
+        #                 count = count + 1
+        #         y_corinate[i][0] = y
+        #         y_corinate[i][1] = count
+        #         print("y coordinate   " + str(y) + "count" + str(count))
+        
+    #     max_count = count = 0
+    #     for i in range(0, len(y_corinate)):
+    #         c = y_corinate[i][1]
+    #         if (c > 0):
+    #             count = count + 1
+    #             if (c > max_count): 
+    #                 max_count = c
+    #             # print(" Y Coordinate " + str(y_corinate[i][0]) + " count " + str(y_corinate[i][1]))
+
+    #     print(" Max  count " + str(max_count))
+
+    #     # create array to store distance from origin to tic mark
+    #     y_Cordinate_Array = np.arange(count)
+
+    #     # assign value to 0
+    #     for h in range(0, count):
+    #         y_Cordinate_Array[h] = 0
+        
+    #     index_y_Cordinate_Array = 0
+    #     for i in range(0, len(y_corinate)):
+    #         c = y_corinate[i][1]
+    #         if ((c > 0) and ((c == max_count) or (c == max_count-1))):
+    #             y_Cordinate_Array[index_y_Cordinate_Array] = y_corinate[i][0]
+    #             index_y_Cordinate_Array = index_y_Cordinate_Array + 1
+        
+    #     for i in range(0, index_y_Cordinate_Array):
+    #         print(str(y_Cordinate_Array[i]))
+    #         y = y_Cordinate_Array[i]
+    #         for j in range (sx - 20, sx +20):
+    #             cdstP2[y,j] = (255, 0, 0)
                 
                 
             
 
-        if quadraticType == "max": 
-            minY = y_Cordinate_Array[0]
-            for i in range(0, index_y_Cordinate_Array):
-                y = y_Cordinate_Array[i]
-                if ( y < minY):
-                    minY = y
-            minMaxY = minY
-        elif quadraticType == "min": 
-            maxY = y_Cordinate_Array[0]
-            for i in range(0, index_y_Cordinate_Array):
-                y = y_Cordinate_Array[i]
-                if ( y > maxY):
-                    maxY = y
-            minMaxY = maxY
+    #     if quadraticType == "max": 
+    #         minY = y_Cordinate_Array[0]
+    #         for i in range(0, index_y_Cordinate_Array):
+    #             y = y_Cordinate_Array[i]
+    #             if ( y < minY):
+    #                 minY = y
+    #         minMaxY = minY
+    #     elif quadraticType == "min": 
+    #         maxY = y_Cordinate_Array[0]
+    #         for i in range(0, index_y_Cordinate_Array):
+    #             y = y_Cordinate_Array[i]
+    #             if ( y > maxY):
+    #                 maxY = y
+    #         minMaxY = maxY
 
-        print(" Minmax Y " + str(minMaxY))
-        print(" Height " + str(height))
+    #     print(" Minmax Y " + str(minMaxY))
+    #     print(" Height " + str(height))
 
     # draw min. max point
     for i in range(sx - 5 , sx + 5):
@@ -517,112 +544,11 @@ def getQuadraticGraphCoodinates():
             if(i > 0 and i < width and j > 0 and j < height ): 
                 cdstP2[j,i] = (255, 0, 0)
                 cdstP2[j,i] = (255, 0, 0)
-
-    #         # print yCordinatesOfQuadraticGraph
-    #         # for u in range(0, height):
-    #         #     print(str( cX ) + " yCordinatesOfQuadraticGraph = " + str(yCordinatesOfQuadraticGraph[u]))
-            
-    #         # find max 
-    #         max = 0  
-    #         for q in range(0, 100): 
-    #             currentY = yCordinatesOfQuadraticGraph[q]
-    #             if (currentY > max):
-    #                 max = currentY
-
-    #         # find min value
-    #         min = max
-    #         for r in range(0, 100): 
-    #             currentY = yCordinatesOfQuadraticGraph[r] 
-    #             if ((currentY != 0) and (currentY < min) ):
-    #                 min = currentY
-            
-    #         # print(str( cX ) + " Min  = " + str(min) + " Max  =" + str(max))
-
-    #         # assign value to 0
-    #         for h in range(0, height):
-    #             yCordinatesOfQuadraticGraph[h] = 0
-
-    #         if ((max-min) <= 10 ):
-    #             xYCoodinareOfQuadraticGraph[index][0] = cX
-    #             xYCoodinareOfQuadraticGraph[index][1] =  int(round((max+min)/2))
-    #             index = index + 1
-    #         # print("quadraticType           ========================= " + quadraticType)
-
-    #     # if the graphs is max graph get the smaller y value
-    #     if(quadraticType == "max"):
-    #         yL = yR = xYCoodinareOfQuadraticGraph[0][1]
-    #         for s in range(0, 100):
-    #             x = xYCoodinareOfQuadraticGraph[s][0] 
-    #             y = xYCoodinareOfQuadraticGraph[s][1]
-    #             if ((x != 0) and (y !=0)):
-    #                 if(x <= sx ):
-    #                     d =  y - yL
-    #                     if d <= 10:
-    #                         yL = y
-    #         yR = yL
-    #         for s in range(0, 100):
-    #             x = xYCoodinareOfQuadraticGraph[s][0] 
-    #             y = xYCoodinareOfQuadraticGraph[s][1]
-    #             if ((x != 0) and (y !=0)):
-    #                 if (x> sx):
-    #                     d = yL - y
-    #                     if d < 15:
-    #                         yR = y
-    #                         # minMaxY = int(round(yR + yL)/2)
-    #                         # print("Testing..............................")
-    #                         break
-
-    #     # if the graphs is min graph get the larger y value
-    #     elif (quadraticType == "min" ) : 
-    #         yL = yR = xYCoodinareOfQuadraticGraph[0][1]
-    #         for s in range(0, 100):
-    #             x = xYCoodinareOfQuadraticGraph[s][0] 
-    #             y = xYCoodinareOfQuadraticGraph[s][1]
-    #             if ((x != 0) and (y !=0)):
-    #                 if(x <= sx ):
-    #                     d = y - yL
-    #                     if d <= 10:
-    #                         yL = y
-            
-    #         yR = yL
-    #         for s in range(0, 100):
-    #             x = xYCoodinareOfQuadraticGraph[s][0] 
-    #             y = xYCoodinareOfQuadraticGraph[s][1]
-    #             if ((x != 0) and (y !=0)):
-    #                 if (x> sx):
-    #                     d = yL - y
-    #                     if d <= 10:
-    #                         yR = y
-    #                         # minMaxY = int(round(yR + yL)/2)
-    #                         # print("Testing..............................")
-    #                         break
-
-    #     # calculate the Y coordinate
-    #     minMaxY = int(round(yR + yL)/2) 
-           
+ 
   
-
-    #     # print(" min Current value ====  "+ str(min))
-
-    #     # yCordinatesLeft = np.arange(height)
-
-    #     # # assign value to 0
-    #     # for h in range(0, height):
-    #     #     yCordinatesLeft[h] = 0
-        
-    #     # indexY = 0
-    #     # for i in range(0, len(coords)):
-    #     #     y = coords[i][0]
-    #     #     x = coords[i][1]  
-    #     #     # allLines[x,y] = (255, 255, 0)
-    #     #     if (x >= sx -10) and (x <= sx - 5 ):
-    #     #         yCordinatesLeft[indexY] = y
-    #     #         indexY = indexY + 1
-        
-    #     # array_sort =  np.sort(yCordinatesLeft) 
-    #     # for i in range(0, (len(yCordinatesLeft))):
-    #     #     print(" sort array " + str(array_sort[i]))
-         
+ 
+     
+  
 
 def draw_X_Axis():
     global maxlength_X
