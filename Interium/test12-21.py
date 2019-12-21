@@ -450,105 +450,13 @@ def getQuadraticGraphCoodinates():
             minMaxY = minY
         elif quadraticType == "min":
             minMaxY = maxY
-        
-        # for i in range(0, len(array_sort +1 )):
-        #     y1 = array_sort[i]
-        #     y2 = array_sort[i+1]
-        #     if (y1 != 0 and y2 != 0):
-
-        
-        # if quadraticType == "max": 
-        #     minY = array_sort[0]
-        #     for i in range(0, len(array_sort)):
-        #         y = array_sort[i]
-        #         if ( y < minY):
-        #             minY = y
-        #     minMaxY = minY
-        # elif quadraticType == "min": 
-        #     maxY = array_sort[0]
-        #     for i in range(0, len(array_sort)):
-        #         y = array_sort[i]
-        #         if ( y > maxY):
-        #             maxY = y
-        #     minMaxY = maxY
-
-
-        # y_corinate = [[0] * 2 for i in range(len(yCordinatesOfQuadraticGraph))]
-        # for i in range(0, len(yCordinatesOfQuadraticGraph)):
-        #     y = yCordinatesOfQuadraticGraph[i]
-        #     count = 0
-        #     if ( y != 0):
-        #         for j in range(0, len(yCordinatesOfQuadraticGraph)):
-        #             current = yCordinatesOfQuadraticGraph[j]
-        #             if ( current >= (y - 10)) and ( current <= (y + 10)):
-        #                 count = count + 1
-        #         y_corinate[i][0] = y
-        #         y_corinate[i][1] = count
-        #         print("y coordinate   " + str(y) + "count" + str(count))
-        
-    #     max_count = count = 0
-    #     for i in range(0, len(y_corinate)):
-    #         c = y_corinate[i][1]
-    #         if (c > 0):
-    #             count = count + 1
-    #             if (c > max_count): 
-    #                 max_count = c
-    #             # print(" Y Coordinate " + str(y_corinate[i][0]) + " count " + str(y_corinate[i][1]))
-
-    #     print(" Max  count " + str(max_count))
-
-    #     # create array to store distance from origin to tic mark
-    #     y_Cordinate_Array = np.arange(count)
-
-    #     # assign value to 0
-    #     for h in range(0, count):
-    #         y_Cordinate_Array[h] = 0
-        
-    #     index_y_Cordinate_Array = 0
-    #     for i in range(0, len(y_corinate)):
-    #         c = y_corinate[i][1]
-    #         if ((c > 0) and ((c == max_count) or (c == max_count-1))):
-    #             y_Cordinate_Array[index_y_Cordinate_Array] = y_corinate[i][0]
-    #             index_y_Cordinate_Array = index_y_Cordinate_Array + 1
-        
-    #     for i in range(0, index_y_Cordinate_Array):
-    #         print(str(y_Cordinate_Array[i]))
-    #         y = y_Cordinate_Array[i]
-    #         for j in range (sx - 20, sx +20):
-    #             cdstP2[y,j] = (255, 0, 0)
-                
-                
-            
-
-    #     if quadraticType == "max": 
-    #         minY = y_Cordinate_Array[0]
-    #         for i in range(0, index_y_Cordinate_Array):
-    #             y = y_Cordinate_Array[i]
-    #             if ( y < minY):
-    #                 minY = y
-    #         minMaxY = minY
-    #     elif quadraticType == "min": 
-    #         maxY = y_Cordinate_Array[0]
-    #         for i in range(0, index_y_Cordinate_Array):
-    #             y = y_Cordinate_Array[i]
-    #             if ( y > maxY):
-    #                 maxY = y
-    #         minMaxY = maxY
-
-    #     print(" Minmax Y " + str(minMaxY))
-    #     print(" Height " + str(height))
-
-    # draw min. max point
+ 
     for i in range(sx - 5 , sx + 5):
         for j in range(minMaxY - 5, minMaxY +5):
             if(i > 0 and i < width and j > 0 and j < height ): 
                 cdstP2[j,i] = (255, 0, 0)
                 cdstP2[j,i] = (255, 0, 0)
- 
-  
- 
-     
-  
+
 
 def draw_X_Axis():
     global maxlength_X
