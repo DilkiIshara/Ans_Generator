@@ -244,6 +244,7 @@ def getQuadraticGraphCoodinates():
     # take the Y value for both positive and negative lines of quadratic graph
     py = ny = y = 0
     if quadraticType == "min": 
+        # print("Min-----------------------------")
         if (arr[positiveIndex][1] < arr[positiveIndex][3]):
             py = arr[positiveIndex][1]
         else :
@@ -256,27 +257,10 @@ def getQuadraticGraphCoodinates():
         if(ny > py):
             y = ny
         else:
-            y = py
-        # px = int(round((y - pc )/pm))
-        # nx = int(round((y - nc )/nm))
-        # print(" px , nx " + str(px) +"fffffffffff" + str(nx))
-        # sx = int(round((px+nx))/2)
-        # print("sx = " + str(sx)) 
-        # for i in range(0, width):
-        #     allLines[y,i] = (50, 55, 255)
-        #     cdstP[y,i] = (50, 55, 255) 
-        # for i in range(0, height): 
-        #     allLines[i,sx] = (50, 55, 255)
-        #     cdstP[i,sx] = (50, 55, 255)
-        # for i in range(0, height): 
-        #     allLines[i,px] = (50, 55, 255)
-        #     cdstP[i,px] = (50, 55, 255)
-        # for i in range(0, height): 
-        #     allLines[i,nx] = (50, 55, 255)
-        #     cdstP[i,nx] = (50, 55, 255) 
+            y = py 
 
     elif quadraticType == "max": 
-        # print("Max")
+        # print("Max----------------------------")
         # py = ny = y = 0
         if (arr[positiveIndex][1] < arr[positiveIndex][3]):
             py = arr[positiveIndex][3]
@@ -336,54 +320,9 @@ def getQuadraticGraphCoodinates():
        # /* This point we can check graph is samamithka on y axis */
        # 
        # 
-     
-    # store Y coordinates in yCordinates list
-    # indexY = 0
-    # for i in range(0, len(coords)):
-    #     y = coords[i][0]
-    #     x = coords[i][1]   
-    #     if (x >= sx -2) and (x <= sx +2):
-    #         if (indexY < height):
-    #             yCordinates[indexY] = y
-    #             indexY = indexY + 1
-    #         # for j in range(0, 10):
-    #         #     cdstP[y+j,x] = ( 50 , 55, 255)
-    #         #     print(" X coodinate = " + str(coords[i][1]) + " Y coordinate " + str(coords[i][0]))
-    # # for i in range(0, (len(yCordinates)-1)):
-    # # y_start = yCordinates[0]
-
-    # # sort array
-    # array_sort =  np.sort(yCordinates) 
-
-    # # find max 
-    # max = 0  
-    # for i in range(0, (len(yCordinates))): 
-    #     currentY = yCordinates[i]
-    #     if (currentY > max):
-    #         max = currentY
-
-    # # find min value
-    # min = max
-    # for i in range(0, (len(yCordinates))): 
-    #     currentY = yCordinates[i]
-    #     if ((currentY != 0) and (currentY < min) ):
-    #         min = currentY
-
-    # # print(" max Current value ====  "+ str(max))
-    # # print(" min Current value ====  "+ str(min))
-    
-    # # identify Y coordinate of min/max point of quadratic eqation
-    # if ((max - min) <= 10):
-    #     minMaxY = int(round((max+min)/2))
-
-    # # if we cant idntify Y coordinate of min/max point of quadratic eqation expand the X coodinate range
-
-    # # elif((max-min) > pixcelForTicMark_Y):
-    # elif((max-min) > 10):
-        # print (" sx -------------------" + str(sx))
 
     xYCoodinareOfQuadraticGraph = [[0] * 2 for i in range(100)] # 0- X coodinate 1- Y coodinate
-    # yCordinatesOfQuadraticGraph = np.arange(height)
+    # create array to store y coodinates of quadratic graph
     yCordinatesOfQuadraticGraph = np.arange(height)
 
     # assign value to 0
@@ -423,9 +362,7 @@ def getQuadraticGraphCoodinates():
             cdstP2[y,x] = (255, 0, 0)
             print (" Y coodinate  " + str(int(round(total_Y/count))) + " ******" +" indexY " + str(indexY))
        
-    # length = len(yCordinatesOfQuadraticGraph) 
-    # print(" Length " + str(length))
-    
+    # print the Y coodinate of graph
     for i in range(0, len(yCordinatesOfQuadraticGraph) ):
         y = yCordinatesOfQuadraticGraph[i]
         if (y != 0):
@@ -433,24 +370,28 @@ def getQuadraticGraphCoodinates():
         
     # sort array
     array_sort =  np.sort(yCordinatesOfQuadraticGraph) 
-
+    
+    # find the max of the Y coodinate of graph
     maxY = yCordinatesOfQuadraticGraph[0]
     for i in range(0, len(yCordinatesOfQuadraticGraph)):
         y = yCordinatesOfQuadraticGraph[i]
         if ( y > maxY):
             maxY = y
-
+    
+    # find the min of the Y coodinate of graph
     minY = maxY
     for i in range(0, len(yCordinatesOfQuadraticGraph)):
         y = yCordinatesOfQuadraticGraph[i]
         if ( y < minY and y != 0):
             minY = y
-        
+
+    # if graph is max one take the min y coodinate and graph is min one take the max y coodinate   
     if quadraticType == "max": 
         minMaxY = minY
     elif quadraticType == "min":
         minMaxY = maxY
  
+    # draw min or max point
     for i in range(sx - 5 , sx + 5):
         for j in range(minMaxY - 5, minMaxY +5):
             if(i > 0 and i < width and j > 0 and j < height ): 
