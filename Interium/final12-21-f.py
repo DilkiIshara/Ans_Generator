@@ -190,6 +190,7 @@ def getQuadraticGraphCoodinates():
     lengthNegative = lengthPositive = negativeIndex = positiveIndex = 0  
     quadraticType = None
     pm = pc = nm = nc = px = nx = pny = 0
+    qa = qb = qc = 0
     minMaxY = sx = 0
 
     for i in range(0, len(graphs_arr)):
@@ -484,6 +485,54 @@ def getQuadraticGraphCoodinates():
             if(i > 0 and i < width and j > 0 and j < height ): 
                 cdstP2[j,i] = (255, 0, 0)
                 cdstP2[j,i] = (255, 0, 0)
+    
+    py = pny
+    ny = pny + 1
+    
+    qa_before = (1/(sx - nx)) * (((py - minMaxY)/(px - sx)) - ((ny - py)/(nx - px)))
+    qa = (1/(sx - nx)) * (((minMaxY - py)/(sx - px)) - ((py - ny )/(px - nx)))
+
+    # qb_before = (1/(nx - sx)) * ((((pny - minMaxY)*(px + nx ))/(nx - sx)) - (((1)*(px + sx ))/(nx - px)))
+    qb_before = ((py - minMaxY)/(px - sx)) - (qa_before*(px + sx))
+    qb = ((minMaxY - py)/(sx-px)) - (qa * (sx+px))
+
+    qc_before = ((nx/(sx - nx))*(((minMaxY*px)-(pny*sx))/(sx - px))) - ((sx/(sx - nx))*(((pny*nx)-(pny*px))/(px - nx)))
+    qc = minMaxY - (qa*pow(sx,2)) - (qb*sx)
+
+    b24ac = pow(qb, 2) - (4*qa*(qc - origin_Y))
+    x1 = ((-1*qb) + pow(b24ac, 0.5))/(2*qa)
+    x2 = ((-1*qb) - pow(b24ac, 0.5))/(2*qa)
+    x4 = int(np.nan_to_num(x2))
+    x3 = int(np.nan_to_num(x1))
+
+    # draw root
+    for i in range(x3 - 5 , x3 + 5):
+        for j in range(origin_Y - 5, origin_Y +5):
+            if(i > 0 and i < width and j > 0 and j < height ): 
+                cdstP2[j,i] = (255, 0, 0)
+                cdstP2[j,i] = (255, 0, 0)
+
+    # draw root
+    for i in range(x4 - 5 , x4 + 5):
+        for j in range(origin_Y - 5, origin_Y +5):
+            if(i > 0 and i < width and j > 0 and j < height ): 
+                cdstP2[j,i] = (255, 0, 0)
+                cdstP2[j,i] = (255, 0, 0)
+
+    print("sx .   " + str(sx))
+    print("px .   " + str(px))
+    print("nx .    " + str(nx))
+    print("pny .    " + str(pny))
+    print("minMaxY . " + str(minMaxY))
+    print(" Before qa  ---> " + str(qa_before))
+    print(" qa  ---> " + str(qa))
+    print(" ------------------------------------------")
+    print(" Before qb  ---> " + str(qb_before))
+    print(" qb  ---> " + str(qb))
+    print(" ------------------------------------------")
+    print(" Before qc  ---> " + str(qc_before))
+    print(" qc  ---> " + str(qc))
+    print(" x1  ---> " + str(x1)+ " x2 ---> " + str(x2) )
 
 
 def draw_X_Axis():
