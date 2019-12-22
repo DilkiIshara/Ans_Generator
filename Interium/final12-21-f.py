@@ -189,7 +189,7 @@ def getQuadraticGraphCoodinates():
     global graphType, cdstP2
     lengthNegative = lengthPositive = negativeIndex = positiveIndex = 0  
     quadraticType = None
-    pm = pc = nm = nc = px = nx = 0
+    pm = pc = nm = nc = px = nx = pny = 0
     minMaxY = sx = 0
 
     for i in range(0, len(graphs_arr)):
@@ -275,10 +275,29 @@ def getQuadraticGraphCoodinates():
         else:
             y = ny
 
+
     # get X coodinate of graphs and get the x coodinate of (Samamithika Akshaya )
     px = int(round((y - pc )/pm))
     nx = int(round((y - nc )/nm))
     sx = int(round((px+nx))/2)
+    pny = y
+
+    # draw positive line point
+    for i in range (px-5, px+5):
+        for j in range(pny - 5,pny +5 ):
+            if(i > 0 and i < width and j > 0 and j < height ): 
+                # if(i<width and j< height):
+                cdstP2[j,i] = (0, 255, 0)
+                cdstP[j,i] = (0, 255, 0) 
+
+    # draw negative line point
+    for i in range (nx-5, nx+5):
+        for j in range(pny - 5,pny +5 ):
+            if(i > 0 and i < width and j > 0 and j < height ): 
+                # if(i<width and j< height):
+                cdstP2[j,i] = (0, 255, 0)
+                cdstP[j,i] = (0, 255, 0) 
+
 
     # draw lines (Samamithika akshaya)
     for i in range(0, width):
