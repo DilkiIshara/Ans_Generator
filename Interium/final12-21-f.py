@@ -178,13 +178,13 @@ def checkGraph():
                     positiveG = positiveG + 1
         if ((positiveG >= 1) and (negativeG >=1)) : # If have two lines which has positive and negative gradiants
             graphType = "Quadratic"
-            print("Quadratic")
+            #### print("Quadratic")
         else:
             graphType = "linear"
-            print(" linear ")
+            #### print(" linear ")
     else:
         graphType = "linear"
-        print(" linear ")   
+        #### print(" linear ")   
 
 def getQuadraticGraphCoodinates():
     global graphType, cdstP2
@@ -382,7 +382,7 @@ def getQuadraticGraphCoodinates():
             yCordinatesOfQuadraticGraph[indexY] = int(round(total_Y/count))
             indexY = indexY + 1
             cdstP2[y,x] = (255, 0, 0)
-            print (" Y coodinate  " + str(int(round(total_Y/count))) + " ******" +" indexY " + str(indexY))
+            # print (" Y coodinate  " + str(int(round(total_Y/count))) + " ******" +" indexY " + str(indexY))
        
     yCordinates_and_Counts = [[0] * 2 for i in range(len(yCordinatesOfQuadraticGraph))] 
     yCordinates_and_Counts_Index = 0
@@ -410,13 +410,13 @@ def getQuadraticGraphCoodinates():
     for i in range(0, yCordinates_and_Counts_Index):
         if yCordinates_and_Counts[i][1] != 0 and yCordinates_and_Counts[i][0] != 0:
             c_count = yCordinates_and_Counts[i][1]
-            print("y coordinate   " + str(yCordinates_and_Counts[i][0]) + " count " + str(yCordinates_and_Counts[i][1]) )
+            # print("y coordinate   " + str(yCordinates_and_Counts[i][0]) + " count " + str(yCordinates_and_Counts[i][1]) )
             if c_count > max_count:
                 max_count = c_count
             if min_count > c_count:
                 min_count = c_count
-    print("y coordinate _ max_count " + str(max_count))
-    print("y coordinate _ min_count " + str(min_count))
+    #### print("y coordinate _ max_count " + str(max_count))
+    #### print("y coordinate _ min_count " + str(min_count))
 
     avg_count = round((max_count-min_count)/2)
     yCordinatesOfQuadraticGraph_New_Index = 0
@@ -425,11 +425,11 @@ def getQuadraticGraphCoodinates():
             yCordinatesOfQuadraticGraph_New[yCordinatesOfQuadraticGraph_New_Index] = yCordinates_and_Counts[i][0]
             yCordinatesOfQuadraticGraph_New_Index = yCordinatesOfQuadraticGraph_New_Index + 1
 
-     # print the Y coodinate of graph
-    for i in range(0, len(yCordinatesOfQuadraticGraph_New) ):
-        y = yCordinatesOfQuadraticGraph_New[i]
-        if (y != 0):
-            print("y coordinate   " + str(y) )
+    # print the Y coodinate of graph
+    # for i in range(0, len(yCordinatesOfQuadraticGraph_New) ):
+    #     y = yCordinatesOfQuadraticGraph_New[i]
+    #     if (y != 0):
+    #         print("y coordinate   " + str(y) )
 
     # find the max of the Y coodinate of graph
     maxY = yCordinatesOfQuadraticGraph_New[0]
@@ -490,18 +490,28 @@ def getQuadraticGraphCoodinates():
     
     if ((quadraticType == "min") and (minMaxY > origin_Y)) or ((quadraticType == "max") and (minMaxY < origin_Y)) :
         hasRealRoots = True
-    
+
+    py = pny
+    ny = pny + 1
+    qa_before = (1/(sx - nx)) * (((py - minMaxY)/(px - sx)) - ((ny - py)/(nx - px)))
+    qa = (1/(sx - nx)) * (((minMaxY - py)/(sx - px)) - ((py - ny )/(px - nx)))
+    # qb_before = (1/(nx - sx)) * ((((pny - minMaxY)*(px + nx ))/(nx - sx)) - (((1)*(px + sx ))/(nx - px)))
+    qb_before = ((py - minMaxY)/(px - sx)) - (qa_before*(px + sx))
+    qb = ((minMaxY - py)/(sx-px)) - (qa * (sx+px))
+    qc_before = ((nx/(sx - nx))*(((minMaxY*px)-(pny*sx))/(sx - px))) - ((sx/(sx - nx))*(((pny*nx)-(pny*px))/(px - nx)))
+    qc = minMaxY - (qa*pow(sx,2)) - (qb*sx)
+
     if ( hasRealRoots == True):
         print(" Have Real Roots ----------------->>>>>")
-        py = pny
-        ny = pny + 1
-        qa_before = (1/(sx - nx)) * (((py - minMaxY)/(px - sx)) - ((ny - py)/(nx - px)))
-        qa = (1/(sx - nx)) * (((minMaxY - py)/(sx - px)) - ((py - ny )/(px - nx)))
-        # qb_before = (1/(nx - sx)) * ((((pny - minMaxY)*(px + nx ))/(nx - sx)) - (((1)*(px + sx ))/(nx - px)))
-        qb_before = ((py - minMaxY)/(px - sx)) - (qa_before*(px + sx))
-        qb = ((minMaxY - py)/(sx-px)) - (qa * (sx+px))
-        qc_before = ((nx/(sx - nx))*(((minMaxY*px)-(pny*sx))/(sx - px))) - ((sx/(sx - nx))*(((pny*nx)-(pny*px))/(px - nx)))
-        qc = minMaxY - (qa*pow(sx,2)) - (qb*sx)
+        # py = pny
+        # ny = pny + 1
+        # qa_before = (1/(sx - nx)) * (((py - minMaxY)/(px - sx)) - ((ny - py)/(nx - px)))
+        # qa = (1/(sx - nx)) * (((minMaxY - py)/(sx - px)) - ((py - ny )/(px - nx)))
+        # # qb_before = (1/(nx - sx)) * ((((pny - minMaxY)*(px + nx ))/(nx - sx)) - (((1)*(px + sx ))/(nx - px)))
+        # qb_before = ((py - minMaxY)/(px - sx)) - (qa_before*(px + sx))
+        # qb = ((minMaxY - py)/(sx-px)) - (qa * (sx+px))
+        # qc_before = ((nx/(sx - nx))*(((minMaxY*px)-(pny*sx))/(sx - px))) - ((sx/(sx - nx))*(((pny*nx)-(pny*px))/(px - nx)))
+        # qc = minMaxY - (qa*pow(sx,2)) - (qb*sx)
         b24ac = pow(qb, 2) - (4*qa*(qc - origin_Y))
         x1 = ((-1*qb) + pow(b24ac, 0.5))/(2*qa)
         x2 = ((-1*qb) - pow(b24ac, 0.5))/(2*qa)
@@ -555,11 +565,6 @@ def getQuadraticGraphCoodinates():
         if (d2 < 0) :
             d2 = (-1)*d2
             print(" Decimal Point 2 ----> " + str(d2))
-        # real_val_1_fd = round(real_val_1_float,1) - real_val_1
-        # real_val_2_fd = round(real_val_2_float,1) - real_val_2
-        # # a = modf(3.1234)
-        # print(" Real value First Decimal  1 ----> " + str(real_val_1_D1))
-        # print(" Real value First Decimal  2 ----> " + str(real_val_2_D1))
         
         if ( (d1 <= 0.2  or d1>=0.8) and (d2 <= 0.2  or d2>=0.8)):   
             real_val_1 = int(round(-1*((origin_X-root_1)/ pixcelForTicMark_X)))
@@ -570,12 +575,13 @@ def getQuadraticGraphCoodinates():
                 print("Graph Equation --- > " + " - ( X - " + str(real_val_1) + ") ( X - " + str(real_val_2) + ")")
 
         
+        else:
+            real_sx = int(round((sx-origin_X)/pixcelForTicMark_X))
+            rsx = real_sx
+            lsx = real_sx - 1
+            print(" Real Sx ------>  " + str(real_sx))
 
-        # print("sx .   " + str(sx))
-        # print("px .   " + str(px))
-        # print("nx .    " + str(nx))
-        # print("pny .    " + str(pny))
-        # print("minMaxY . " + str(minMaxY))
+       
         # print(" Before qa  ---> " + str(qa_before))
         # print(" qa  ---> " + str(qa))
         # print(" ------------------------------------------")
@@ -587,6 +593,47 @@ def getQuadraticGraphCoodinates():
         # print(" x1  ---> " + str(x1)+ " x2 ---> " + str(x2) )
     else : 
         print(" Does not have Real Roots ----------------->>>>>")
+        real_sx = int(round((sx-origin_X)/pixcelForTicMark_X))
+        rsx = real_sx
+        lsx = real_sx - 1
+        # print(" Real Sx ------>  " + str(real_sx))
+        # color tic mark right hand side of thesamamiyjika axis
+        for k in range(0, 20):
+            rsx_coordinate = origin_X + (pixcelForTicMark_X*(rsx+k))
+            lsx_coordinate = origin_X + (pixcelForTicMark_X*(lsx-k))
+
+            rsy_coordinate = int(round(((qa*(pow(rsx_coordinate,2))) + (qb*rsx_coordinate) + qc)))
+            lsy_coordinate = int(round(((qa*(pow(lsx_coordinate,2))) + (qb*lsx_coordinate) + qc)))
+            
+            rsy = ((origin_Y-rsy_coordinate)/pixcelForTicMark_Y)
+            rsy_D1 = round(rsy,1)
+            c = modf(rsy_D1)
+            d3 = c[0]
+            if (d3 < 0) :
+                d1 = (-1)*d3
+                print(" D_33333333333 ----> " + str(d3))
+
+             
+             
+            for i in range(lsx_coordinate - 5 , lsx_coordinate + 5):
+                for j in range(lsy_coordinate - 5, lsy_coordinate +5):
+                    if(i > 0 and i < width and j > 0 and j < height ): 
+                        cdstP2[j,i] = (0, 0, 255)  
+            for i in range(rsx_coordinate - 5 , rsx_coordinate + 5):
+                for j in range(rsy_coordinate - 5, rsy_coordinate +5):
+                    if(i > 0 and i < width and j > 0 and j < height ): 
+                        cdstP2[j,i] = (255, 255, 150)
+                        # cdstP[j,i] = (255, 255, 255) 
+        # color tic mark left hand side of thesamamiyjika axis
+        # for k in range(0, 20):
+        #     lsx_coordinate = origin_X + (pixcelForTicMark_X*(lsx-k))
+        #     for i in range(lsx_coordinate - 5 , lsx_coordinate + 5):
+        #         for j in range(origin_Y - 5, origin_Y +5):
+        #             if(i > 0 and i < width and j > 0 and j < height ): 
+        #                 cdstP2[j,i] = (0, 0, 255)    
+
+
+         
 
 
 def draw_X_Axis():
@@ -607,7 +654,7 @@ def draw_X_Axis():
         l = X_arr[h][1] 
         if l == maxlength_X or (l > maxlength_X - (maxlength_X * 0.1)) : 
             sameLine = sameLine + 1
-    print(" Same Lines : " + str(sameLine))
+    #### print(" Same Lines : " + str(sameLine))
 
     if (sameLine > 1): 
         # find_X_Axis_Using_Mofology() 
@@ -792,7 +839,7 @@ def draw_Graph():
             maxlength_Graph = l 
     # Draw Graph
     cv.line(cdstP, (arr[graph_cordinate][0], arr[graph_cordinate][1]), (arr[graph_cordinate][2], arr[graph_cordinate][3]), (0,252,0), 2, cv.LINE_AA)
-    print ("Graph    ------------->("+str(arr[graph_cordinate][0])+","+str(arr[graph_cordinate][1])+")       ("+str(arr[graph_cordinate][2])+","+str(arr[graph_cordinate][3])+")")
+    #### print ("Graph    ------------->("+str(arr[graph_cordinate][0])+","+str(arr[graph_cordinate][1])+")       ("+str(arr[graph_cordinate][2])+","+str(arr[graph_cordinate][3])+")")
 
 def origin():
     global origin_X, origin_Y
@@ -828,8 +875,8 @@ def identifyIntersection():
     #     graphCrossOrigin = True
     #     print(" Go through Origin")
 
-    print(" Y axis intersection ---------->("+str(intersection_Yaxis_X) +","+ str(intersection_Yaxis_Y) +")")    
-    print(" X axis intersection ---------->("+str(intersection_Xaxis_X) +","+ str(intersection_Xaxis_Y) +")")
+    #### print(" Y axis intersection ---------->("+str(intersection_Yaxis_X) +","+ str(intersection_Yaxis_Y) +")")    
+    #### print(" X axis intersection ---------->("+str(intersection_Xaxis_X) +","+ str(intersection_Xaxis_Y) +")")
 
     # draw intersection of x axis
     for i in range(intersection_Xaxis_X - 5 , intersection_Xaxis_X + 5):
@@ -991,7 +1038,7 @@ def draw_TicMark_X_Axis():
                 if((x2 > 0) and (x2<width)):
                     allLines[i,x2] = (255,252,0)   
                     cdstP[i,x2] = (255,252,0) 
-    print("Pixcels between Tic marks (X axis)  ------------->   : " + str(pixcelForTicMark_X))
+    #### print("Pixcels between Tic marks (X axis)  ------------->   : " + str(pixcelForTicMark_X))
 
 def identifyTicMarks_Y_Axis():
     global pixcelForTicMark_Y, height
@@ -1140,7 +1187,7 @@ def draw_TicMark_Y_Axis():
                 if((y2 > 0) and (y2<height) and (i > 0) and (i< width)):
                     allLines[y2,i] = (0,252,0)  
                     cdstP[y2,i] = (200,252,0) 
-    print("Pixcels between Tic marks (Y axis)  ------------->   : " + str(pixcelForTicMark_Y))
+    #### print("Pixcels between Tic marks (Y axis)  ------------->   : " + str(pixcelForTicMark_Y))
 
 
 def getRealCoordianatesWithoutOCR():
@@ -1169,8 +1216,8 @@ def getRealCoordianatesWithoutOCR():
         if (pixcelForTicMark_Y != 0) : 
             real_intersection_Yaxis_Y = int(round((origin_Y - intersection_Yaxis_Y)/ pixcelForTicMark_Y)) * ratio_Y_Axis_Value
 
-    print(" Real Coordinates of X intersectio Point  = " + str(real_intersection_Xaxis_X))
-    print(" Real Coordinates of Y intersectio Point  = " + str(real_intersection_Yaxis_Y))
+    #### print(" Real Coordinates of X intersectio Point  = " + str(real_intersection_Xaxis_X))
+    #### print(" Real Coordinates of Y intersectio Point  = " + str(real_intersection_Yaxis_Y))
 
 def equationIP(): 
     c = real_intersection_Yaxis_Y 
@@ -1263,11 +1310,11 @@ def identifyNumbersRelated_X_Y_Axis():
     
     if (total_ratio_X_Axis_Value > 0):
         ratio_X_Axis_Value = round(total_ratio_X_Axis_Value/(ratio_X_Axis_Index))
-        print("Ratio_X_Axis_Value " + str(ratio_X_Axis_Value))
+        #### print("Ratio_X_Axis_Value " + str(ratio_X_Axis_Value))
 
     if (total_ratio_Y_Axis_Value > 0):
         ratio_Y_Axis_Value = round(total_ratio_Y_Axis_Value/(ratio_Y_Axis_Index))
-        print("Ratio_Y_Axis_Value " + str(ratio_Y_Axis_Value))    
+        #### print("Ratio_Y_Axis_Value " + str(ratio_Y_Axis_Value))    
     
     # print charactor X coodinate and Y coodinate
     # for h in range(0, numberOfCharactor ):
@@ -1468,21 +1515,21 @@ def main(argv):
 
         # x axis
         check_X = indentify_X_Axis_UsingValues()
-        print(" Have we fond x axis using text : " + str(check_X))
+        #### print(" Have we fond x axis using text : " + str(check_X))
         # Identify X Axis Considering lenth If X Axis not found using text
         if(check_X != True): 
             draw_X_Axis()
         # draw X axis 
         cv.line(cdstP, (arr[X_axis_cordinate][0], arr[X_axis_cordinate][1]), (arr[X_axis_cordinate][2], arr[X_axis_cordinate][3]), (50,0,255), 2, cv.LINE_AA)
-        print ("X  axis -------------->("+str(arr[X_axis_cordinate][0])+","+str(arr[X_axis_cordinate][1])+")       ("+str(arr[X_axis_cordinate][2])+","+str(arr[X_axis_cordinate][3])+")")
+        #### print ("X  axis -------------->("+str(arr[X_axis_cordinate][0])+","+str(arr[X_axis_cordinate][1])+")       ("+str(arr[X_axis_cordinate][2])+","+str(arr[X_axis_cordinate][3])+")")
         
         # y axis
         check_Y = indentify_Y_UsingValues()
-        print(" Have we fond Y axis using text : " + str(check_Y))
+        #### print(" Have we fond Y axis using text : " + str(check_Y))
         if(check_Y != True): 
             draw_Y_Axis()
         cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
-        print ("Y  axis -------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
+        #### print ("Y  axis -------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
 
         # Graph
         draw_Graph() 
