@@ -596,6 +596,8 @@ def getQuadraticGraphCoodinates():
         real_sx = int(round((sx-origin_X)/pixcelForTicMark_X))
         rsx = real_sx
         lsx = real_sx - 1
+        X_Y_Coordinate = [[0] * 2 for i in range(10)] # 0- X coordinate / 1 - Y Coordinate
+        count = 0
         # print(" Real Sx ------>  " + str(real_sx))
         # color tic mark right hand side of thesamamiyjika axis
         for k in range(0, 20):
@@ -610,11 +612,33 @@ def getQuadraticGraphCoodinates():
             c = modf(rsy_D1)
             d3 = c[0]
             if (d3 < 0) :
-                d1 = (-1)*d3
-                print(" D_33333333333 ----> " + str(d3))
+                d3 = (-1)*d3
+                print(" D_33333333333 ----> " + str(d3)) 
+            if (d3 <= 0.2  or d3>=0.8) :
+                ry = int(round(rsy_D1))
+                if (count < 10):
+                    X_Y_Coordinate[count][0] = rsx+k
+                    X_Y_Coordinate[count][1] = ry
+                    count = count + 1
+                    print(" Coordinate------------> x=== " + str(rsx+k) + " Y ========" + str(ry))
 
+            # needddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+            # lsy = ((origin_Y-lsy_coordinate)/pixcelForTicMark_Y)
+            # lsy_D1 = round(lsy,1)
+            # d = modf(lsy_D1)
+            # d4 = d[0]
+            # if (d4 < 0) :
+            #     d4 = (-1)*d4
+            #     print(" D_33333333333 ----> " + str(d4))
+            # if (d4 <= 0.2  or d4>=0.8) :
+            #     ly = int(round(lsy_D1)) 
+            #     if (count < 10):
+            #         X_Y_Coordinate[count][0] = lsx-k
+            #         X_Y_Coordinate[count][1] = ly
+            #         count = count + 1
+            #     print(" Coordinate------------> x=== " + str(lsx-k) + " Y ========" + str(ly))
              
-             
+            # draw
             for i in range(lsx_coordinate - 5 , lsx_coordinate + 5):
                 for j in range(lsy_coordinate - 5, lsy_coordinate +5):
                     if(i > 0 and i < width and j > 0 and j < height ): 
@@ -623,7 +647,37 @@ def getQuadraticGraphCoodinates():
                 for j in range(rsy_coordinate - 5, rsy_coordinate +5):
                     if(i > 0 and i < width and j > 0 and j < height ): 
                         cdstP2[j,i] = (255, 255, 150)
-                        # cdstP[j,i] = (255, 255, 255) 
+
+        # print X_Y_Coordinate array
+        for i in range(0,10):
+            x = X_Y_Coordinate[i][0]
+            y = X_Y_Coordinate[i][1]
+            print(" X value ---> " + str(x) + " Y Value " + str(y))
+
+        if count > 3:
+            x1 = X_Y_Coordinate[0][0]
+            x2 = X_Y_Coordinate[1][0]
+            x3 = X_Y_Coordinate[2][0]
+            y1 = X_Y_Coordinate[0][1]
+            y2 = X_Y_Coordinate[1][1]
+            y3 = X_Y_Coordinate[2][1]
+
+            print(" X_1 value ---> " + str(x1) + " Y_1 Value " + str(y1))
+            print(" X_2 value ---> " + str(x2) + " Y_2 Value " + str(y2))
+            print(" X_3 value ---> " + str(x3) + " Y_3 Value " + str(y3))
+
+            a = (1/(x1 - x3)) * (((y1 - y2)/(x1 - x2)) - ((y2 - y3 )/(x2 - x3)))
+            b = ((y1 - y2)/(x1-x2)) - (qa * (x1+x2))
+            c = y1 - (a*pow(x1,2)) - (b*x1)
+            
+            a1 = round((1/(x1 - x3)) * (((y1 - y2)/(x1 - x2)) - ((y2 - y3 )/(x2 - x3))), 1)
+            b1 = round(((y1 - y2)/(x1-x2)) - (qa * (x1+x2)),1)
+            c1 = round(y1 - (a*pow(x1,2)) - (b*x1),1)
+            
+            
+            print(" Equation --->  Y = " +str(a1)+"X^2  + "+str(b1)+"X + " +str(c1))
+
+ 
         # color tic mark left hand side of thesamamiyjika axis
         # for k in range(0, 20):
         #     lsx_coordinate = origin_X + (pixcelForTicMark_X*(lsx-k))
