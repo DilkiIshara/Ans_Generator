@@ -518,6 +518,24 @@ def getQuadraticGraphCoodinates():
                 if(i > 0 and i < width and j > 0 and j < height ): 
                     cdstP2[j,i] = (255, 0, 0)
                     cdstP2[j,i] = (255, 0, 0)
+        
+        root_1 = x3
+        root_2 = x4
+        # print(" Real value ----> " + str(root_1))
+        # print(" Real value ----> " + str(root_2))
+        # print(" Origin X ----> " + str(origin_X))
+        real_val_1 = real_val_2 = 0 
+        real_val_1 = int(round(-1*((origin_X-root_1)/ pixcelForTicMark_X)))
+        real_val_2 = int(round(-1*((origin_X-root_2)/ pixcelForTicMark_X)))
+        print(" Real value ----> " + str(real_val_1))
+        print(" Real value ----> " + str(real_val_2))
+
+        if ((quadraticType == "min") and ((real_val_1 != 0) or (real_val_1 != 0))):
+            print("Graph Equation --- > " + " ( X - " + str(real_val_1) + ") ( X - " + str(real_val_2) + ")")
+        elif ((quadraticType == "max") and ((real_val_1 != 0) or (real_val_1 != 0))):
+            print("Graph Equation --- > " + " - ( X - " + str(real_val_1) + ") ( X - " + str(real_val_2) + ")")
+
+        
 
         # print("sx .   " + str(sx))
         # print("px .   " + str(px))
