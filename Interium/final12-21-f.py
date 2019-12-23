@@ -667,14 +667,16 @@ def getQuadraticGraphCoodinates():
             print(" X_3 value ---> " + str(x3) + " Y_3 Value " + str(y3))
 
             a = (1/(x1 - x3)) * (((y1 - y2)/(x1 - x2)) - ((y2 - y3 )/(x2 - x3)))
-            b = ((y1 - y2)/(x1-x2)) - (qa * (x1+x2))
+            b = ((y1 - y2)/(x1-x2)) - (a * (x1+x2))
             c = y1 - (a*pow(x1,2)) - (b*x1)
             
             a1 = round((1/(x1 - x3)) * (((y1 - y2)/(x1 - x2)) - ((y2 - y3 )/(x2 - x3))), 1)
-            b1 = round(((y1 - y2)/(x1-x2)) - (qa * (x1+x2)),1)
+            b1 = round(((y1 - y2)/(x1-x2)) - (a * (x1+x2)),1)
             c1 = round(y1 - (a*pow(x1,2)) - (b*x1),1)
             
-            
+            print(" a ----------->" + str(a1))
+            print(" b ----------->" + str(b1))
+            print(" c ----------->" + str(c1))
             print(" Equation --->  Y = " +str(a1)+"X^2  + "+str(b1)+"X + " +str(c1))
 
  
