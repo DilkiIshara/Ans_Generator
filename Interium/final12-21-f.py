@@ -193,7 +193,8 @@ def getQuadraticGraphCoodinates():
     pm = pc = nm = nc = px = nx = pny = 0
     qa = qb = qc = 0
     minMaxY = sx = 0
-    hasRealRoots = False   
+    hasRealRoots = False  
+    solveUsingRealRoots = False
 
     for i in range(0, len(graphs_arr)):
         m = graphs_arr[i][0]
@@ -503,6 +504,7 @@ def getQuadraticGraphCoodinates():
 
     if ( hasRealRoots == True):
         print(" Have Real Roots ----------------->>>>>")
+        solveUsingRealRoots = True
         # py = pny
         # ny = pny + 1
         # qa_before = (1/(sx - nx)) * (((py - minMaxY)/(px - sx)) - ((ny - py)/(nx - px)))
@@ -571,8 +573,10 @@ def getQuadraticGraphCoodinates():
             real_val_2 = int(round(-1*((origin_X-root_2)/ pixcelForTicMark_X)))
             if ((quadraticType == "min") and ((real_val_1 != 0) or (real_val_1 != 0))):
                 print("Graph Equation --- > " + " ( X - " + str(real_val_1) + ") ( X - " + str(real_val_2) + ")")
+                return
             elif ((quadraticType == "max") and ((real_val_1 != 0) or (real_val_1 != 0))):
                 print("Graph Equation --- > " + " - ( X - " + str(real_val_1) + ") ( X - " + str(real_val_2) + ")")
+                return
 
         
         else:
@@ -580,6 +584,8 @@ def getQuadraticGraphCoodinates():
             rsx = real_sx
             lsx = real_sx - 1
             print(" Real Sx ------>  " + str(real_sx))
+
+            solveUsingRealRoots = False
 
        
         # print(" Before qa  ---> " + str(qa_before))
@@ -591,8 +597,11 @@ def getQuadraticGraphCoodinates():
         # print(" Before qc  ---> " + str(qc_before))
         # print(" qc  ---> " + str(qc))
         # print(" x1  ---> " + str(x1)+ " x2 ---> " + str(x2) )
+          
     else : 
         print(" Does not have Real Roots ----------------->>>>>")
+
+    if (solveUsingRealRoots == False) :
         real_sx = int(round((sx-origin_X)/pixcelForTicMark_X))
         rsx = real_sx
         lsx = real_sx - 1
@@ -671,8 +680,30 @@ def getQuadraticGraphCoodinates():
             c = y1 - (a*pow(x1,2)) - (b*x1)
             
             a1 = round((1/(x1 - x3)) * (((y1 - y2)/(x1 - x2)) - ((y2 - y3 )/(x2 - x3))), 1)
+            a1_O = modf(a1)
+            d_a1 = round(a1_O[0],1)
+            if (d_a1 < 0) :
+                d_a1 = (-1)*d_a1
+                print ("=============================== a " + str(d_a1)) 
+            if (d_a1 <= 0.3  or d_a1>= 0.7) :
+                a1 = int(round(a1))
+
             b1 = round(((y1 - y2)/(x1-x2)) - (a * (x1+x2)),1)
+            b1_O = modf(b1)
+            d_b1 = round(b1_O[0],1)
+            if (d_b1 < 0) :
+                d_b1 = (-1)*d_b1 
+            print ("===============================  b " + str(d_b1)) 
+            if (d_b1 <= 0.3  or d_b1>=0.7) :
+                b1 = int(round(b1))
+
             c1 = round(y1 - (a*pow(x1,2)) - (b*x1),1)
+            c1_O = modf(c1)
+            d_c1 = round(c1_O[0],1)
+            if (d_c1 < 0) :
+                d_c1 = (-1)*d_c1 
+            if (d_c1 <= 0.3  or d_c1>=0.7) :
+                c1 = int(round(c1))
             
             print(" a ----------->" + str(a1))
             print(" b ----------->" + str(b1))
@@ -1624,9 +1655,10 @@ def main(argv):
 
     # cv.imshow("Resized image", resized) 
     # cv.imshow("Source", src) 
-    cv.imshow("Probabilistic Line Transform", cdstP) 
+
+    #### cv.imshow("Probabilistic Line Transform", cdstP) 
     cv.imshow("Min Max", cdstP2) 
-    cv.imshow("Detected All Lines" , allLines )
+    #### cv.imshow("Detected All Lines" , allLines )
     cv.waitKey()
     return 0  
 
