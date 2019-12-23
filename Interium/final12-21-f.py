@@ -8,6 +8,7 @@ import cv2 as cv
 import numpy as np
 import pytesseract
 from PIL import Image 
+from math import modf
 import re
 
 filename = None
@@ -520,20 +521,53 @@ def getQuadraticGraphCoodinates():
                     cdstP2[j,i] = (255, 0, 0)
         
         root_1 = x3
-        root_2 = x4
-        # print(" Real value ----> " + str(root_1))
-        # print(" Real value ----> " + str(root_2))
-        # print(" Origin X ----> " + str(origin_X))
+        root_2 = x4 
         real_val_1 = real_val_2 = 0 
-        real_val_1 = int(round(-1*((origin_X-root_1)/ pixcelForTicMark_X)))
-        real_val_2 = int(round(-1*((origin_X-root_2)/ pixcelForTicMark_X)))
-        print(" Real value ----> " + str(real_val_1))
-        print(" Real value ----> " + str(real_val_2))
 
-        if ((quadraticType == "min") and ((real_val_1 != 0) or (real_val_1 != 0))):
-            print("Graph Equation --- > " + " ( X - " + str(real_val_1) + ") ( X - " + str(real_val_2) + ")")
-        elif ((quadraticType == "max") and ((real_val_1 != 0) or (real_val_1 != 0))):
-            print("Graph Equation --- > " + " - ( X - " + str(real_val_1) + ") ( X - " + str(real_val_2) + ")")
+        # take number in floting point
+        real_val_1_float = -1*((origin_X-root_1)/ pixcelForTicMark_X)
+        real_val_2_float = -1*((origin_X-root_2)/ pixcelForTicMark_X)
+        print(" Real value floating points ----> " + str(real_val_1_float))
+        print(" Real value floating points ----> " + str(real_val_2_float))
+
+        # round the floating point number in to one decimal point
+        real_val_1_D1 = round(real_val_1_float,1)
+        real_val_2_D1 = round(real_val_2_float,1)
+        print(" Real value in one Decimal point ----> " + str(real_val_1_D1))
+        print(" Real value in one decimal point ----> " + str(real_val_2_D1))
+        
+        # Separate the Integer Part and Floating part
+        a = modf(real_val_1_D1)
+        d1 = a[0]
+        # print(" ----> " + str(a[0])) # floating part
+        # print(" ----> " + str(a[1])) # integer part
+        b = modf(real_val_2_D1)
+        d2 = b[0]
+        
+        # print(" ----> " + str(b[0])) # floating part
+        # print(" ----> " + str(b[1])) # integer part
+        print(" Decimal Point 1 ----> " + str(a[0]))
+        print(" Decimal Point 2 ----> " + str(b[0]))
+
+        if (d1 < 0) :
+            d1 = (-1)*d1
+            print(" Decimal Point 1 ----> " + str(d1))
+        if (d2 < 0) :
+            d2 = (-1)*d2
+            print(" Decimal Point 2 ----> " + str(d2))
+        # real_val_1_fd = round(real_val_1_float,1) - real_val_1
+        # real_val_2_fd = round(real_val_2_float,1) - real_val_2
+        # # a = modf(3.1234)
+        # print(" Real value First Decimal  1 ----> " + str(real_val_1_D1))
+        # print(" Real value First Decimal  2 ----> " + str(real_val_2_D1))
+        
+        if ( (d1 <= 0.2  or d1>=0.8) and (d2 <= 0.2  or d2>=0.8)):   
+            real_val_1 = int(round(-1*((origin_X-root_1)/ pixcelForTicMark_X)))
+            real_val_2 = int(round(-1*((origin_X-root_2)/ pixcelForTicMark_X)))
+            if ((quadraticType == "min") and ((real_val_1 != 0) or (real_val_1 != 0))):
+                print("Graph Equation --- > " + " ( X - " + str(real_val_1) + ") ( X - " + str(real_val_2) + ")")
+            elif ((quadraticType == "max") and ((real_val_1 != 0) or (real_val_1 != 0))):
+                print("Graph Equation --- > " + " - ( X - " + str(real_val_1) + ") ( X - " + str(real_val_2) + ")")
 
         
 
