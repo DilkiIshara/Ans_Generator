@@ -1306,13 +1306,23 @@ def getRealCoordianatesWithoutOCR():
     # print("Pixcels between Tic marks (X axis)  : " + str(pixcelForTicMark_X))
 
     if((origin_X <= intersection_Xaxis_X + 5) and (origin_X >= intersection_Xaxis_X - 5)): 
-        real_intersection_Xaxis_X = 0
-    elif (origin_X < intersection_Xaxis_X): 
+        real_intersection_Xaxis_X = 0 
+    else:
         if (pixcelForTicMark_X != 0) :
             real_intersection_Xaxis_X = int(round((intersection_Xaxis_X - origin_X)/ pixcelForTicMark_X)) * ratio_X_Axis_Value 
-    else:
-        if (pixcelForTicMark_X != 0) : 
-            real_intersection_Xaxis_X = int(round((origin_X - intersection_Xaxis_X)/ pixcelForTicMark_X)*(-1)) * ratio_X_Axis_Value
+            real_intersection_Xaxis_X_f = round(((intersection_Xaxis_X - origin_X)/ pixcelForTicMark_X) * ratio_X_Axis_Value , 1)
+            print(" real_intersection_Xaxis_X_f "+ str(real_intersection_Xaxis_X_f))
+            print(" intersection_Xaxis_X "+ str(intersection_Xaxis_X))
+            print("origin_X    " + str(origin_X))
+            print(" pixcelForTicMark_X "+ str(pixcelForTicMark_X))
+            print(" ratio_X_Axis_Value "+ str(ratio_X_Axis_Value))
+            print("check ------------------------")
+    # elif (origin_X < intersection_Xaxis_X): 
+    #     if (pixcelForTicMark_X != 0) :
+    #         real_intersection_Xaxis_X = int(round((intersection_Xaxis_X - origin_X)/ pixcelForTicMark_X)) * ratio_X_Axis_Value 
+    # else:
+    #     if (pixcelForTicMark_X != 0) : 
+    #         real_intersection_Xaxis_X = int(round((origin_X - intersection_Xaxis_X)/ pixcelForTicMark_X)*(-1)) * ratio_X_Axis_Value
     
     if((origin_Y <= intersection_Yaxis_Y + 5) and (origin_Y >= intersection_Yaxis_Y - 5)) :
         real_intersection_Yaxis_Y = 0 
@@ -1323,8 +1333,8 @@ def getRealCoordianatesWithoutOCR():
         if (pixcelForTicMark_Y != 0) : 
             real_intersection_Yaxis_Y = int(round((origin_Y - intersection_Yaxis_Y)/ pixcelForTicMark_Y)) * ratio_Y_Axis_Value
 
-    #### print(" Real Coordinates of X intersectio Point  = " + str(real_intersection_Xaxis_X))
-    #### print(" Real Coordinates of Y intersectio Point  = " + str(real_intersection_Yaxis_Y))
+    print(" Real Coordinates of X intersectio Point  = " + str(real_intersection_Xaxis_X))
+    print(" Real Coordinates of Y intersectio Point  = " + str(real_intersection_Yaxis_Y))
 
 def equationIP(): 
     c = real_intersection_Yaxis_Y 
@@ -1655,6 +1665,9 @@ def main(argv):
         # 13 Check graph is quadratic or Linear
         checkGraph()
 
+        # get the ratio between x and Y axis Values
+        identifyNumbersRelated_X_Y_Axis()
+
         # if graph is a Linear Graph
         if ( graphType == "linear"):
             # Graph
@@ -1668,13 +1681,13 @@ def main(argv):
                 equationIP()
 
         # if graph is a Quadratic Graph
-        elif (graphType == "Quadratic"): 
+        elif ((graphType == "Quadratic") and (pixcelForTicMark_Y !=0) and (pixcelForTicMark_X != 0)): 
             getQuadraticGraphCoodinates()
 
 
         
          
-        #identifyNumbersRelated_X_Y_Axis()
+        
         
     if ( graphType == "linear"): 
         cv.imshow("Probabilistic Line Transform", cdstP) 
