@@ -550,11 +550,11 @@ def getQuadraticGraphCoodinates():
         
         # Separate the Integer Part and Floating part
         a = modf(real_val_1_D1)
-        d1 = a[0]
+        d1 = round(a[0],1)
         # print(" ----> " + str(a[0])) # floating part
         # print(" ----> " + str(a[1])) # integer part
         b = modf(real_val_2_D1)
-        d2 = b[0]
+        d2 = round(b[0],1)
         
         # print(" ----> " + str(b[0])) # floating part
         # print(" ----> " + str(b[1])) # integer part
@@ -568,7 +568,7 @@ def getQuadraticGraphCoodinates():
             d2 = (-1)*d2
             print(" Decimal Point 2 ----> " + str(d2))
         
-        if ( (d1 <= 0.2  or d1>=0.8) and (d2 <= 0.2  or d2>=0.8)):   
+        if ( (d1 <= 0.25  or d1>=0.75) and (d2 <= 0.25  or d2>=0.75)):   
             real_val_1 = int(round(-1*((origin_X-root_1)/ pixcelForTicMark_X)))
             real_val_2 = int(round(-1*((origin_X-root_2)/ pixcelForTicMark_X)))
             if ((quadraticType == "min") and ((real_val_1 != 0) or (real_val_1 != 0))):
@@ -609,21 +609,22 @@ def getQuadraticGraphCoodinates():
         count = 0
         # print(" Real Sx ------>  " + str(real_sx))
         # color tic mark right hand side of thesamamiyjika axis
-        for k in range(0, 20):
+        for k in range(0, 25):
             rsx_coordinate = origin_X + (pixcelForTicMark_X*(rsx+k))
             lsx_coordinate = origin_X + (pixcelForTicMark_X*(lsx-k))
 
             rsy_coordinate = int(round(((qa*(pow(rsx_coordinate,2))) + (qb*rsx_coordinate) + qc)))
             lsy_coordinate = int(round(((qa*(pow(lsx_coordinate,2))) + (qb*lsx_coordinate) + qc)))
             
+            
             rsy = ((origin_Y-rsy_coordinate)/pixcelForTicMark_Y)
             rsy_D1 = round(rsy,1)
             c = modf(rsy_D1)
-            d3 = c[0]
+            d3 = round(c[0],1)
             if (d3 < 0) :
                 d3 = (-1)*d3
                 print(" D_33333333333 ----> " + str(d3)) 
-            if (d3 <= 0.2  or d3>=0.8) :
+            if (d3 <= 0.25  or d3>=0.75) :
                 ry = int(round(rsy_D1))
                 if (count < 10):
                     X_Y_Coordinate[count][0] = rsx+k
@@ -663,6 +664,25 @@ def getQuadraticGraphCoodinates():
             y = X_Y_Coordinate[i][1]
             print(" X value ---> " + str(x) + " Y Value " + str(y))
 
+        if count <3:
+            lsx_coordinate = origin_X + (pixcelForTicMark_X*(lsx-k))
+            lsy_coordinate = int(round(((qa*(pow(lsx_coordinate,2))) + (qb*lsx_coordinate) + qc)))
+            lsy = ((origin_Y-lsy_coordinate)/pixcelForTicMark_Y)
+            lsy_D1 = round(lsy,1)
+            d = modf(lsy_D1)
+            d4 = round(d[0],1)
+            if (d4 < 0) :
+                d4 = (-1)*d4
+                print(" D_33333333333 ----> " + str(d4))
+            if (d4 <= 0.25  or d4>=0.75) :
+                ly = int(round(lsy_D1)) 
+                if (count < 10):
+                    X_Y_Coordinate[count][0] = lsx-k
+                    X_Y_Coordinate[count][1] = ly
+                    count = count + 1
+                print(" Coordinate------------> x=== " + str(lsx-k) + " Y ========" + str(ly))
+
+
         if count > 3:
             x1 = X_Y_Coordinate[0][0]
             x2 = X_Y_Coordinate[1][0]
@@ -685,7 +705,7 @@ def getQuadraticGraphCoodinates():
             if (d_a1 < 0) :
                 d_a1 = (-1)*d_a1
                 print ("=============================== a " + str(d_a1)) 
-            if (d_a1 <= 0.3  or d_a1>= 0.7) :
+            if (d_a1 <= 0.25  or d_a1>= 0.75) :
                 a1 = int(round(a1))
 
             b1 = round(((y1 - y2)/(x1-x2)) - (a * (x1+x2)),1)
@@ -694,7 +714,7 @@ def getQuadraticGraphCoodinates():
             if (d_b1 < 0) :
                 d_b1 = (-1)*d_b1 
             print ("===============================  b " + str(d_b1)) 
-            if (d_b1 <= 0.3  or d_b1>=0.7) :
+            if (d_b1 <= 0.25  or d_b1>=0.75) :
                 b1 = int(round(b1))
 
             c1 = round(y1 - (a*pow(x1,2)) - (b*x1),1)
@@ -702,7 +722,7 @@ def getQuadraticGraphCoodinates():
             d_c1 = round(c1_O[0],1)
             if (d_c1 < 0) :
                 d_c1 = (-1)*d_c1 
-            if (d_c1 <= 0.3  or d_c1>=0.7) :
+            if (d_c1 <= 0.25  or d_c1>=0.75) :
                 c1 = int(round(c1))
             
             print(" a ----------->" + str(a1))
