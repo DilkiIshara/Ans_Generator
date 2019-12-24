@@ -1601,98 +1601,86 @@ def main(argv):
     
     if linesP is not None: # Check there are lines
 
-        # 1 store value cordinate
+        # store value cordinate
         if result != "":
             getTextCoordinate()
 
-        # 2  Draw the lines
+        # Draw the lines
         displayAlllines()
 
-        # 3  add mofology
+        # add mofology
         addMofologyToImage()
 
-        # 4 Store Lines Coordinate
+        # Store Lines Coordinate
         storeLineCoordinate()
             
-        # 5 Separate X axis Y axis and Graphs
+        # Separate X axis Y axis and Graphs
         separateX_Y_Graph()
 
-        # 6 x axis
+        # Check graph is quadratic or Linear
+        checkGraph()
+
+        # x axis
         check_X = indentify_X_Axis_UsingValues()
         #### print(" Have we fond x axis using text : " + str(check_X))
         # Identify X Axis Considering lenth If X Axis not found using text
         if(check_X != True): 
             draw_X_Axis()
         # draw X axis 
-        #### print ("X  axis -------------->("+str(arr[X_axis_cordinate][0])+","+str(arr[X_axis_cordinate][1])+")       ("+str(arr[X_axis_cordinate][2])+","+str(arr[X_axis_cordinate][3])+")")
         cv.line(cdstP, (arr[X_axis_cordinate][0], arr[X_axis_cordinate][1]), (arr[X_axis_cordinate][2], arr[X_axis_cordinate][3]), (50,0,255), 2, cv.LINE_AA)
+        #### print ("X  axis -------------->("+str(arr[X_axis_cordinate][0])+","+str(arr[X_axis_cordinate][1])+")       ("+str(arr[X_axis_cordinate][2])+","+str(arr[X_axis_cordinate][3])+")")
         
-        # 7 y axis
+        # y axis
         check_Y = indentify_Y_UsingValues()
         #### print(" Have we fond Y axis using text : " + str(check_Y))
         if(check_Y != True): 
             draw_Y_Axis()
         cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
         #### print ("Y  axis -------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
-        
-        # 8 identify origin
+
+        # Graph
+        draw_Graph() 
+
+        # identify origin
         origin()
-        
-        # 9 identify X axis Ticmarks
+
+        # identify X axis Ticmarks
         if (pixcelForTicMark_X == 0 ):
             identifyTicMarks_X_Axis() 
 
-        # 10 identify Y axis Ticmarks
+        # identify Y axis Ticmarks
         if (pixcelForTicMark_Y == 0):
             identifyTicMarks_Y_Axis() 
-
-        # 11 draw tic mark of Y axis
+        
+        # draw tic mark of Y axis
         draw_TicMark_Y_Axis()
 
-        # 12 draw tic mark of X axis
+        # draw tic mark of X axis
         draw_TicMark_X_Axis()
 
-        # 13 Check graph is quadratic or Linear
-        checkGraph()
-
-        # if graph is a Linear Graph
-        if ( graphType == "linear"):
-            # Graph
-            draw_Graph() 
-            # identify X and Y axis intersection point
-            identifyIntersection()
-            # get real coordinates of y axis and X intersection point without OCR
-            if ( pixcelForTicMark_Y !=0 and pixcelForTicMark_X != 0) :
-                getRealCoordianatesWithoutOCR()
-                # generate equation using Image processing without OCR
-                equationIP()
-
-        # if graph is a Quadratic Graph
-        elif (graphType == "Quadratic"): 
+        if graphType == "Quadratic": 
             getQuadraticGraphCoodinates()
 
-
-        
+        # identify X and Y axis intersection point
+        identifyIntersection()
          
-        #identifyNumbersRelated_X_Y_Axis()
+        # identifyNumbersRelated_X_Y_Axis()
         
-    if ( graphType == "linear"): 
-        cv.imshow("Probabilistic Line Transform", cdstP) 
-    elif (graphType == "Quadratic"): 
-        cv.imshow("Min Max", cdstP2)
-        cv.imshow("Probabilistic Line Transform", cdstP) 
-    cv.imshow("Detected All Lines" , allLines )
-    cv.waitKey()
-    return 0  
+        # get real coordinates of y axis and X intersection point without OCR
+        if ( pixcelForTicMark_Y !=0 and pixcelForTicMark_X != 0) :
+            getRealCoordianatesWithoutOCR()
+
+        # generate equation using Image processing without OCR
+        equationIP()
 
     # cv.imshow("Resized image", resized) 
     # cv.imshow("Source", src) 
 
     #### cv.imshow("Probabilistic Line Transform", cdstP) 
-    #### cv.imshow("Min Max", cdstP2) 
+    cv.imshow("Min Max", cdstP2) 
     #### cv.imshow("Detected All Lines" , allLines )
-    #### cv.waitKey()
-    #### return 0  
+    cv.waitKey()
+    return 0  
 
 if __name__ == "__main__":
     main(sys.argv[1:]) 
