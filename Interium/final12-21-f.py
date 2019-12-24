@@ -20,7 +20,7 @@ X_axis_cordinate = Y_axis_cordinate = graph_cordinate = -1
 arr = None             # 0-x1 1-Y1 2-x2 3-y2
 X_arr = Y_arr = None   # 0-a  1-length 2-arrIndex
 graphs_arr = None      # 0-m  1-C 2-length 3-arrIndex 
-cdstP = cdstP2 = allLines = textCoordinate = None
+cdstP = cdstP2 = allLines = textCoordinate = cdstP_Linear = None
 noOfLines = numberOfCharactor = 0
 width = height = 0
 origin_X = origin_Y = intersection_Xaxis_X = intersection_Xaxis_Y = intersection_Yaxis_X = intersection_Yaxis_Y = numberOfDigitValue = 0
@@ -1543,9 +1543,87 @@ def indentify_X_Axis_UsingValues():
                     return found_X 
     return found_X 
 
+def generateEquationLinearGraph():
+    m = graphs_arr[graph_cordinate][0]
+    c = graphs_arr[graph_cordinate][1]
+    X_Y_Coordinate = [[0] * 2 for i in range(10)] # 0- X coordinate / 1 - Y Coordinate
+    count = 0
+    current_X = 0
+
+    for k in range(0, 20):
+        current_X = origin_X+(k*pixcelForTicMark_X) 
+        intersect_y = round((m*current_X) + c,1)
+        # draw root
+        # for i in range(current_X - 5 , current_X + 5):
+        #     for j in range(check_Y - 5, check_Y +5):
+        #         if(i > 0 and i < width and j > 0 and j < height ): 
+        #             cdstP_Linear[j,i] = (255, 0, 0)
+        #             cdstP_Linear[j,i] = (255, 0, 0)
+
+        real_Y = round(((origin_Y - intersect_y)/pixcelForTicMark_Y) , 1)
+        print(" X Value -->" + str(-k) + " Y Value -->" + str(real_Y) )
+        a = modf(real_Y)
+        d1 = round(a[0],1)
+        if (d1 < 0) :
+            d1 = (-1)*d1  
+        if (d1 <= 0.25  or d1>=0.75) :
+                y = int(round(real_Y))
+                if (count < 10):
+                    X_Y_Coordinate[count][0] = k
+                    X_Y_Coordinate[count][1] = y
+                    count = count + 1
+
+    if count < 2:
+        for k in range(1, 20):
+            current_X = origin_X-(k*pixcelForTicMark_X) 
+            intersect_y = round((m*current_X) + c,1)
+            real_Y = round(((origin_Y - intersect_y)/pixcelForTicMark_Y) , 1)
+            # print(" X Value -->" + str(-k) + " Y Value -->" + str(real_Y) )
+            a = modf(real_Y)
+            d1 = round(a[0],1)
+            if (d1 < 0) :
+                d1 = (-1)*d1  
+            if (d1 <= 0.25  or d1>=0.75) :
+                y = int(round(real_Y))
+                if (count < 10):
+                    X_Y_Coordinate[count][0] = -k
+                    X_Y_Coordinate[count][1] = y
+                    count = count + 1
+    
+    if (count > 2):
+        x1 = X_Y_Coordinate[0][0]
+        y1 = X_Y_Coordinate[0][1]
+        x2 = X_Y_Coordinate[1][0]
+        y2 = X_Y_Coordinate[1][1]
+
+        m = round(((y1 - y2)/(x1 - x2)) , 1)
+        a = modf(m)
+        d1 = round(a[0],1)
+        if (d1 < 0) :
+            d1 = (-1)*d1  
+        if (d1 <= 0.25  or d1>=0.75) :
+            m = int(round(m))
+
+        c = round((y1 - (m*x1)), 1)
+        b = modf(c)
+        d2 = round(b[0],1)
+        if (d2 < 0) :
+            d2 = (-1)*d2
+        if (d2 <= 0.25  or d2>=0.75) :
+            c = int(round(c))
+
+        print(" Equation ----> " + " Y = " + str(m) + "X + "+ str(c))
+
+    # print
+    for i in range (0, 10):
+        print(" X Value -->" + str(X_Y_Coordinate[i][0]) + " Y Value -->" + str(X_Y_Coordinate[i][1]) )
+       
+    # getQuadraticGraphCoodinates
+
+
 def main(argv):
     
-    global cdstP, cdstP2, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y, height, width, filename, src
+    global cdstP, cdstP2, cdstP_Linear, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y, height, width, filename, src
 
     # Loads an image
     default_file = 'x2.png' 
@@ -1586,6 +1664,7 @@ def main(argv):
     cdstP = np.copy(cdst)
     allLines = np.copy(cdst)  
     cdstP2 = np.copy(cdst)
+    cdstP_Linear = np.copy(cdst)
     
     # Get Text
     global result
@@ -1676,9 +1755,10 @@ def main(argv):
             identifyIntersection()
             # get real coordinates of y axis and X intersection point without OCR
             if ( pixcelForTicMark_Y !=0 and pixcelForTicMark_X != 0) :
-                getRealCoordianatesWithoutOCR()
-                # generate equation using Image processing without OCR
-                equationIP()
+                # getRealCoordianatesWithoutOCR()
+                # # generate equation using Image processing without OCR
+                # equationIP()
+                generateEquationLinearGraph()
 
         # if graph is a Quadratic Graph
         elif ((graphType == "Quadratic") and (pixcelForTicMark_Y !=0) and (pixcelForTicMark_X != 0)): 
@@ -1691,6 +1771,7 @@ def main(argv):
         
     if ( graphType == "linear"): 
         cv.imshow("Probabilistic Line Transform", cdstP) 
+        cv.imshow("Linear graph", cdstP_Linear) 
     elif (graphType == "Quadratic"): 
         cv.imshow("Min Max", cdstP2)
         cv.imshow("Probabilistic Line Transform", cdstP) 
