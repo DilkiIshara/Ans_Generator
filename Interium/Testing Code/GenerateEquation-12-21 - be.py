@@ -19,7 +19,7 @@ X_axis_cordinate = Y_axis_cordinate = graph_cordinate = -1
 arr = None             # 0-x1 1-Y1 2-x2 3-y2
 X_arr = Y_arr = None   # 0-a  1-length 2-arrIndex
 graphs_arr = None      # 0-m  1-C 2-length 3-arrIndex 
-cdstP = allLines = textCoordinate = None
+cdstP = cdstP2 = allLines = textCoordinate = None
 noOfLines = numberOfCharactor = 0
 width = height = 0
 origin_X = origin_Y = intersection_Xaxis_X = intersection_Xaxis_Y = intersection_Yaxis_X = intersection_Yaxis_Y = numberOfDigitValue = 0
@@ -165,17 +165,17 @@ def separateX_Y_Graph():
 
 def checkGraph():
     global graphType
-    if numberOf_Graph > 1 :
+    if numberOf_Graph > 1 : # check number of lines which are not horizontal or vertical
         negativeG = positiveG = 0
         for i in range(0, len(graphs_arr)):
             m = graphs_arr[i][0]
             if m != 0:
-                print(" graph m " + str(graphs_arr[i][0]))
+                # print(" graph m " + str(graphs_arr[i][0]))
                 if m < 0:
                     negativeG = negativeG + 1
                 else: 
                     positiveG = positiveG + 1
-        if ((positiveG >= 1) and (negativeG >=1)) :
+        if ((positiveG >= 1) and (negativeG >=1)) : # If have two lines which has positive and negative gradiants
             graphType = "Quadratic"
             print("Quadratic")
         else:
@@ -186,42 +186,443 @@ def checkGraph():
         print(" linear ")   
 
 def getQuadraticGraphCoodinates():
-    global graphType
+    global graphType, cdstP2
     lengthNegative = lengthPositive = negativeIndex = positiveIndex = 0  
+    quadraticType = None
+    pm = pc = nm = nc = px = nx = 0
+    minMaxY = sx = 0
+
     for i in range(0, len(graphs_arr)):
         m = graphs_arr[i][0]
         lineLength = graphs_arr[i][2] 
+        c = graphs_arr[i][1] 
         if m != 0:
             # print(" graph m " + str(graphs_arr[i][0]))
+            # get the line which has negative gradiant and max length
             if m < 0:
                 if lengthNegative < lineLength :
                     lengthNegative = lineLength
+                    nm = m
+                    nc = c
                     negativeIndex = i
+            # get the line which has positive gradiant and max length
             else: 
                 if lengthPositive < lineLength :
                     lengthPositive = lineLength
+                    pm = m
+                    pc = c
                     positiveIndex = i
-    print(" Positive Index = " + str(positiveIndex))
-    print(" Negative Index = " + str(negativeIndex))
+
+    # Draw the 2 linear lines og Quadratic Graphs
+    # print(" Positive Index = " + str(positiveIndex))
+    # print(" Negative Index = " + str(negativeIndex))
     cv.line(cdstP, (arr[negativeIndex][0], arr[negativeIndex][1]), (arr[negativeIndex][2], arr[negativeIndex][3]), (5,0,255), 2, cv.LINE_AA)
     cv.line(cdstP, (arr[positiveIndex][0], arr[positiveIndex][1]), (arr[positiveIndex][2], arr[positiveIndex][3]), (128, 0, 128), 2, cv.LINE_AA)
     
+    # get x coodinates of line which has positive gradiant
     positiveXcoodinate = 0
     if ((arr[positiveIndex][0]) < (arr[positiveIndex][2])):
         positiveXcoodinate = arr[positiveIndex][0]
     else:
         positiveXcoodinate = arr[positiveIndex][2]
     
+    # get x coodinates of line which has negative gradiant
     negativeXcoodinate = 0
     if ((arr[negativeIndex][0]) < (arr[negativeIndex][2])):
         negativeXcoodinate = arr[negativeIndex][0]
     else:
         negativeXcoodinate = arr[negativeIndex][2]
     
+    # check quadratic graph hax max or min value
     if (positiveXcoodinate < negativeXcoodinate):
+        quadraticType = "min"
         print(" Has Min Value")
     else:
+        quadraticType = "max"
         print(" Has MaX Value")
+
+    # take the Y value for both positive and negative lines of quadratic graph
+    py = ny = y = 0
+    if quadraticType == "min": 
+        if (arr[positiveIndex][1] < arr[positiveIndex][3]):
+            py = arr[positiveIndex][1]
+        else :
+            py = arr[positiveIndex][3]
+
+        if (arr[negativeIndex][1] < arr[negativeIndex][3]):
+            ny = arr[negativeIndex][1]
+        else :
+            ny = arr[negativeIndex][3]
+        if(ny > py):
+            y = ny
+        else:
+            y = py
+        # px = int(round((y - pc )/pm))
+        # nx = int(round((y - nc )/nm))
+        # print(" px , nx " + str(px) +"fffffffffff" + str(nx))
+        # sx = int(round((px+nx))/2)
+        # print("sx = " + str(sx)) 
+        # for i in range(0, width):
+        #     allLines[y,i] = (50, 55, 255)
+        #     cdstP[y,i] = (50, 55, 255) 
+        # for i in range(0, height): 
+        #     allLines[i,sx] = (50, 55, 255)
+        #     cdstP[i,sx] = (50, 55, 255)
+        # for i in range(0, height): 
+        #     allLines[i,px] = (50, 55, 255)
+        #     cdstP[i,px] = (50, 55, 255)
+        # for i in range(0, height): 
+        #     allLines[i,nx] = (50, 55, 255)
+        #     cdstP[i,nx] = (50, 55, 255) 
+
+    elif quadraticType == "max": 
+        # print("Max")
+        # py = ny = y = 0
+        if (arr[positiveIndex][1] < arr[positiveIndex][3]):
+            py = arr[positiveIndex][3]
+        else :
+            py = arr[positiveIndex][1]
+        if (arr[negativeIndex][1] < arr[negativeIndex][3]):
+            ny = arr[negativeIndex][3]
+        else :
+            ny = arr[negativeIndex][1]
+        if(ny > py):
+            y = py
+        else:
+            y = ny
+
+    # get X coodinate of graphs and get the x coodinate of (Samamithika Akshaya )
+    px = int(round((y - pc )/pm))
+    nx = int(round((y - nc )/nm))
+    sx = int(round((px+nx))/2)
+
+    # draw lines (Samamithika akshaya)
+    for i in range(0, width):
+        cdstP2[y,i] = (50, 55, 255)
+        cdstP[y,i] = (50, 55, 255) 
+    for i in range(0, height): 
+        cdstP2[i,sx] = (50, 55, 255)
+        cdstP[i,sx] = (50, 55, 255)
+    for i in range(0, height): 
+        cdstP2[i,px] = (50, 55, 255)
+        cdstP[i,px] = (50, 55, 255)
+    for i in range(0, height): 
+        cdstP2[i,nx] = (50, 55, 255)
+        cdstP[i,nx] = (50, 55, 255) 
+    #cv.imshow("Mofology ------" , MofologyImg)
+
+    # Transform source image to gray if it is not already
+    if len(MofologyImg.shape) != 2:
+        gray = cv.cvtColor(MofologyImg, cv.COLOR_BGR2GRAY)
+    else:
+        gray = MofologyImg 
+
+    # Set threshold level
+    threshold_level = 10
+
+    # Find coordinates of all pixels below threshold
+    coords = np.column_stack(np.where(gray < threshold_level))
+    np.set_printoptions(threshold=np.inf)
+    #print(coords)
+     
+    # create array to store y coodinates of quadratic graph
+    yCordinates = np.arange(height)
+
+    # assign value to 0
+    for h in range(0, height):
+        yCordinates[h] = 0
+
+    # /*
+       # /* This point we can check graph is samamithka on y axis */
+       # 
+       # 
+     
+    # store Y coordinates in yCordinates list
+    indexY = 0
+    for i in range(0, len(coords)):
+        y = coords[i][0]
+        x = coords[i][1]   
+        if (x >= sx -2) and (x <= sx +2):
+            if (indexY < height):
+                yCordinates[indexY] = y
+                indexY = indexY + 1
+            # for j in range(0, 10):
+            #     cdstP[y+j,x] = ( 50 , 55, 255)
+            #     print(" X coodinate = " + str(coords[i][1]) + " Y coordinate " + str(coords[i][0]))
+    # for i in range(0, (len(yCordinates)-1)):
+    # y_start = yCordinates[0]
+
+    # sort array
+    array_sort =  np.sort(yCordinates) 
+
+    # find max 
+    max = 0  
+    for i in range(0, (len(yCordinates))): 
+        currentY = yCordinates[i]
+        if (currentY > max):
+            max = currentY
+
+    # find min value
+    min = max
+    for i in range(0, (len(yCordinates))): 
+        currentY = yCordinates[i]
+        if ((currentY != 0) and (currentY < min) ):
+            min = currentY
+
+    # print(" max Current value ====  "+ str(max))
+    # print(" min Current value ====  "+ str(min))
+    
+    # identify Y coordinate of min/max point of quadratic eqation
+    if ((max - min) <= 10):
+        minMaxY = int(round((max+min)/2))
+
+    # if we cant idntify Y coordinate of min/max point of quadratic eqation expand the X coodinate range
+
+    # elif((max-min) > pixcelForTicMark_Y):
+    elif((max-min) > 10):
+        # print (" sx -------------------" + str(sx))
+
+        xYCoodinareOfQuadraticGraph = [[0] * 2 for i in range(100)] # 0- X coodinate 1- Y coodinate
+        # yCordinatesOfQuadraticGraph = np.arange(height)
+        yCordinatesOfQuadraticGraph = np.arange(width)
+
+
+        # assign value to 0
+        for h in range(0, width):
+            yCordinatesOfQuadraticGraph[h] = 0
+
+        # get the y coodinate of Graphs by considering mor X coordinates
+        index = 0
+        # for i in range(sx-30, sx + 30):
+
+
+
+        # for i in range(sx-20, sx + 20):
+        #     cX = i
+        #     indexY = 0
+        #     for p in range(0, len(coords)):
+        #         y = coords[p][0]
+        #         x = coords[p][1]  
+        #         # allLines[x,y] = (255, 255, 0)
+        #         if (x == cX):
+        #             yCordinatesOfQuadraticGraph[indexY] = y
+        #             indexY = indexY + 1
+        #             cdstP2[y,x] = (255, 0, 0)
+
+
+      
+        for i in range(sx-30, sx + 30):
+            cX = i
+            indexY = 0
+            c = 1
+            min = max = 0
+            for p in range(0, len(coords)):
+                total_Y = 0
+                count = 0
+                y = coords[p][0]
+                x = coords[p][1]  
+                # allLines[x,y] = (255, 255, 0)
+                if (x == cX):
+                    total_Y = total_Y + y
+                    count = count + 1
+                    if c == 1:
+                       min = max = y
+                    elif c > 1:
+                        if (y > max ):
+                            max = y
+                        if (y < min):
+                            min = y
+                    c = c + 1
+                    # yCordinatesOfQuadraticGraph[indexY] = y
+                    # indexY = indexY + 1
+                    # cdstP2[y,x] = (255, 0, 0)
+            if (count > 0 and total_Y > 0 and (max - min ) <= 10):
+                yCordinatesOfQuadraticGraph[indexY] = int(round(total_Y/count))
+                indexY = indexY + 1
+                cdstP2[y,x] = (255, 0, 0)
+
+        for i in range(0, len(yCordinatesOfQuadraticGraph)):
+            y = yCordinatesOfQuadraticGraph[i]
+            if ( y != 0):
+                print("y coordinate   " + str(y) )
+
+        y_corinate = [[0] * 2 for i in range(len(yCordinatesOfQuadraticGraph))]
+        for i in range(0, len(yCordinatesOfQuadraticGraph)):
+            y = yCordinatesOfQuadraticGraph[i]
+            count = 0
+            if ( y != 0):
+                for j in range(0, len(yCordinatesOfQuadraticGraph)):
+                    current = yCordinatesOfQuadraticGraph[j]
+                    if ( current >= (y - 10)) and ( current <= (y + 10)):
+                        count = count + 1
+                y_corinate[i][0] = y
+                y_corinate[i][1] = count
+                print("y coordinate   " + str(y) + "count" + str(count))
+        
+        max_count = count = 0
+        for i in range(0, len(y_corinate)):
+            c = y_corinate[i][1]
+            if (c > 0):
+                count = count + 1
+                if (c > max_count): 
+                    max_count = c
+                # print(" Y Coordinate " + str(y_corinate[i][0]) + " count " + str(y_corinate[i][1]))
+
+        print(" Max  count " + str(max_count))
+
+        # create array to store distance from origin to tic mark
+        y_Cordinate_Array = np.arange(count)
+
+        # assign value to 0
+        for h in range(0, count):
+            y_Cordinate_Array[h] = 0
+        
+        index_y_Cordinate_Array = 0
+        for i in range(0, len(y_corinate)):
+            c = y_corinate[i][1]
+            if ((c > 0) and ((c == max_count) or (c == max_count-1))):
+                y_Cordinate_Array[index_y_Cordinate_Array] = y_corinate[i][0]
+                index_y_Cordinate_Array = index_y_Cordinate_Array + 1
+        
+        for i in range(0, index_y_Cordinate_Array):
+            print(str(y_Cordinate_Array[i]))
+            y = y_Cordinate_Array[i]
+            for j in range (sx - 20, sx +20):
+                cdstP2[y,j] = (255, 0, 0)
+                
+                
+            
+
+        if quadraticType == "max": 
+            minY = y_Cordinate_Array[0]
+            for i in range(0, index_y_Cordinate_Array):
+                y = y_Cordinate_Array[i]
+                if ( y < minY):
+                    minY = y
+            minMaxY = minY
+        elif quadraticType == "min": 
+            maxY = y_Cordinate_Array[0]
+            for i in range(0, index_y_Cordinate_Array):
+                y = y_Cordinate_Array[i]
+                if ( y > maxY):
+                    maxY = y
+            minMaxY = maxY
+
+        print(" Minmax Y " + str(minMaxY))
+        print(" Height " + str(height))
+
+    # draw min. max point
+    for i in range(sx - 5 , sx + 5):
+        for j in range(minMaxY - 5, minMaxY +5):
+            if(i > 0 and i < width and j > 0 and j < height ): 
+                cdstP2[j,i] = (255, 0, 0)
+                cdstP2[j,i] = (255, 0, 0)
+
+    #         # print yCordinatesOfQuadraticGraph
+    #         # for u in range(0, height):
+    #         #     print(str( cX ) + " yCordinatesOfQuadraticGraph = " + str(yCordinatesOfQuadraticGraph[u]))
+            
+    #         # find max 
+    #         max = 0  
+    #         for q in range(0, 100): 
+    #             currentY = yCordinatesOfQuadraticGraph[q]
+    #             if (currentY > max):
+    #                 max = currentY
+
+    #         # find min value
+    #         min = max
+    #         for r in range(0, 100): 
+    #             currentY = yCordinatesOfQuadraticGraph[r] 
+    #             if ((currentY != 0) and (currentY < min) ):
+    #                 min = currentY
+            
+    #         # print(str( cX ) + " Min  = " + str(min) + " Max  =" + str(max))
+
+    #         # assign value to 0
+    #         for h in range(0, height):
+    #             yCordinatesOfQuadraticGraph[h] = 0
+
+    #         if ((max-min) <= 10 ):
+    #             xYCoodinareOfQuadraticGraph[index][0] = cX
+    #             xYCoodinareOfQuadraticGraph[index][1] =  int(round((max+min)/2))
+    #             index = index + 1
+    #         # print("quadraticType           ========================= " + quadraticType)
+
+    #     # if the graphs is max graph get the smaller y value
+    #     if(quadraticType == "max"):
+    #         yL = yR = xYCoodinareOfQuadraticGraph[0][1]
+    #         for s in range(0, 100):
+    #             x = xYCoodinareOfQuadraticGraph[s][0] 
+    #             y = xYCoodinareOfQuadraticGraph[s][1]
+    #             if ((x != 0) and (y !=0)):
+    #                 if(x <= sx ):
+    #                     d =  y - yL
+    #                     if d <= 10:
+    #                         yL = y
+    #         yR = yL
+    #         for s in range(0, 100):
+    #             x = xYCoodinareOfQuadraticGraph[s][0] 
+    #             y = xYCoodinareOfQuadraticGraph[s][1]
+    #             if ((x != 0) and (y !=0)):
+    #                 if (x> sx):
+    #                     d = yL - y
+    #                     if d < 15:
+    #                         yR = y
+    #                         # minMaxY = int(round(yR + yL)/2)
+    #                         # print("Testing..............................")
+    #                         break
+
+    #     # if the graphs is min graph get the larger y value
+    #     elif (quadraticType == "min" ) : 
+    #         yL = yR = xYCoodinareOfQuadraticGraph[0][1]
+    #         for s in range(0, 100):
+    #             x = xYCoodinareOfQuadraticGraph[s][0] 
+    #             y = xYCoodinareOfQuadraticGraph[s][1]
+    #             if ((x != 0) and (y !=0)):
+    #                 if(x <= sx ):
+    #                     d = y - yL
+    #                     if d <= 10:
+    #                         yL = y
+            
+    #         yR = yL
+    #         for s in range(0, 100):
+    #             x = xYCoodinareOfQuadraticGraph[s][0] 
+    #             y = xYCoodinareOfQuadraticGraph[s][1]
+    #             if ((x != 0) and (y !=0)):
+    #                 if (x> sx):
+    #                     d = yL - y
+    #                     if d <= 10:
+    #                         yR = y
+    #                         # minMaxY = int(round(yR + yL)/2)
+    #                         # print("Testing..............................")
+    #                         break
+
+    #     # calculate the Y coordinate
+    #     minMaxY = int(round(yR + yL)/2) 
+           
+  
+
+    #     # print(" min Current value ====  "+ str(min))
+
+    #     # yCordinatesLeft = np.arange(height)
+
+    #     # # assign value to 0
+    #     # for h in range(0, height):
+    #     #     yCordinatesLeft[h] = 0
+        
+    #     # indexY = 0
+    #     # for i in range(0, len(coords)):
+    #     #     y = coords[i][0]
+    #     #     x = coords[i][1]  
+    #     #     # allLines[x,y] = (255, 255, 0)
+    #     #     if (x >= sx -10) and (x <= sx - 5 ):
+    #     #         yCordinatesLeft[indexY] = y
+    #     #         indexY = indexY + 1
+        
+    #     # array_sort =  np.sort(yCordinatesLeft) 
+    #     # for i in range(0, (len(yCordinatesLeft))):
+    #     #     print(" sort array " + str(array_sort[i]))
+         
 
 def draw_X_Axis():
     global maxlength_X
@@ -248,62 +649,53 @@ def draw_X_Axis():
         find_X_Axis() 
 
 def addMofologyToImage():
+    global MofologyImg
     # Transform source image to gray if it is not already
     if len(src.shape) != 2:
         gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
     else:
         gray = src
-    # Apply adaptiveThreshold at the bitwise_not of gray, notice the ~ symbol
+
+    # Apply adaptiveThreshold at the bitwise_not of gray
     gray = cv.bitwise_not(gray)
     bw = cv.adaptiveThreshold(gray, 255, cv.ADAPTIVE_THRESH_MEAN_C,  cv.THRESH_BINARY, 15, -2)
     horizontal = np.copy(bw)
     vertical = np.copy(bw)
+
     # Specify size on horizontal axis
     cols = horizontal.shape[1]
     horizontal_size = cols // 10
-     # Create structure element for extracting horizontal lines through morphology operations
+    # Create structure element for extracting horizontal lines through morphology operations
     horizontalStructure = cv.getStructuringElement(cv.MORPH_RECT, (horizontal_size, 1))
     # Apply morphology operations
     horizontal = cv.erode(horizontal, horizontalStructure)
     horizontal = cv.dilate(horizontal, horizontalStructure)
-    # [vert]
+
+   
     # Specify size on vertical axis
     rows = vertical.shape[0]
     verticalsize = rows // 10
-     # Create structure element for extracting vertical lines through morphology operations
+    # Create structure element for extracting vertical lines through morphology operations
     verticalStructure = cv.getStructuringElement(cv.MORPH_RECT, (1, verticalsize))
     # Apply morphology operations
     vertical = cv.erode(vertical, verticalStructure)
     vertical = cv.dilate(vertical, verticalStructure)
-    #  #////
-    # test1 = bw - horizontal
-    # show_wait_destroy("test1", test1)
-     #////////////////
+
     test2 = bw - vertical - horizontal 
 
-
-    # [smooth]
-    # Inverse vertical image
-    graph = cv.bitwise_not(test2)
-    # Step 1
+    # smooth
+    graph = cv.bitwise_not(test2) 
     edges = cv.adaptiveThreshold(graph, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 3, -2)
-    # Step 2
     kernel = np.ones((2, 2), np.uint8)
     edges = cv.dilate(edges, kernel)
-    # Step 3
     smooth = np.copy(graph)
-    # Step 4
     smooth = cv.blur(smooth, (2, 2))
-    # Step 5
     (rows, cols) = np.where(edges != 0)
-    graph[rows, cols] = smooth[rows, cols]
-    # Show final result
-    # show_wait_destroy("smooth - final", graph)
-    # [smooth]
-    # Show final result
+    graph[rows, cols] = smooth[rows, cols] 
+    
+    # final result
     MofologyImg = graph
-    cv.imshow("Mofology ", graph) 
-    # show_wait_destroy("smooth - final", graph)
+    # cv.imshow("Mofology ", MofologyImg)  
 
 def find_X_Axis():
     global maxlength_X
@@ -632,7 +1024,7 @@ def draw_TicMark_X_Axis():
                     allLines[i,x1] = (255,252,0)  
                     cdstP[i,x1] = (255,252,0)  
                 if((x2 > 0) and (x2<width)):
-                    allLines[i,x2] = (255,252,0)  
+                    allLines[i,x2] = (255,252,0)   
                     cdstP[i,x2] = (255,252,0) 
     print("Pixcels between Tic marks (X axis)  ------------->   : " + str(pixcelForTicMark_X))
 
@@ -1024,7 +1416,7 @@ def indentify_X_Axis_UsingValues():
 
 def main(argv):
     
-    global cdstP, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y, height, width, filename, src
+    global cdstP, cdstP2, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y, height, width, filename, src
 
     # Loads an image
     default_file = 'x2.png' 
@@ -1064,6 +1456,7 @@ def main(argv):
     cdst = cv.cvtColor(dst, cv.COLOR_GRAY2BGR)
     cdstP = np.copy(cdst)
     allLines = np.copy(cdst)  
+    cdstP2 = np.copy(cdst)
     
     # Get Text
     global result
@@ -1095,6 +1488,9 @@ def main(argv):
 
         # Draw the lines
         displayAlllines()
+
+        # add mofology
+        addMofologyToImage()
 
         # Store Lines Coordinate
         storeLineCoordinate()
@@ -1143,8 +1539,7 @@ def main(argv):
         # draw tic mark of X axis
         draw_TicMark_X_Axis()
 
-        if graphType == "Quadratic":
-            print (" Test ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
+        if graphType == "Quadratic": 
             getQuadraticGraphCoodinates()
 
         # identify X and Y axis intersection point
@@ -1159,9 +1554,10 @@ def main(argv):
         # generate equation using Image processing without OCR
         equationIP()
 
-    cv.imshow("Resized image", resized) 
-    cv.imshow("Source", src) 
+    # cv.imshow("Resized image", resized) 
+    # cv.imshow("Source", src) 
     cv.imshow("Probabilistic Line Transform", cdstP) 
+    cv.imshow("Min Max", cdstP2) 
     cv.imshow("Detected All Lines" , allLines )
     cv.waitKey()
     return 0  
