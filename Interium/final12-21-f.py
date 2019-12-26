@@ -814,7 +814,8 @@ def addMofologyToImage():
     
     # final result
     MofologyImg = graph
-    # cv.imshow("Mofology ", MofologyImg)  
+    # cv.imwrite("Mofology", MofologyImg )
+    cv.imshow("Mofology ", MofologyImg)  
 
 def find_X_Axis():
     global maxlength_X
