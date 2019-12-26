@@ -814,8 +814,7 @@ def addMofologyToImage():
     
     # final result
     MofologyImg = graph
-    # cv.imwrite("Mofology", MofologyImg )
-    cv.imshow("Mofology ", MofologyImg)  
+    # cv.imshow("Mofology ", MofologyImg)  
 
 def find_X_Axis():
     global maxlength_X
@@ -1616,8 +1615,8 @@ def generateEquationLinearGraph():
         print(" Equation ----> " + " Y = " + str(m) + "X + "+ str(c))
 
     # print
-    # for i in range (0, 10):
-    #     print(" X Value -->" + str(X_Y_Coordinate[i][0]) + " Y Value -->" + str(X_Y_Coordinate[i][1]) )
+    for i in range (0, 10):
+        print(" X Value -->" + str(X_Y_Coordinate[i][0]) + " Y Value -->" + str(X_Y_Coordinate[i][1]) )
        
     # getQuadraticGraphCoodinates
 
