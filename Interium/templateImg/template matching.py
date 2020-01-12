@@ -4,15 +4,16 @@ import cv2
 import numpy as np 
 
 # Read the main image 
-img_rgb = cv2.imread('src.png') 
+img_rgb = cv2.imread('src.PNG') 
 
 # Convert to grayscale 
 img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY) 
 
 # Read the template 
-template = cv2.imread('1.png',0) 
+template = cv2.imread('1.PNG',0) 
+# template = cv2.imread('1.PNG') 
 
-# Store width and heigth of template in w and h 
+# Store width and height of template in w and h 
 w, h = template.shape[::-1] 
 found = None
 
@@ -20,7 +21,7 @@ for scale in np.linspace(0.2, 1.0, 20)[::-1]:
 
 	# resize the image according to the scale, and keep track 
 	# of the ratio of the resizing 
-	resized = cv2.resize(img_gray, width = int(img_gray.shape[1] * scale)) 
+	resized = imutils.resize(img_gray, width = int(img_gray.shape[1] * scale)) 
 	r = img_gray.shape[1] / float(resized.shape[1]) 
 
 	# if the resized image is smaller than the template, then break 

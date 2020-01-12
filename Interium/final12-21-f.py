@@ -814,7 +814,7 @@ def addMofologyToImage():
     
     # final result
     MofologyImg = graph
-    # cv.imwrite("Mofology", MofologyImg )
+    cv.imwrite("Mofology3.PNG", MofologyImg )
     cv.imshow("Mofology ", MofologyImg)  
 
 def find_X_Axis():
