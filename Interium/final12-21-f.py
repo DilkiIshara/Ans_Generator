@@ -743,7 +743,7 @@ def getQuadraticGraphCoodinates():
          
 
 
-def draw_X_Axis():
+def identify_X_Axis_UsingLength():
     global maxlength_X
     global X_axis_cordinate
     global origin_Y, allLines 
@@ -865,7 +865,7 @@ def find_X_Axis():
                 if ((length_Of_X_Axis == maxlength_X  or (length_Of_X_Axis > (maxlength_X-(maxlength_X*0.05)))) and (X_axis_Y_cordinate <= (min_XAxis_Ycordinate)) ) :  
                     X_axis_cordinate = h 
                    
-def draw_Y_Axis():
+def identify_Y_Axis_Using_Length():
     global maxlength_Y
     global origin_X
     global Y_axis_cordinate
@@ -1712,7 +1712,7 @@ def main(argv):
         #### print(" Have we fond x axis using text : " + str(check_X))
         # Identify X Axis Considering lenth If X Axis not found using text
         if(check_X != True): 
-            draw_X_Axis()
+            identify_X_Axis_UsingLength()
         # draw X axis 
         #### print ("X  axis -------------->("+str(arr[X_axis_cordinate][0])+","+str(arr[X_axis_cordinate][1])+")       ("+str(arr[X_axis_cordinate][2])+","+str(arr[X_axis_cordinate][3])+")")
         cv.line(cdstP, (arr[X_axis_cordinate][0], arr[X_axis_cordinate][1]), (arr[X_axis_cordinate][2], arr[X_axis_cordinate][3]), (50,0,255), 2, cv.LINE_AA)
@@ -1721,7 +1721,7 @@ def main(argv):
         check_Y = indentify_Y_UsingValues()
         #### print(" Have we fond Y axis using text : " + str(check_Y))
         if(check_Y != True): 
-            draw_Y_Axis()
+            identify_X_Axis_Using_Length()
         cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
         #### print ("Y  axis -------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
         
