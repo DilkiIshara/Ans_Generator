@@ -27,10 +27,11 @@ origin_X = origin_Y = intersection_Xaxis_X = intersection_Xaxis_Y = intersection
 real_intersection_Xaxis_X = real_intersection_Yaxis_Y = 0
 pixcelForTicMark_Y = pixcelForTicMark_X = 0
 N = 4 # arr (x,y) (x,y) 
+numberOf_Xaxis = numberOf_Yaxis = None # 0 - number 1 - coordinate
 graphCrossOrigin = False
 ratio_Y_Axis_Value = ratio_X_Axis_Value = 1
 found_X = found_Y = False
-src = MofologyImg = graphType = None
+src = MofologyImg = graphType = srcTemplate = None
 
 def getEqationByUsingCoordinate():
     # print("result       :  " + result) 
@@ -743,7 +744,7 @@ def getQuadraticGraphCoodinates():
          
 
 
-def identify_X_Axis_UsingLength():
+def draw_X_Axis():
     global maxlength_X
     global X_axis_cordinate
     global origin_Y, allLines 
@@ -865,7 +866,7 @@ def find_X_Axis():
                 if ((length_Of_X_Axis == maxlength_X  or (length_Of_X_Axis > (maxlength_X-(maxlength_X*0.05)))) and (X_axis_Y_cordinate <= (min_XAxis_Ycordinate)) ) :  
                     X_axis_cordinate = h 
                    
-def identify_Y_Axis_Using_Length():
+def draw_Y_Axis():
     global maxlength_Y
     global origin_X
     global Y_axis_cordinate
@@ -1397,7 +1398,6 @@ def identifyNumbersRelated_X_Y_Axis():
 
                 if ((ratio_Y_Axis_Index < 5) and (numberOf_Tic_Mark_Y_Axis > 0)):
                     # print(" X coodinate" + str(character_X_Cordinate))
-                    #  textCoordinate[i][0] = number
                     ratio_y  = round(int(textCoordinate[i][0]) / numberOf_Tic_Mark_Y_Axis )
                     if (ratio_y > 0) :
                         ratio_Y_Axis_Value_Array[ratio_Y_Axis_Index] = ratio_y
@@ -1553,7 +1553,7 @@ def generateEquationLinearGraph():
     current_X = 0
 
     for k in range(0, 20):
-        current_X = origin_X + (k*pixcelForTicMark_X) 
+        current_X = origin_X+(k*pixcelForTicMark_X) 
         intersect_y = round((m*current_X) + c,1)
         # draw root
         # for i in range(current_X - 5 , current_X + 5):
@@ -1622,10 +1622,132 @@ def generateEquationLinearGraph():
        
     # getQuadraticGraphCoodinates
 
+def templateMatching():
+    global srcTemplate, numberOf_Xaxis, numberOf_Yaxis
+
+    numberOf_Xaxis = [[0] * 3 for i in range(20)] # 0 - number 1 X coordinate 2 count
+    numberOf_Yaxis = [[0] * 2 for i in range(20)] # 0 - number 1 Y coordinate
+    indexNumberOf_Xaxis = indexNumberOf_Yaxis = 0
+
+    # assign value to 0
+    for h in range(0, 20):
+        numberOf_Xaxis[h][0] = numberOf_Xaxis[h][1] = numberOf_Xaxis[h][2] = 0
+        numberOf_Yaxis[h][0] = numberOf_Yaxis[h][1] = 0
+        print(" numberOf_Xaxis +  " + str(numberOf_Xaxis[h][0]) + "  , " + str(numberOf_Xaxis[h][1]) )
+        print(" numberOf_Yaxis +  " + str(numberOf_Yaxis[h][0]) + "  , " + str(numberOf_Yaxis[h][1]) )
+
+    img = src
+
+    # Transform source image to gray if it is not already
+    if len(img.shape) != 2:
+        gray_img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    else:
+        gray_img = img
+
+    # create array to store Images(template) 
+    templates = [[0] * 2 for i in range(12)]
+
+    templates[0][0] = "c0.png"
+    templates[0][1] = 0
+
+    templates[1][0] = "c1.png"
+    templates[1][1] = 1
+
+    templates[2][0] = "c2.png"
+    templates[2][1] = 2
+
+    templates[3][0] = "c3.png"
+    templates[3][1] = 3
+
+    templates[4][0] = "c4.png"
+    templates[4][1] = 4
+
+    templates[5][0] = "c5.png"
+    templates[5][1] = 5
+
+    templates[6][0] = "c6.png"
+    templates[6][1] = 6
+
+    templates[7][0] = "c7.png"
+    templates[7][1] = 7
+
+    templates[8][0] = "c8.png"
+    templates[8][1] = 8
+
+    templates[9][0] = "c9.png"
+    templates[9][1] = 9
+
+    templates[10][0] = "c10.png"
+    templates[10][1] = 10
+
+    templates[11][0] = "c20.png"
+    templates[11][1] = 20
+
+    helfpixcelForTicMark_X = pixcelForTicMark_X/2
+    helfpixcelForTicMark_Y = pixcelForTicMark_Y/2
+
+    for i in range(1 , 12):
+        curretTemplate = templates[i][0]
+        number = templates[i][1]
+        tem = cv.imread(curretTemplate)
+        if len(tem.shape) != 2:
+            template = cv.cvtColor(tem, cv.COLOR_BGR2GRAY)
+        else:
+            template = tem
+        w, h = template.shape[::-1]
+        result = cv.matchTemplate(gray_img, template, cv.TM_CCOEFF_NORMED)
+        loc = np.where(result >= 0.7)
+        for pt in zip(*loc[::-1]):
+            topleft_x = pt[0]
+            topleft_y = pt[1]
+            bottemRight_x = pt[0] + w
+            bottemRight_y = pt[1] + h
+            x = int(round((topleft_x + bottemRight_x)/2))
+            y = int(round((topleft_y + bottemRight_y)/2))
+            print(" Origin Y " + str(origin_Y)+ " ----------------- y " + str(y) )
+
+            if ( y >= (origin_Y - helfpixcelForTicMark_Y)) and ( y <= (origin_Y + helfpixcelForTicMark_Y)):
+                print("indexNumberOf_Xaxis "+ str(indexNumberOf_Xaxis))
+                if ( indexNumberOf_Xaxis < 20):
+                    numberOf_Xaxis[indexNumberOf_Xaxis][0] = number
+                    numberOf_Xaxis[indexNumberOf_Xaxis][1] = x
+                    indexNumberOf_Xaxis = indexNumberOf_Xaxis + 1
+                cv.rectangle(srcTemplate, pt, (pt[0] + w, pt[1] + h), (0, 255, 0), 2)
+
+            if ( x >= (origin_X - helfpixcelForTicMark_X)) and ( x <= (origin_X + helfpixcelForTicMark_X)):
+                if ( indexNumberOf_Yaxis < 20):
+                    numberOf_Yaxis[indexNumberOf_Yaxis][0] = number
+                    numberOf_Yaxis[indexNumberOf_Yaxis][1] = y
+                    indexNumberOf_Yaxis = indexNumberOf_Yaxis + 1
+                cv.rectangle(srcTemplate, pt, (pt[0] + w, pt[1] + h), (255,0,0), 2)
+    identify_XAxis_Ratio()
+
+def identify_XAxis_Ratio():
+    for i in range(0 , 20):
+        num = numberOf_Xaxis[i][0]
+        x_cor = numberOf_Xaxis[i][1]
+        count = 0
+        if ( (num != 0) and (x_cor != 0)):
+            print(" Number --> " + str(num)+ " Coordinate -->" + str(x_cor))
+            cv.rectangle(srcTemplate, (x_cor, origin_Y), (x_cor + 10, origin_Y + 10), (0, 150, 150), 2)
+            for j in range(0 , 20):
+                num1 = numberOf_Xaxis[j][0]
+                x_cor1 = numberOf_Xaxis[j][1]
+                if (num == num1) and ( x_cor >= x_cor1-10) and ( x_cor <= x_cor1+10):
+                    count = count + 1
+        numberOf_Xaxis[i][2] = count  
+
+        for i in range(0 , 20):
+            num = numberOf_Xaxis[i][0]
+            x_cor = numberOf_Xaxis[i][1]
+            count = numberOf_Xaxis[i][2]
+            if ( (num != 0) and (x_cor != 0)):
+                print(" Number --> " + str(num)+ " Coordinate -->" + str(x_cor) + " Count --> "+ str(count))
+
 
 def main(argv):
     
-    global cdstP, cdstP2, cdstP_Linear, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y, height, width, filename, src
+    global cdstP, cdstP2, cdstP_Linear, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y, height, width, filename, src, srcTemplate
 
     # Loads an image
     default_file = 'x2.png' 
@@ -1667,6 +1789,7 @@ def main(argv):
     allLines = np.copy(cdst)  
     cdstP2 = np.copy(cdst)
     cdstP_Linear = np.copy(cdst)
+    srcTemplate = np.copy(cdst)
     
     # Get Text
     global result
@@ -1699,6 +1822,8 @@ def main(argv):
         # 2  Draw the lines
         displayAlllines()
 
+        # templateMatching()
+
         # 3  add mofology
         addMofologyToImage()
 
@@ -1713,7 +1838,7 @@ def main(argv):
         #### print(" Have we fond x axis using text : " + str(check_X))
         # Identify X Axis Considering lenth If X Axis not found using text
         if(check_X != True): 
-            identify_X_Axis_UsingLength()
+            draw_X_Axis()
         # draw X axis 
         #### print ("X  axis -------------->("+str(arr[X_axis_cordinate][0])+","+str(arr[X_axis_cordinate][1])+")       ("+str(arr[X_axis_cordinate][2])+","+str(arr[X_axis_cordinate][3])+")")
         cv.line(cdstP, (arr[X_axis_cordinate][0], arr[X_axis_cordinate][1]), (arr[X_axis_cordinate][2], arr[X_axis_cordinate][3]), (50,0,255), 2, cv.LINE_AA)
@@ -1722,7 +1847,7 @@ def main(argv):
         check_Y = indentify_Y_UsingValues()
         #### print(" Have we fond Y axis using text : " + str(check_Y))
         if(check_Y != True): 
-            identify_Y_Axis_Using_Length()
+            draw_Y_Axis()
         cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (255,128,0), 2, cv.LINE_AA)
         #### print ("Y  axis -------------->("+str(arr[Y_axis_cordinate][0])+","+str(arr[Y_axis_cordinate][1])+")       ("+str(arr[Y_axis_cordinate][2])+","+str(arr[Y_axis_cordinate][3])+")")
         
@@ -1746,6 +1871,8 @@ def main(argv):
         # 13 Check graph is quadratic or Linear
         checkGraph()
 
+        templateMatching()
+
         # get the ratio between x and Y axis Values
         identifyNumbersRelated_X_Y_Axis()
 
@@ -1753,10 +1880,8 @@ def main(argv):
         if ( graphType == "linear"):
             # Graph
             draw_Graph() 
-
-            # identify X and Y axis intersection point and check graph cross the origin
+            # identify X and Y axis intersection point
             identifyIntersection()
-
             # get real coordinates of y axis and X intersection point without OCR
             if ( pixcelForTicMark_Y !=0 and pixcelForTicMark_X != 0) :
                 # getRealCoordianatesWithoutOCR()
@@ -1771,8 +1896,8 @@ def main(argv):
 
         
          
-        
-        
+    # cv.imshow("Source", src)    
+    cv.imshow("Source Template", srcTemplate)    
     if ( graphType == "linear"): 
         cv.imshow("Probabilistic Line Transform", cdstP) 
         cv.imshow("Linear graph", cdstP_Linear) 

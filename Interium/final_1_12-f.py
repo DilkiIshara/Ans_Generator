@@ -32,6 +32,7 @@ graphCrossOrigin = False
 ratio_Y_Axis_Value = ratio_X_Axis_Value = 1
 found_X = found_Y = False
 src = MofologyImg = graphType = srcTemplate = None
+tem_y_arr =  tem_x_arr =  tem_Matching_Coordinates  = None
 
 def getEqationByUsingCoordinate():
     # print("result       :  " + result) 
@@ -1623,18 +1624,23 @@ def generateEquationLinearGraph():
     # getQuadraticGraphCoodinates
 
 def templateMatching():
-    global srcTemplate, numberOf_Xaxis, numberOf_Yaxis
+    global srcTemplate, numberOf_Xaxis, numberOf_Yaxis, tem_y_arr, tem_x_arr, tem_Matching_Coordinates
 
     numberOf_Xaxis = [[0] * 3 for i in range(20)] # 0 - number 1 X coordinate 2 count
     numberOf_Yaxis = [[0] * 2 for i in range(20)] # 0 - number 1 Y coordinate
     indexNumberOf_Xaxis = indexNumberOf_Yaxis = 0
+    tem_Matching_Coordinates = [[0] * 5 for i in range(30)] # 0 - number 1 - topleft_x/ 2-topleft_y / 3 - bottemRight_x / 4 -bottemRight_y 
+    tem_Matching_Coordinates_Index = 0
+    tem_x_arr  = [[0] * 2 for i in range(20)]  # np.arange(20)
+    tem_y_arr = [[0] * 2 for i in range(20)]  # np.arange(20)
+    xIndex = yIndex = 0
 
     # assign value to 0
     for h in range(0, 20):
         numberOf_Xaxis[h][0] = numberOf_Xaxis[h][1] = numberOf_Xaxis[h][2] = 0
         numberOf_Yaxis[h][0] = numberOf_Yaxis[h][1] = 0
-        print(" numberOf_Xaxis +  " + str(numberOf_Xaxis[h][0]) + "  , " + str(numberOf_Xaxis[h][1]) )
-        print(" numberOf_Yaxis +  " + str(numberOf_Yaxis[h][0]) + "  , " + str(numberOf_Yaxis[h][1]) )
+        # print(" numberOf_Xaxis +  " + str(numberOf_Xaxis[h][0]) + "  , " + str(numberOf_Xaxis[h][1]) )
+        # print(" numberOf_Yaxis +  " + str(numberOf_Yaxis[h][0]) + "  , " + str(numberOf_Yaxis[h][1]) )
 
     img = src
 
@@ -1702,25 +1708,52 @@ def templateMatching():
             topleft_y = pt[1]
             bottemRight_x = pt[0] + w
             bottemRight_y = pt[1] + h
+            
+            if tem_Matching_Coordinates_Index < 30:
+                tem_Matching_Coordinates[tem_Matching_Coordinates_Index][0] = number 
+                tem_Matching_Coordinates[tem_Matching_Coordinates_Index][1] = topleft_x 
+                tem_Matching_Coordinates[tem_Matching_Coordinates_Index][2] = topleft_y
+                tem_Matching_Coordinates[tem_Matching_Coordinates_Index][3] = bottemRight_x 
+                tem_Matching_Coordinates[tem_Matching_Coordinates_Index][4] = bottemRight_y 
+
             x = int(round((topleft_x + bottemRight_x)/2))
             y = int(round((topleft_y + bottemRight_y)/2))
-            print(" Origin Y " + str(origin_Y)+ " ----------------- y " + str(y) )
+          
+            if (xIndex < 20):
+                tem_x_arr[xIndex][0] =  x
+                tem_x_arr[xIndex][1] =  0
+                xIndex = xIndex + 1
+            if (yIndex < 20):
+                tem_y_arr[yIndex][0] = y
+                tem_y_arr[yIndex][1] = 0
+                yIndex = yIndex + 1
+        
+            
+    #         print(" Origin Y " + str(origin_Y)+ " ----------------- y " + str(y) )
 
-            if ( y >= (origin_Y - helfpixcelForTicMark_Y)) and ( y <= (origin_Y + helfpixcelForTicMark_Y)):
-                print("indexNumberOf_Xaxis "+ str(indexNumberOf_Xaxis))
-                if ( indexNumberOf_Xaxis < 20):
-                    numberOf_Xaxis[indexNumberOf_Xaxis][0] = number
-                    numberOf_Xaxis[indexNumberOf_Xaxis][1] = x
-                    indexNumberOf_Xaxis = indexNumberOf_Xaxis + 1
-                cv.rectangle(srcTemplate, pt, (pt[0] + w, pt[1] + h), (0, 255, 0), 2)
+    #         if ( y >= (origin_Y - helfpixcelForTicMark_Y)) and ( y <= (origin_Y  + helfpixcelForTicMark_Y)):
+    #             print("indexNumberOf_Xaxis "+ str(indexNumberOf_Xaxis))
+    #             if ( indexNumberOf_Xaxis < 20):
+    #                 numberOf_Xaxis[indexNumberOf_Xaxis][0] = number
+    #                 numberOf_Xaxis[indexNumberOf_Xaxis][1] = x
+    #                 indexNumberOf_Xaxis = indexNumberOf_Xaxis + 1
+    #             cv.rectangle(srcTemplate, pt, (pt[0] + w, pt[1] + h), (0, 255, 0), 2)
 
-            if ( x >= (origin_X - helfpixcelForTicMark_X)) and ( x <= (origin_X + helfpixcelForTicMark_X)):
-                if ( indexNumberOf_Yaxis < 20):
-                    numberOf_Yaxis[indexNumberOf_Yaxis][0] = number
-                    numberOf_Yaxis[indexNumberOf_Yaxis][1] = y
-                    indexNumberOf_Yaxis = indexNumberOf_Yaxis + 1
-                cv.rectangle(srcTemplate, pt, (pt[0] + w, pt[1] + h), (255,0,0), 2)
-    identify_XAxis_Ratio()
+    #         if ( x >= (origin_X - helfpixcelForTicMark_X)) and ( x <= (origin_X + helfpixcelForTicMark_X)):
+    #             if ( indexNumberOf_Yaxis < 20):
+    #                 numberOf_Yaxis[indexNumberOf_Yaxis][0] = number
+    #                 numberOf_Yaxis[indexNumberOf_Yaxis][1] = y
+    #                 indexNumberOf_Yaxis = indexNumberOf_Yaxis + 1
+    #             cv.rectangle(srcTemplate, pt, (pt[0] + w, pt[1] + h), (255,0,0), 2)
+    # identify_XAxis_Ratio()
+
+def identify_XAxis_Y_AXis_UsingTempalte_Matching():
+    x_cor = tem_x_arr[0][0]
+    y_cor = tem_y_arr[0][0]
+
+    for i in range(0, len(tem_x_arr)):
+
+
 
 def identify_XAxis_Ratio():
     for i in range(0 , 20):
@@ -1822,7 +1855,7 @@ def main(argv):
         # 2  Draw the lines
         displayAlllines()
 
-        # templateMatching()
+        templateMatching()
 
         # 3  add mofology
         addMofologyToImage()
@@ -1833,6 +1866,8 @@ def main(argv):
         # 5 Separate X axis Y axis and Graphs
         separateX_Y_Graph()
 
+        identify_XAxis_Y_AXis_UsingTempalte_Matching
+  
         # 6 x axis
         check_X = indentify_X_Axis_UsingValues()
         #### print(" Have we fond x axis using text : " + str(check_X))
