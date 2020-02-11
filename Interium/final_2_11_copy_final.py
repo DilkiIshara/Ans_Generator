@@ -1730,6 +1730,7 @@ def templateMatching():
                 tem_Matching_Coordinates[tem_Matching_Coordinates_Index][2] = topleft_y
                 tem_Matching_Coordinates[tem_Matching_Coordinates_Index][3] = bottemRight_x 
                 tem_Matching_Coordinates[tem_Matching_Coordinates_Index][4] = bottemRight_y 
+                tem_Matching_Coordinates_Index = tem_Matching_Coordinates_Index + 1
 
             
           
@@ -1918,6 +1919,13 @@ def identify_XAxis_YAxis_Ratio():
     
     numberOf_Yaxis = [[0] * 2 for i in range(30)] # 0 - number 1 Y coordinate  # numbers which are relate to Y Axis
     numberOf_Xaxis = [[0] * 2 for i in range(30)] # 0 - number 1 X coordinate  # numbers which are relate to X Axis
+    indexNumberOf_Xaxis = indexNumberOf_Yaxis = 0
+    ratio_Of_XAxis = 1
+
+    x_Axis_ratio = np.arange(30) # ratio of number of X axis 
+    x_Axis_ratio_Index = 0
+    for j in range(0, 30):
+        x_Axis_ratio[j] = 0
 
     for i in range(0,30):
         number = tem_Matching_Coordinates[i][0]
@@ -1929,22 +1937,74 @@ def identify_XAxis_YAxis_Ratio():
         x = int(round((top_x + bottom_x)/2))
         y = int(round((top_y + bottom_y)/2))
 
-        if ( y >= (origin_Y - helfpixcelForTicMark_Y)) and ( y <= (origin_Y  + helfpixcelForTicMark_Y)):
-            # print("indexNumberOf_Xaxis "+ str(indexNumberOf_Xaxis))
+
+        helfpixcelForTicMark_Y = int(round(pixcelForTicMark_Y /2))
+        helfpixcelForTicMark_X = int(round(pixcelForTicMark_X / 2))
+
+        # select Template Which are near to X axis
+        if ( y >= (origin_Y - helfpixcelForTicMark_Y)) and ( y <= (origin_Y  + helfpixcelForTicMark_Y)): 
             if ( indexNumberOf_Xaxis < 20):
                 numberOf_Xaxis[indexNumberOf_Xaxis][0] = number
                 numberOf_Xaxis[indexNumberOf_Xaxis][1] = x
-                indexNumberOf_Xaxis = indexNumberOf_Xaxis + 1
-                cv.rectangle(srcTemplate, pt, (pt[0] + w, pt[1] + h), (0, 255, 0), 2)
+                indexNumberOf_Xaxis = indexNumberOf_Xaxis + 1 
+                cv.rectangle(cdstP, (top_x,top_y), (bottom_x, bottom_y), (237, 28, 36), 2)
 
-        if ( x >= (origin_X - helfpixcelForTicMark_X)) and ( x <= (origin_X + helfpixcelForTicMark_X)):
-            if ( indexNumberOf_Yaxis < 20):
-                numberOf_Yaxis[indexNumberOf_Yaxis][0] = number
-                numberOf_Yaxis[indexNumberOf_Yaxis][1] = y
-                indexNumberOf_Yaxis = indexNumberOf_Yaxis + 1
-                cv.rectangle(srcTemplate, pt, (pt[0] + w, pt[1] + h), (255,0,0), 2)
+        # if ( x >= (origin_X - helfpixcelForTicMark_X)) and ( x <= (origin_X + helfpixcelForTicMark_X)):
+        #     if ( indexNumberOf_Yaxis < 20):
+        #         numberOf_Yaxis[indexNumberOf_Yaxis][0] = number
+        #         numberOf_Yaxis[indexNumberOf_Yaxis][1] = y
+        #         indexNumberOf_Yaxis = indexNumberOf_Yaxis + 1 
 
+    # print number and Its x coordinate
+    for i in range(0, 30):
+        number = numberOf_Xaxis[i][0]
+        x = numberOf_Xaxis[i][1]
+        print(" Xnumber---" + str(number) + str(" X coordinate "+ str(x)))
+
+    # get The ratio and stotre in a array
+    for i in range(0, 30):
+        number = numberOf_Xaxis[i][0]
+        x = numberOf_Xaxis[i][1]
+        if number != 0 and pixcelForTicMark_X != 0:
+            numberOf_TicMarks = int(round((x - origin_X )/pixcelForTicMark_X))
+            if numberOf_TicMarks != 0:
+                ratio = int(round(number/numberOf_TicMarks))
+                if x_Axis_ratio_Index < 30:
+                    if (ratio < 0):
+                        x_Axis_ratio[x_Axis_ratio_Index] = ratio*(-1)
+                    else:
+                        x_Axis_ratio[x_Axis_ratio_Index] = ratio
+                    x_Axis_ratio_Index = x_Axis_ratio_Index + 1
     
+    ratioVsCount = [[0] * 2 for i in range(30)]
+    ratioVsCount_Index = 0
+
+    # get the frequency of each ratio
+    for i in range(0, 30):
+        count = 0
+        print(" X Axis Ratios ===" + str(x_Axis_ratio[i]))
+        current_Ratio = x_Axis_ratio[i]
+        if current_Ratio != 0 :
+            for j in range(0, 30):
+                if current_Ratio == (x_Axis_ratio[j]):
+                    count = count + 1
+            if (ratioVsCount_Index < 30 ):
+                ratioVsCount[ratioVsCount_Index][0] = current_Ratio
+                ratioVsCount[ratioVsCount_Index][1] = count
+                ratioVsCount_Index = ratioVsCount_Index + 1
+
+    # select the ratio which has the max frequency
+    max_count = 0
+    for i in range(0, 30):
+        count = ratioVsCount[i][1]
+        if (max_count < count):
+            max_count = count
+            if ((ratioVsCount[i][0] > 1)):
+                ratio_Of_XAxis = ratioVsCount[i][0]
+
+    print(" ratio_Of_XAxis = "+str(ratio_Of_XAxis))
+
+
 
     # for i in range(0 , 20):
     #     num = numberOf_Xaxis[i][0]
@@ -2111,9 +2171,9 @@ def main(argv):
             identifyNumbersRelated_X_Y_Axis()
 
             # need++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        # if ratio_X_Axis_Value == 1 :
+        if ratio_X_Axis_Value == 1 :
             # print (" Check 555555555555555555555")
-            # identify_XAxis_YAxis_Ratio()
+            identify_XAxis_YAxis_Ratio()
 
         # if graph is a Linear Graph
         if ( graphType == "linear"):
