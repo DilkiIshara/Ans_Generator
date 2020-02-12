@@ -34,6 +34,7 @@ found_X = found_Y = False
 src = MofologyImg = graphType = srcTemplate = None
 tem_y_arr =  tem_x_arr =  tem_Matching_Coordinates  = None
 xIndex = yIndex = 0 # for Identify X, Y using template maching 
+numberOf_Yaxis =  numberOf_Xaxis  = None
 
 def getEqationByUsingCoordinate():
     # print("result       :  " + result) 
@@ -646,7 +647,7 @@ def getQuadraticGraphCoodinates():
     for i in range(0,10):
         x = X_Y_Coordinate[i][0]
         y = X_Y_Coordinate[i][1]
-        print(" X value ---> " + str(x) + " Y Value " + str(y))
+        print(str(i ) +   "      X value ---> " + str(x) + " Y Value " + str(y))
 
     if count <3:
         lsx_coordinate = origin_X + (pixcelForTicMark_X*(lsx-k))
@@ -668,12 +669,12 @@ def getQuadraticGraphCoodinates():
 
 
     if count > 3:
-        x1 = X_Y_Coordinate[0][0]
-        x2 = X_Y_Coordinate[1][0]
-        x3 = X_Y_Coordinate[2][0]
-        y1 = X_Y_Coordinate[0][1]
-        y2 = X_Y_Coordinate[1][1]
-        y3 = X_Y_Coordinate[2][1]
+        x1 = X_Y_Coordinate[0][0] * ratio_X_Axis_Value
+        x2 = X_Y_Coordinate[1][0] * ratio_X_Axis_Value
+        x3 = X_Y_Coordinate[2][0] * ratio_X_Axis_Value
+        y1 = X_Y_Coordinate[0][1] * ratio_Y_Axis_Value
+        y2 = X_Y_Coordinate[1][1] * ratio_Y_Axis_Value
+        y3 = X_Y_Coordinate[2][1] * ratio_Y_Axis_Value
 
         print(" X_1 value ---> " + str(x1) + " Y_1 Value " + str(y1))
         print(" X_2 value ---> " + str(x2) + " Y_2 Value " + str(y2))
@@ -1580,10 +1581,10 @@ def generateEquationLinearGraph():
                     count = count + 1
     
     if (count > 2):
-        x1 = X_Y_Coordinate[0][0]
-        y1 = X_Y_Coordinate[0][1]
-        x2 = X_Y_Coordinate[1][0]
-        y2 = X_Y_Coordinate[1][1]
+        x1 = X_Y_Coordinate[0][0] * ratio_X_Axis_Value
+        y1 = X_Y_Coordinate[0][1] * ratio_Y_Axis_Value
+        x2 = X_Y_Coordinate[1][0] * ratio_X_Axis_Value
+        y2 = X_Y_Coordinate[1][1] * ratio_Y_Axis_Value
 
         m = round(((y1 - y2)/(x1 - x2)) , 1)
         a = modf(m)
@@ -1639,7 +1640,7 @@ def templateMatching():
         gray_img = img
 
     # create array to store Images(template) 
-    templates = [[0] * 2 for i in range(12)]
+    templates = [[0] * 2 for i in range(15)]
 
     templates[0][0] = "c0.png"
     templates[0][1] = 0
@@ -1675,13 +1676,19 @@ def templateMatching():
     templates[10][1] = 10
     templates[11][0] = "c20.png"
     templates[11][1] = 20
+    templates[12][0] = "cy5.png"
+    templates[12][1] = 5
+    templates[13][0] = "cy10.png"
+    templates[13][1] = 10
+    templates[14][0] = "cy5.2.png"
+    templates[14][1] = 5
 
     helfpixcelForTicMark_X = pixcelForTicMark_X/2
     helfpixcelForTicMark_Y = pixcelForTicMark_Y/2
 
  
 
-    for i in range(1 , 12):
+    for i in range(1 , 15):
         curretTemplate = templates[i][0]
         number = templates[i][1]
         tem = cv.imread(curretTemplate)
@@ -1711,9 +1718,10 @@ def templateMatching():
                         haveDuplicate = True
             
             if haveDuplicate != True:
-                xy_arr[xy_Index][0]  = x
-                xy_arr[xy_Index][1]  = y
-                xy_Index = xy_Index +1
+                if xy_Index < 30:
+                    xy_arr[xy_Index][0]  = x
+                    xy_arr[xy_Index][1]  = y
+                    xy_Index = xy_Index +1
 
                 if (xIndex < 20):
                     tem_x_arr[xIndex][0] =  x
@@ -1914,8 +1922,8 @@ def identify_Y_AXis_UsingTempalte_Matching():
                     return found_Y
     return found_Y      
 
-def identify_XAxis_YAxis_Ratio():
-    global numberOf_Yaxis
+def seperateTemplateTo_X_Y_Axis():
+    global numberOf_Yaxis, numberOf_Xaxis
     
     numberOf_Yaxis = [[0] * 2 for i in range(30)] # 0 - number 1 Y coordinate  # numbers which are relate to Y Axis
     numberOf_Xaxis = [[0] * 2 for i in range(30)] # 0 - number 1 X coordinate  # numbers which are relate to X Axis
@@ -1949,12 +1957,24 @@ def identify_XAxis_YAxis_Ratio():
                 indexNumberOf_Xaxis = indexNumberOf_Xaxis + 1 
                 cv.rectangle(cdstP, (top_x,top_y), (bottom_x, bottom_y), (237, 28, 36), 2)
 
-        # if ( x >= (origin_X - helfpixcelForTicMark_X)) and ( x <= (origin_X + helfpixcelForTicMark_X)):
-        #     if ( indexNumberOf_Yaxis < 20):
-        #         numberOf_Yaxis[indexNumberOf_Yaxis][0] = number
-        #         numberOf_Yaxis[indexNumberOf_Yaxis][1] = y
-        #         indexNumberOf_Yaxis = indexNumberOf_Yaxis + 1 
+        if ( x >= (origin_X - helfpixcelForTicMark_X)) and ( x <= (origin_X + helfpixcelForTicMark_X)):
+            if ( indexNumberOf_Yaxis < 20):
+                numberOf_Yaxis[indexNumberOf_Yaxis][0] = number
+                numberOf_Yaxis[indexNumberOf_Yaxis][1] = y
+                indexNumberOf_Yaxis = indexNumberOf_Yaxis + 1 
+                cv.rectangle(cdstP, (top_x,top_y), (bottom_x, bottom_y), (0, 250, 36), 2)
 
+
+def identify_X_Axis_Ratio():
+    global ratio_X_Axis_Value
+
+    ratio_Of_XAxis = 1
+    x_Axis_ratio = np.arange(30) # ratio of number of X axis 
+
+    x_Axis_ratio_Index = 0
+    for j in range(0, 30):
+        x_Axis_ratio[j] = 0
+    
     # print number and Its x coordinate
     for i in range(0, 30):
         number = numberOf_Xaxis[i][0]
@@ -2002,9 +2022,97 @@ def identify_XAxis_YAxis_Ratio():
             if ((ratioVsCount[i][0] > 1)):
                 ratio_Of_XAxis = ratioVsCount[i][0]
 
+    ratio_X_Axis_Value = ratio_Of_XAxis
+
     print(" ratio_Of_XAxis = "+str(ratio_Of_XAxis))
 
 
+
+
+def identify_Y_Axis_Ratio():
+    global ratio_Y_Axis_Value
+
+    ratio_Of_YAxis = 1
+    y_Axis_ratio = np.arange(30) # ratio of number of X axis 
+    numberOf_Yaxis_remove_Duplicates = [[0] * 2 for i in range(30)] # 0 - number 1 Y coordinate  # numbers which are relate to Y Axis
+    numberOf_Yaxis_remove_Duplicates_Index = 0 
+    
+    y_Axis_ratio_Index = 0
+    for j in range(0, 30):
+        y_Axis_ratio[j] = 0
+    
+    # print number and Its y coordinate
+    for i in range(0, 30):
+        number = numberOf_Yaxis[i][0]
+        y = numberOf_Yaxis[i][1]
+        print("  Y number---" + str(number) + str(" Y coordinate "+ str(y)))
+
+    # remove duplicates  # ********** full method
+    for i in range(0, 30):
+        number = numberOf_Yaxis[i][0]
+        y = numberOf_Yaxis[i][1]
+        haveDuplicate = False
+        if number != 0 and y != 0:
+            for j in range (0,30):
+                number_dup = numberOf_Yaxis_remove_Duplicates[j][0]
+                y_dup = numberOf_Yaxis_remove_Duplicates[j][1]
+                if number_dup == number and y == y_dup:
+                    haveDuplicate = True
+        if haveDuplicate != True:
+            numberOf_Yaxis_remove_Duplicates[numberOf_Yaxis_remove_Duplicates_Index][0] = number
+            numberOf_Yaxis_remove_Duplicates[numberOf_Yaxis_remove_Duplicates_Index][1] = y
+            numberOf_Yaxis_remove_Duplicates_Index = numberOf_Yaxis_remove_Duplicates_Index + 1
+                
+    
+
+    # get The ratio and stotre in a array
+    for i in range(0, 30):
+        # number = numberOf_Yaxis[i][0]
+        # y = numberOf_Yaxis[i][1]
+        number =  numberOf_Yaxis_remove_Duplicates[i][0]                                                #*******
+        y =  numberOf_Yaxis_remove_Duplicates[i][1]                                                      #*******
+        # print("  Y number ermove ---" + str(number) + str(" Y coordinate "+ str(y)))
+        if number != 0 and pixcelForTicMark_Y != 0 and y !=0 :                                          #*******
+            numberOf_TicMarks = int(round((y - origin_Y )/pixcelForTicMark_Y))
+            if numberOf_TicMarks != 0:
+                ratio = int(round(number/numberOf_TicMarks))
+                print("  ratio ----- ---" + str(ratio))
+                if y_Axis_ratio_Index < 30:
+                    if (ratio < 0):
+                        y_Axis_ratio[y_Axis_ratio_Index] = ratio*(-1)
+                    else:
+                        y_Axis_ratio[y_Axis_ratio_Index] = ratio
+                    y_Axis_ratio_Index = y_Axis_ratio_Index + 1 
+    
+    ratioVsCount = [[0] * 2 for i in range(30)]
+    ratioVsCount_Index = 0
+
+    # get the frequency of each ratio
+    for i in range(0, 30):
+        count = 0
+        print(" Y Axis Ratios ===" + str(y_Axis_ratio[i]))
+        current_Ratio = y_Axis_ratio[i]
+        if current_Ratio != 0 :
+            for j in range(0, 30):
+                if current_Ratio == (y_Axis_ratio[j]):
+                    count = count + 1
+            if (ratioVsCount_Index < 30 ):
+                ratioVsCount[ratioVsCount_Index][0] = current_Ratio
+                ratioVsCount[ratioVsCount_Index][1] = count
+                ratioVsCount_Index = ratioVsCount_Index + 1
+
+    # select the ratio which has the max frequency
+    max_count = 0
+    for i in range(0, 30):
+        count = ratioVsCount[i][1]
+        if (max_count < count):
+            max_count = count
+            if ((ratioVsCount[i][0] > 1)):
+                ratio_Of_YAxis = ratioVsCount[i][0]
+
+    ratio_Y_Axis_Value = ratio_Of_YAxis
+
+    print(" ratio_Of_YAxis = "+str(ratio_Of_YAxis))
 
     # for i in range(0 , 20):
     #     num = numberOf_Xaxis[i][0]
@@ -2171,9 +2279,13 @@ def main(argv):
             identifyNumbersRelated_X_Y_Axis()
 
             # need++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        seperateTemplateTo_X_Y_Axis()
         if ratio_X_Axis_Value == 1 :
             # print (" Check 555555555555555555555")
-            identify_XAxis_YAxis_Ratio()
+            identify_X_Axis_Ratio()
+
+        if ratio_Y_Axis_Value == 1:
+            identify_Y_Axis_Ratio()
 
         # if graph is a Linear Graph
         if ( graphType == "linear"):
