@@ -387,7 +387,7 @@ def getQuadraticGraphCoodinates():
                 c = c + 1
         # print("Min ++++++++++++" + str(min) + "Max ++++++++++++" + str(max) )
         # print (" Total Y " + str(total_Y ) + " Count " + str(count)+ "******** ")
-        if (count != 0 and total_Y != 0 and (max - min) < 10):
+        if (count != 0 and total_Y != 0 and (max - min) < 10 and (indexY >= 0 and indexY < height)):
             # print (" Total Y " + str(total_Y ) + " Count " + str(count))
             yCordinatesOfQuadraticGraph[indexY] = int(round(total_Y/count))
             indexY = indexY + 1
@@ -1560,9 +1560,9 @@ def indentify_X_Axis_UsingValues():
         count_Y[i][0] = y_val
         count_Y[i][1] = count
 
-    # print charactor Y coordinate and frequency of that value
-    for i in range(0, numberOfCharactor ):
-        print("      " + str(  count_Y[i][0] ) + "_--------------------  " + str(count_Y[i][1]))
+    # # print charactor Y coordinate and frequency of that value
+    # for i in range(0, numberOfCharactor ):
+    #     print("      " + str(  count_Y[i][0] ) + "_--------------------  " + str(count_Y[i][1]))
     
     # get the maximum frequency of the y coordinate
     for i in range(0, numberOfCharactor): 
@@ -1722,55 +1722,55 @@ def templateMatching():
     # create array to store Images(template) 
     templates = [[0] * 2 for i in range(20)]
 
-    templates[0][0] = "c0.png"
-    templates[0][1] = 0
+    templates[0][0] = "tem1.png"
+    templates[0][1] = 1
 
-    templates[1][0] = "c1.png"
+    templates[1][0] = "tem1.1.png"
     templates[1][1] = 1
 
-    templates[2][0] = "c2.png"
+    templates[2][0] = "tem2.png"
     templates[2][1] = 2
 
-    templates[3][0] = "c3.png"
-    templates[3][1] = 3
+    templates[3][0] = "tem2.1.png"
+    templates[3][1] = 2
 
-    templates[4][0] = "c4.png"
-    templates[4][1] = 4
+    templates[4][0] = "tem3.png"
+    templates[4][1] = 3
 
-    templates[5][0] = "c5.png"
-    templates[5][1] = 5
+    templates[5][0] = "tem3.1.png"
+    templates[5][1] = 3
 
-    templates[6][0] = "c6.png"
-    templates[6][1] = 6
+    templates[6][0] = "tem4.png"
+    templates[6][1] = 4
 
-    templates[7][0] = "c7.png"
-    templates[7][1] = 7
+    templates[7][0] = "tem4.1.png"
+    templates[7][1] = 4
 
-    templates[8][0] = "c8.png"
-    templates[8][1] = 8
+    templates[8][0] = "tem5.png"
+    templates[8][1] = 5
 
-    templates[9][0] = "c9.png"
-    templates[9][1] = 9
-    templates[10][0] = "c10.png"
-    templates[10][1] = 10
-    templates[11][0] = "c20.png"
-    templates[11][1] = 20
-    templates[12][0] = "c2.1.png"
-    templates[12][1] = 2
-    templates[13][0] = "c4.1.png"
-    templates[13][1] = 4
-    templates[14][0] = "c0.png"
-    templates[14][1] = 0
-    templates[15][0] = "c0.png"
-    templates[15][1] = 0
-    templates[16][0] = "c0.png"
-    templates[16][1] = 0
-    templates[17][0] = "c0.png"
-    templates[17][1] = 0
-    templates[18][0] = "c0.png"
-    templates[18][1] = 0
-    templates[19][0] = "c0.png"
-    templates[19][1] = 0
+    templates[9][0] = "tem5.1.png"
+    templates[9][1] = 5
+    templates[10][0] = "tem6.png"
+    templates[10][1] = 6
+    templates[11][0] = "tem6.1.png"
+    templates[11][1] = 6
+    templates[12][0] = "tem8.png"
+    templates[12][1] = 8
+    templates[13][0] = "tem8.1.png"
+    templates[13][1] = 8
+    templates[14][0] = "tem10.png"
+    templates[14][1] = 10
+    templates[15][0] = "tem10.1.png"
+    templates[15][1] = 10
+    templates[16][0] = "tem15.png"
+    templates[16][1] = 15
+    templates[17][0] = "tem1.png"
+    templates[17][1] = 1
+    templates[18][0] = "tem1.1.png"
+    templates[18][1] = 1
+    templates[19][0] = "tem2.png"
+    templates[19][1] = 2
 
     helfpixcelForTicMark_X = pixcelForTicMark_X/2
     helfpixcelForTicMark_Y = pixcelForTicMark_Y/2
@@ -1786,7 +1786,7 @@ def templateMatching():
         else:
             template = tem
         w, h = template.shape[::-1]
-        result = cv.matchTemplate(gray_img, template, cv.TM_CCOEFF_NORMED)
+        result = cv.matchTemplate(MofologyImg, template, cv.TM_CCOEFF_NORMED)
         loc = np.where(result >= 0.7)
         for pt in zip(*loc[::-1]):
             topleft_x = pt[0]
@@ -1806,7 +1806,7 @@ def templateMatching():
                 if cur_x != 0 and ((xy_arr[k][1]) != 0):
                     # if (cur_x == x) and (y == xy_arr[k][0]):
                     # print ("cur x " + str(cur_x ) + " and y = " + str(xy_arr[k][1]))
-                    if (cur_x >= x - 3 and cur_x <= x + 3 ) and (y >= (xy_arr[k][1] - 3) and y <= (xy_arr[k][1] + 3)):
+                    if (cur_x >= x - 5 and cur_x <= x + 5 ) and (y >= (xy_arr[k][1] - 5) and y <= (xy_arr[k][1] + 5)):
                         haveDuplicate = True
 
             
@@ -1945,9 +1945,12 @@ def identify_Y_AXis_UsingTempalte_Matching():
         identifyTicMarks_X_Axis() 
 
     # get the yx coordinate and their count 
+
+
     for i in range(0, 30): 
         count = 0
         x = xy_arr[i][0]
+        print(" x cor " + str(x))
         if x != 0:
             for j in range (0, 30): 
                 current_x_cor = xy_arr[j][0]
@@ -1963,6 +1966,7 @@ def identify_Y_AXis_UsingTempalte_Matching():
     x_coordnate_of_Y_Axis = total_x_coordnate_of_Y_Axis = 0
         # y_coordnate_of_X_Axis = 0 
     for i in range (0,20):
+        print(" x cor " + str(x_coordinates[i][0]) + " count  " + str(x_coordinates[i][1]))
         current_x_count_max = x_coordinates[i][1]
         if current_x_count_max > x_count_max:
             x_count_max = current_x_count_max
@@ -1989,7 +1993,6 @@ def identify_Y_AXis_UsingTempalte_Matching():
     
     if x_count_max > 1:
         # get the vertical line which has maximum length
-        # print(" check ---------------->")
         maxlength_Y = 0
         for h in range(0, noOfLines):
             l = Y_arr[h][1]
@@ -2009,7 +2012,11 @@ def identify_Y_AXis_UsingTempalte_Matching():
             x = arr[h][0]
             if (len == maxlength_Y) or (len >= maxlength_Y - (maxlength_Y * 0.3)): 
                 # print(" length --------------- ------------" + str(len) + ",,,"+ str(x))
-                if ( (x_coordnate_of_Y_Axis <= x + (pixcelForTicMark_X/2)) and ( x_coordnate_of_Y_Axis >= x-(pixcelForTicMark_X/2)) and (x_coordnate_of_Y_Axis != 0)):     
+                # if ((x_coordnate_of_Y_Axis <= x + (pixcelForTicMark_X/2)) and (x_coordnate_of_Y_Axis != 0)):    
+                if ((x_coordnate_of_Y_Axis <= x + (pixcelForTicMark_X/2)) and ( x_coordnate_of_Y_Axis >= x - (pixcelForTicMark_X/2)) and (x_coordnate_of_Y_Axis != 0)):     
+                    print("////// template x"+ str(x_coordnate_of_Y_Axis))
+                    print("////// identify line x x"+ str(x))
+                    print(" check ----------------> " + str(count))
                     Y_axis_cordinate = h 
                     found_Y = True
                     return found_Y
@@ -2238,35 +2245,40 @@ def main(argv):
     filename = argv[0] if len(argv) > 0 else default_file
 
     # Convert to gray Scale
-    src = cv.imread(cv.samples.findFile(filename), cv.IMREAD_GRAYSCALE)
-    src2 = src
-    # img = cv.imread(cv.samples.findFile(filename))
-    # src = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    # src = cv.imread(cv.samples.findFile(filename), cv.IMREAD_GRAYSCALE) 
+    img = cv.imread(cv.samples.findFile(filename))
+    i_height = np.size(img, 0)
+    i_width = np.size(img, 1)
+    resized_img = None
+
+    if (i_height <= 650 and i_width <= 900):
+        resized_img = img
+    else:
+        # resize imagex
+        r_width = int(600)
+        r_height = int(550)
+        dim = (r_width, r_height)
+        resized_img = cv.resize(img, dim, interpolation = cv.INTER_AREA) 
+  
+    src = cv.cvtColor(resized_img, cv.COLOR_BGR2GRAY)
 
     # Check if image is loaded fine or not
     if src is None:
         print ('Error opening image!')
         print ('Usage: hough_lines.py [image_name -- default ' + default_file + '] \n')
         return -1 
-    
-    # resize image
-    scale_percent = 220 # percent of original size
-    # width = int(src.shape[1] * scale_percent / 100)
-    # height = int(src.shape[0] * scale_percent / 100)
-    width = int(500)
-    height = int(500)
-    dim = (width, height)
-    resized = cv.resize(src, dim, interpolation = cv.INTER_AREA)
 
+    src2 = src
     resized = src
+
     height = np.size(resized, 0)
     width = np.size(resized, 1)
     # print("Image width : " + str(width))
     # print("Image height : " + str(height))
     
     # Edge detection
-    dst = cv.Canny(resized, 20, 200, None, 3)
-    #dst = cv.Canny(src, 20, 200, None, 3)  
+    #dst = cv.Canny(src, 20, 200, None, 3) 
+    dst = cv.Canny(resized, 20, 200, None, 3) 
 
     cv.imshow("Check Canny", dst)  
     # Copy edges to the images that will display the results in BGR
@@ -2279,10 +2291,9 @@ def main(argv):
     cdstP_Linear = np.copy(cdst)
     srcTemplate = np.copy(cdst)
     
-    
+    # Get Text
     global result
-    # Get Text Using OCR
-    result = pytesseract.image_to_string(Image.open(cv.samples.findFile(filename)))
+    result = pytesseract.image_to_string(resized_img)
     print(" Numbers Identify Using OCR  " + str(result))
 
     if result: 
@@ -2297,10 +2308,9 @@ def main(argv):
         # print("Text cannot Read")
      
     # Probabilistic Line Transform
-    linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 0, 15) 
-    
     # linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 0, 10) 
     # linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 4, 15) 
+    linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 0, 15) 
     noOfLines = len(linesP) 
     
     if linesP is not None: # Check there are lines

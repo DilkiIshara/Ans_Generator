@@ -2400,6 +2400,8 @@ def main(argv):
 
         print(" Ratio Of Number on X Axis = "+str(ratio_X_Axis_Value))
         print(" Ratio Of Number on Y Axis = "+str(ratio_Y_Axis_Value))
+        print(" number of pixcles  on X axis " + str(pixcelForTicMark_X))
+        print(" number of pixcles  on Y axis " + str(pixcelForTicMark_Y))
 
 
         # if graph is a Linear Graph
