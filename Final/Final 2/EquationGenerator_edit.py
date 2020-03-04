@@ -1070,24 +1070,23 @@ def identifyTicMarks_X_Axis():
     increment = 1
     for h in range(0, len(linesP)):
         d = array_sort[h]
-        if d != 0:
-            if(h == 0):
-                modify_array_sort[h] = d
-            else : 
-                dup = 0
-                for k in range(0, len(linesP)):
-                    val = modify_array_sort[k]
-                    if(((val-5) <= d) and ((val+5)>= d)):
-                        modify_array_sort[k] = int(round((val+d)/2))
-                        dup = 1
+        if(h == 0):
+            modify_array_sort[h] = d
+        else : 
+            dup = 0
+            for k in range(0, len(linesP)):
+                val = modify_array_sort[k]
+                if(((val-5) <= d) and ((val+5)>= d)):
+                    modify_array_sort[k] = int(round((val+d)/2))
+                    dup = 1
                 
-                if (dup == 0 ):
-                    modify_array_sort[increment] = d
-                    increment = increment + 1
+            if (dup == 0 ):
+                modify_array_sort[increment] = d
+                increment = increment + 1
 
     # print(modify_array_sort)
     j = 0
-    for h in range(2, len(linesP)):
+    for h in range(0, len(linesP)):
         d = modify_array_sort[h]
         if(h > 0):
             d1 = modify_array_sort[h-1]
@@ -1106,7 +1105,7 @@ def identifyTicMarks_X_Axis():
         if (d != 0) : 
             count = 0
             for i in range(0, j ):  
-                if ((distance[i] >= d - 10) and (distance[i] <= d + 10) )  : 
+                if ((distance[i] >= d - 5) and (distance[i] <= d + 5) )  : 
                     count = count +1
             count_arr[h][0]  = d
             count_arr[h][1]  = count
@@ -1261,7 +1260,7 @@ def identifyTicMarks_Y_Axis():
         if (d != 0) : 
             count = 0
             for i in range(0, j ):  
-                if ((distance[i] >= d - 10) and (distance[i] <= d + 10) )  : 
+                if ((distance[i] >= d - 5) and (distance[i] <= d + 5) )  : 
                     count = count +1
             count_arr[h][0]  = d
             count_arr[h][1]  = count
@@ -1950,7 +1949,7 @@ def identify_Y_AXis_UsingTempalte_Matching():
     for i in range(0, 30): 
         count = 0
         x = xy_arr[i][0]
-        print(" x cor " + str(x))
+        # print(" x cor " + str(x))
         if x != 0:
             for j in range (0, 30): 
                 current_x_cor = xy_arr[j][0]
@@ -1966,7 +1965,7 @@ def identify_Y_AXis_UsingTempalte_Matching():
     x_coordnate_of_Y_Axis = total_x_coordnate_of_Y_Axis = 0
         # y_coordnate_of_X_Axis = 0 
     for i in range (0,20):
-        print(" x cor " + str(x_coordinates[i][0]) + " count  " + str(x_coordinates[i][1]))
+        # print(" x cor " + str(x_coordinates[i][0]) + " count  " + str(x_coordinates[i][1]))
         current_x_count_max = x_coordinates[i][1]
         if current_x_count_max > x_count_max:
             x_count_max = current_x_count_max
@@ -2014,9 +2013,9 @@ def identify_Y_AXis_UsingTempalte_Matching():
                 # print(" length --------------- ------------" + str(len) + ",,,"+ str(x))
                 # if ((x_coordnate_of_Y_Axis <= x + (pixcelForTicMark_X/2)) and (x_coordnate_of_Y_Axis != 0)):    
                 if ((x_coordnate_of_Y_Axis <= x + (pixcelForTicMark_X/2)) and ( x_coordnate_of_Y_Axis >= x - (pixcelForTicMark_X/2)) and (x_coordnate_of_Y_Axis != 0)):     
-                    print("////// template x"+ str(x_coordnate_of_Y_Axis))
-                    print("////// identify line x x"+ str(x))
-                    print(" check ----------------> " + str(count))
+                    # print("////// template x"+ str(x_coordnate_of_Y_Axis))
+                    # print("////// identify line x x"+ str(x))
+                    # print(" check ----------------> " + str(count))
                     Y_axis_cordinate = h 
                     found_Y = True
                     return found_Y
