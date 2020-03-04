@@ -624,7 +624,7 @@ def getQuadraticGraphCoodinates():
         if (d3 < 0) :
             d3 = (-1)*d3
             # print(" D_33333333333 ----> " + str(d3)) 
-        if (d3 <= 0.1  or d3>=0.9) :
+        if (d3 <= 0.2  or d3>=0.8) :
             ry = int(round(rsy_D1))
             if (count < 10):
                 X_Y_Coordinate[count][0] = rsx+k
@@ -643,30 +643,13 @@ def getQuadraticGraphCoodinates():
         if (d4 < 0) :
             d4 = (-1)*d4
             # print(" D_33333333333 ----> " + str(d4))
-        if (d4 <= 0.25  or d4>=0.75) :
+        if (d4 <= 0.2  or d4>=0.8) :
             ly = int(round(lsy_D1)) 
             if (count_2 < 10):
                 X_Y_Coordinate_n[count_2][0] = lsx-k
                 X_Y_Coordinate_n[count_2][1] = ly
                 count_2 = count_2 + 1
-                totalCount = totalCount + 1
-                # print(" Coordinate------------> x=== " + str(rsx+k) + " Y ========" + str(ry))
-
-            # needddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
-            # lsy = ((origin_Y-lsy_coordinate)/pixcelForTicMark_Y)
-            # lsy_D1 = round(lsy,1)
-            # d = modf(lsy_D1)
-            # d4 = d[0]
-            # if (d4 < 0) :
-            #     d4 = (-1)*d4
-            #     print(" D_33333333333 ----> " + str(d4))
-            # if (d4 <= 0.2  or d4>=0.8) :
-            #     ly = int(round(lsy_D1)) 
-            #     if (count < 10):
-            #         X_Y_Coordinate[count][0] = lsx-k
-            #         X_Y_Coordinate[count][1] = ly
-            #         count = count + 1
-            #     print(" Coordinate------------> x=== " + str(lsx-k) + " Y ========" + str(ly))
+                totalCount = totalCount + 1 
              
         # draw
         for i in range(lsx_coordinate - 5 , lsx_coordinate + 5):
@@ -677,30 +660,7 @@ def getQuadraticGraphCoodinates():
             for j in range(rsy_coordinate - 5, rsy_coordinate +5):
                 if(i > 0 and i < width and j > 0 and j < height ): 
                     cdstP2[j,i] = (255, 255, 150)
-
-    # print X_Y_Coordinate array
-    # for i in range(0,10):
-    #     x = X_Y_Coordinate[i][0]
-    #     y = X_Y_Coordinate[i][1]
-        # print(str(i ) +   "      X value ---> " + str(x) + " Y Value " + str(y))
-
-    #if count <3:
-        # lsx_coordinate = origin_X + (pixcelForTicMark_X*(lsx-k))
-        # lsy_coordinate = int(round(((qa*(pow(lsx_coordinate,2))) + (qb*lsx_coordinate) + qc)))
-        # lsy = ((origin_Y-lsy_coordinate)/pixcelForTicMark_Y)
-        # lsy_D1 = round(lsy,1)
-        # d = modf(lsy_D1)
-        # d4 = round(d[0],1)
-        # if (d4 < 0) :
-        #     d4 = (-1)*d4
-        #     # print(" D_33333333333 ----> " + str(d4))
-        # if (d4 <= 0.25  or d4>=0.75) :
-        #     ly = int(round(lsy_D1)) 
-        #     if (count < 10):
-        #         X_Y_Coordinate[count][0] = lsx-k
-        #         X_Y_Coordinate[count][1] = ly
-        #         count = count + 1
-            # print(" Coordinate------------> x=== " + str(lsx-k) + " Y ========" + str(ly))
+ 
 
 
     if totalCount > 3:
@@ -1416,7 +1376,8 @@ def getTextCoordinate():
 
 def identifyNumbersRelated_X_Y_Axis():
     global  ratio_X_Axis_Value, ratio_Y_Axis_Value  
-    ratio_Of_XAxis = ratio_Of_XAxis = 1
+    ratio_Of_XAxis = 1 
+    ratio_Of_YAxis = 1
     x_Axis_ratio = y_Axis_ratio = np.arange(30) # ratio of number of X axis 
     x_Axis_Number =  [[0] * 2 for i in range(30)] 
     y_Axis_Number = [[0] * 2 for i in range(30)] 
@@ -1644,6 +1605,16 @@ def indentify_Y_UsingValues():
         for h in range(0, noOfLines):
             len = Y_arr[h][1]
             x = arr[h][0]
+            if (len == maxlength_Y):
+                hasError = True
+                if ( (x_coordinate <= x + (pixcelForTicMark_X/2)) and ( x_coordinate >= x-(pixcelForTicMark_X/2))):     
+                    Y_axis_cordinate = h
+                    found_Y = True
+                    return found_Y
+        
+        for h in range(0, noOfLines):
+            len = Y_arr[h][1]
+            x = arr[h][0]
             if (len == maxlength_Y) or (len >= maxlength_Y - (maxlength_Y * 0.4)):
                 hasError = True
                 if ( (x_coordinate <= x + (pixcelForTicMark_X/2)) and ( x_coordinate >= x-(pixcelForTicMark_X/2))):     
@@ -1714,23 +1685,40 @@ def indentify_X_Axis_UsingValues():
             for h in range(0, noOfLines):
                 len = X_arr[h][1]
                 y = arr[h][1]
+                if (len == maxlength_X): 
+                    if ((y_coordinate <= y + (pixcelForTicMark_Y/2)) and ( y_coordinate >= y - (pixcelForTicMark_Y/2))):     
+                        X_axis_cordinate = h 
+                        found_X = True
+                        return found_X 
+
+            for h in range(0, noOfLines):
+                len = X_arr[h][1]
+                y = arr[h][1]
+                if (len == maxlength_X) :     
+                    if ((y_coordinate <= y + (pixcelForTicMark_Y*(3/4))) and ( y_coordinate >= y - (pixcelForTicMark_Y*(3/4)))):     
+                        X_axis_cordinate = h 
+                        found_X = True
+                        return found_X 
+
+            for h in range(0, noOfLines):
+                len = X_arr[h][1]
+                y = arr[h][1]
                 if (len == maxlength_X) or (len >= maxlength_X - (maxlength_X * 0.4)):
-                    hasError = True
                     if ((y_coordinate <= y + (pixcelForTicMark_Y/2)) and ( y_coordinate >= y - (pixcelForTicMark_Y/2))):     
                         X_axis_cordinate = h 
                         found_X = True
                         return found_X  
+
+            for h in range(0, noOfLines):
+                len = X_arr[h][1]
+                y = arr[h][1]
+                if (len == maxlength_X) or (len >= maxlength_X - (maxlength_X * 0.4)):  
+                    if ((y_coordinate <= y + (pixcelForTicMark_Y*(3/4))) and ( y_coordinate >= y - (pixcelForTicMark_Y*(3/4)))):     
+                        X_axis_cordinate = h 
+                        found_X = True
+                        return found_X
             
-            if hasError == True:
-                for h in range(0, noOfLines):
-                    len = X_arr[h][1]
-                    y = arr[h][1]
-                    if (len == maxlength_X) or (len >= maxlength_X - (maxlength_X * 0.4)):    
-                        print(" Y coordinates --------------------"+str(y))
-                        if ((y_coordinate <= y + (pixcelForTicMark_Y*(3/4))) and ( y_coordinate >= y - (pixcelForTicMark_Y*(3/4)))):     
-                            X_axis_cordinate = h 
-                            found_X = True
-                            return found_X 
+            
     return found_X 
 
 def generateEquationLinearGraph():
@@ -1753,7 +1741,7 @@ def generateEquationLinearGraph():
         d1 = round(a[0],1)
         if (d1 < 0) :
             d1 = (-1)*d1  
-        if (d1 <= 0.15  or d1>=0.85) :
+        if (d1 <= 0.2  or d1>=0.8) :
             y = int(round(real_Y))
             if (count < 10):
                 X_Y_Coordinate[count][0] = k
@@ -1772,7 +1760,7 @@ def generateEquationLinearGraph():
         d1 = round(a[0],1)
         if (d1 < 0) :
             d1 = (-1)*d1  
-        if (d1 <= 0.15  or d1>=0.85) :
+        if (d1 <= 0.2  or d1>=0.8) :
             y = int(round(real_Y)) 
             if (count_2 < 10):
                 X_Y_Coordinate_n[count_2][0] = -k
@@ -1780,7 +1768,7 @@ def generateEquationLinearGraph():
                 count_2 = count_2 + 1
                 totalCount = totalCount + 1
  
-    
+    print(" Total count " + str(totalCount))
     if (totalCount > 2):
         
         if count != 0 and count_2 != 0:
@@ -1831,7 +1819,6 @@ def generateEquationLinearGraph():
 
 def templateMatching():
     global srcTemplate, numberOf_Xaxis, numberOf_Yaxis, tem_y_arr, tem_x_arr, tem_Matching_Coordinates, xIndex , yIndex, temSrc, xy_arr
-    temSrc = src
     numberOf_Xaxis = [[0] * 3 for i in range(20)] # 0 - number 1 X coordinate 2 count
     numberOf_Yaxis = [[0] * 2 for i in range(20)] # 0 - number 1 Y coordinate
     indexNumberOf_Xaxis = indexNumberOf_Yaxis = 0
@@ -1931,7 +1918,7 @@ def templateMatching():
 
  
 
-    for i in range(1 , 25):
+    for i in range(2, 25):
         curretTemplate = templates[i][0]
         number = templates[i][1]
         tem = cv.imread(curretTemplate)
@@ -2069,7 +2056,6 @@ def identify_XAxis_UsingTempalte_Matching():
                 maxlength_X = l  
         # print(" Length of X Axis  : " + str(maxlength_X))
 
-
         # identify x axis considering line length and text
         # if numberOfDigitValue > 0:
         hasErrorin = False
@@ -2077,26 +2063,43 @@ def identify_XAxis_UsingTempalte_Matching():
         for h in range(0, noOfLines):
             len = X_arr[h][1]
             y = arr[h][1] 
-            if (len == maxlength_X) or (len >= maxlength_X - (maxlength_X * 0.4)):
-                hasErrorin = True
-                # print("  ---------------   " + str(y))
-                # print ("      ======================  " + str(len))     
+            if (len == maxlength_X) :
+                hasErrorin = True     
                 if ( (y_coordnate_of_X_Axis <= y + (pixcelForTicMark_Y/2)) and ( y_coordnate_of_X_Axis >= y-(pixcelForTicMark_Y/2)) and ( y_coordnate_of_X_Axis != 0) ):    
                     X_axis_cordinate = h 
                     found_X = True
+                    print(" Check 1")
                     return found_X 
 
-        if hasErrorin == True:
-            for h in range(0, noOfLines):
-                len = X_arr[h][1]
-                y = arr[h][1] 
-                if (len == maxlength_X) or (len >= maxlength_X - (maxlength_X * 0.4)):
-                # print("  ---------------   " + str(y))
-                # print ("      ======================  " + str(len))     
-                    if ( (y_coordnate_of_X_Axis <= y + (pixcelForTicMark_Y* (3/4))) and ( y_coordnate_of_X_Axis >= y-(pixcelForTicMark_Y*(3/4))) and ( y_coordnate_of_X_Axis != 0) ):    
-                        X_axis_cordinate = h 
-                        found_X = True
-                        return found_X 
+        for h in range(0, noOfLines):
+            len = X_arr[h][1]
+            y = arr[h][1] 
+            if (len == maxlength_X):      
+                if ( (y_coordnate_of_X_Axis <= y + (pixcelForTicMark_Y* (3/4))) and ( y_coordnate_of_X_Axis >= y-(pixcelForTicMark_Y*(3/4))) and ( y_coordnate_of_X_Axis != 0) ):    
+                    X_axis_cordinate = h 
+                    found_X = True
+                    print(" Check 2")
+                    return found_X 
+
+        for h in range(0, noOfLines):
+            len = X_arr[h][1]
+            y = arr[h][1] 
+            if (len == maxlength_X) or (len >= maxlength_X - (maxlength_X * 0.4)):    
+                if ( (y_coordnate_of_X_Axis <= y + (pixcelForTicMark_Y/2)) and ( y_coordnate_of_X_Axis >= y-(pixcelForTicMark_Y/2)) and ( y_coordnate_of_X_Axis != 0) ):    
+                    X_axis_cordinate = h 
+                    found_X = True
+                    print(" Check 3")
+                    return found_X 
+
+        for h in range(0, noOfLines):
+            len = X_arr[h][1]
+            y = arr[h][1] 
+            if (len == maxlength_X) or (len >= maxlength_X - (maxlength_X * 0.4)):      
+                if ( (y_coordnate_of_X_Axis <= y + (pixcelForTicMark_Y* (3/4))) and ( y_coordnate_of_X_Axis >= y-(pixcelForTicMark_Y*(3/4))) and ( y_coordnate_of_X_Axis != 0) ):    
+                    X_axis_cordinate = h 
+                    found_X = True
+                    print(" Check 4")
+                    return found_X 
     return found_X 
 
 
@@ -2405,7 +2408,7 @@ def identify_Y_Axis_Ratio():
 def main(argv):
     
     global cdstP, src2, cdstP2, cdstP_X_Y, cdstP_Linear, allLines, linesP, arr, X_arr, Y_arr, graphs_arr, noOfLines, origin_X, origin_Y, height, width, filename, src, srcTemplate, resized_img
-
+   
     # Loads an image
     default_file = 'x2.png' 
     filename = argv[0] if len(argv) > 0 else default_file
@@ -2413,6 +2416,11 @@ def main(argv):
     # Convert to gray Scale
     # src = cv.imread(cv.samples.findFile(filename), cv.IMREAD_GRAYSCALE) 
     img = cv.imread(cv.samples.findFile(filename))
+
+    if img.all() == None :
+        print(" Cannot Solve this graph")
+        return
+
     i_height = np.size(img, 0)
     i_width = np.size(img, 1)
     resized_img = None
@@ -2435,8 +2443,8 @@ def main(argv):
         print ('Usage: hough_lines.py [image_name -- default ' + default_file + '] \n')
         return -1 
 
-    src2 = src
-    resized = src
+    src2 = np.copy(src)
+    resized = np.copy(src)
 
     height = np.size(resized, 0)
     width = np.size(resized, 1)
@@ -2451,6 +2459,7 @@ def main(argv):
     # Copy edges to the images that will display the results in BGR
     cdst = cv.cvtColor(dst, cv.COLOR_GRAY2BGR)
    
+    temSrc = np.copy(src)
     cdstP = np.copy(cdst)
     cdstP_X_Y = np.copy(cdst)
     allLines = np.copy(cdst)  
@@ -2478,9 +2487,11 @@ def main(argv):
     # linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 0, 10) 
     # linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 4, 15) 
     linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 25, None, 4, 15) 
-    noOfLines = len(linesP) 
+    
     
     if linesP is not None: # Check there are lines
+
+        noOfLines = len(linesP) 
 
         # 1 store value cordinate
         if result != "":
@@ -2607,6 +2618,7 @@ def main(argv):
     if ( graphType == "linear"): 
         cv.imshow("Probabilistic Line Transform", cdstP) 
         cv.imshow("Linear graph", cdstP_Linear) 
+        cv.imshow("Mofology ", MofologyImg_2) 
     elif (graphType == "Quadratic"): 
         cv.imshow("Mofology ", MofologyImg_2) 
         cv.imshow("Min Max", cdstP2)
