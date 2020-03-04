@@ -1409,18 +1409,21 @@ def getTextCoordinate():
             textCoordinate[i][0] = int(b[0]) # store Charactor
             textCoordinate[i][1] = round((int(b[1]) + int(b[3]))/2) # store X Coordinate
             textCoordinate[i][2] = round(((height - int(b[2])) + (height - int(b[4])))/2) # store Y Coordinate
-            cv.rectangle(cdstP, ( int(b[1]), int((int(b[2])))), (int(b[3]), int((int(b[4])))), (255, 255, 0), 2)
+            cv.rectangle(cdstP, ( int(b[1]), int((height - int(b[2])))), (int(b[3]), int((height - int(b[4])))), (255, 255, 0), 2)
             i = i + 1
             numberOfDigitValue = i
      
 
 def identifyNumbersRelated_X_Y_Axis():
-    global  ratio_X_Axis_Value, ratio_Y_Axis_Value   
-
+    global  ratio_X_Axis_Value, ratio_Y_Axis_Value  
     ratio_Of_XAxis = ratio_Of_XAxis = 1
     x_Axis_ratio = y_Axis_ratio = np.arange(30) # ratio of number of X axis 
-    x_Axis_Number = y_Axis_Number = [[0] * 2 for i in range(30)] 
+    x_Axis_Number =  [[0] * 2 for i in range(30)] 
+    y_Axis_Number = [[0] * 2 for i in range(30)] 
     x_Axis_Number_Index = y_Axis_Number_Index = 0
+
+    numberOf_Yaxis_remove_Duplicates = numberOf_Xaxis_remove_Duplicates = [[0] * 2 for i in range(30)] # 0 - number 1 Y coordinate  # numbers which are relate to Y Axis
+    numberOf_Xaxis_remove_Duplicates_Index = numberOf_Yaxis_remove_Duplicates_Index = 0 
 
     x_Axis_ratio_Index = y_Axis_ratio_Index = 0
     for j in range(0, 30):
@@ -1431,65 +1434,163 @@ def identifyNumbersRelated_X_Y_Axis():
         for i in range(0, numberOfCharactor): 
             character_X_Cordinate = textCoordinate[i][1]
             character_Y_Cordinate = textCoordinate[i][2]
+            Number = textCoordinate[i][0] 
+
             # Identify Y axis numbers
-            if(((textCoordinate[i][1]) <= (origin_X+pixcelForTicMark_X)) and ((textCoordinate[i][1]) >= (origin_X-pixcelForTicMark_X))):
-              if y_Axis_Number_Index < 30:
+            if((character_X_Cordinate <= (origin_X + pixcelForTicMark_X)) and (character_X_Cordinate >= (origin_X-pixcelForTicMark_X))): 
+                if y_Axis_Number_Index < 30:
                     y_Axis_Number[y_Axis_Number_Index][0] = textCoordinate[i][0]   # number
                     y_Axis_Number[y_Axis_Number_Index][1] = textCoordinate[i][2]   #  Y cooordinate
-                    y_Axis_Number_Index = y_Axis_Number_Index + 1
-                    print(" Number " + str(textCoordinate[i][0]))
+                    y_Axis_Number_Index = y_Axis_Number_Index + 1  
 
             # Identify Numbers related to X axis
-            elif(((character_Y_Cordinate) <= (origin_Y+pixcelForTicMark_Y)) and ((character_Y_Cordinate) >= (origin_Y-pixcelForTicMark_Y))):
+            elif(((character_Y_Cordinate) <= (origin_Y + pixcelForTicMark_Y)) and ((character_Y_Cordinate) >= (origin_Y-pixcelForTicMark_Y))):
                 if x_Axis_Number_Index < 30:
                     x_Axis_Number[x_Axis_Number_Index][0] = textCoordinate[i][0]   # number
                     x_Axis_Number[x_Axis_Number_Index][1] = textCoordinate[i][1]   #  X cooordinate
-                    x_Axis_Number_Index = x_Axis_Number_Index + 1
+                    x_Axis_Number_Index = x_Axis_Number_Index + 1 
 
-    # get The ratio and stotre in a array
-    for i in range(0, 30):
-        number = x_Axis_Number[i][0]
-        x = x_Axis_Number[i][1]
-        if number != 0 and pixcelForTicMark_X != 0:
-            numberOf_TicMarks = int(round((x - origin_X )/pixcelForTicMark_X))
-            if numberOf_TicMarks != 0:
-                ratio = int(round(number/numberOf_TicMarks))
-                if x_Axis_ratio_Index < 30:
-                    if (ratio < 0):
-                        x_Axis_ratio[x_Axis_ratio_Index] = ratio*(-1)
-                    else:
-                        x_Axis_ratio[x_Axis_ratio_Index] = ratio
-                    x_Axis_ratio_Index = x_Axis_ratio_Index + 1
+
+# Identify Ratio of X axis
+    if x_Axis_Number_Index > 1:
+        for i in range(0, 30): 
+            number = x_Axis_Number[i][0]
+            x = x_Axis_Number[i][1] 
+            haveDuplicate = False
+            if number != 0 and x != 0:
+                for j in range (0,30):
+                    number_dup = numberOf_Xaxis_remove_Duplicates[j][0]
+                    x_dup = numberOf_Xaxis_remove_Duplicates[j][1]
+                    if number_dup == number and (x >= x_dup - 3 and x <= x_dup + 3):
+                        haveDuplicate = True
+            if haveDuplicate != True:
+                numberOf_Xaxis_remove_Duplicates[numberOf_Xaxis_remove_Duplicates_Index][0] = number
+                numberOf_Xaxis_remove_Duplicates[numberOf_Xaxis_remove_Duplicates_Index][1] = x
+                numberOf_Xaxis_remove_Duplicates_Index = numberOf_Xaxis_remove_Duplicates_Index + 1
+                
+
+        # get The ratio and stotre in a array
+        for i in range(0, 30):
+            number = numberOf_Xaxis_remove_Duplicates[i][0]
+            x = numberOf_Xaxis_remove_Duplicates[i][1]
+            haveDuplicate = False
+            if number != 0 and x != 0 and pixcelForTicMark_X != 0:
+                numberOf_TicMarks = int(round((x - origin_X )/pixcelForTicMark_X))
+                if numberOf_TicMarks != 0:
+                    ratio = int(round(number/numberOf_TicMarks))
+                    if x_Axis_ratio_Index < 30:
+                        if (ratio < 0):
+                            x_Axis_ratio[x_Axis_ratio_Index] = ratio*(-1)
+                        else:
+                            x_Axis_ratio[x_Axis_ratio_Index] = ratio
+                        x_Axis_ratio_Index = x_Axis_ratio_Index + 1
     
-    ratioVsCount = [[0] * 2 for i in range(30)]
-    ratioVsCount_Index = 0
+        ratioVsCount = [[0] * 2 for i in range(30)]
+        ratioVsCount_Index = 0
 
-    # get the frequency of each ratio
-    for i in range(0, 30):
-        count = 0
-        # print(" X Axis Ratios ===" + str(x_Axis_ratio[i]))
-        current_Ratio = x_Axis_ratio[i]
-        if current_Ratio != 0 :
-            for j in range(0, 30):
-                if current_Ratio == (x_Axis_ratio[j]):
-                    count = count + 1
-            if (ratioVsCount_Index < 30 ):
-                ratioVsCount[ratioVsCount_Index][0] = current_Ratio
-                ratioVsCount[ratioVsCount_Index][1] = count
-                ratioVsCount_Index = ratioVsCount_Index + 1
+        # get the frequency of each ratio
+        for i in range(0, 30):
+            count = 0
+            # print(" X Axis Ratios ===" + str(x_Axis_ratio[i]))
+            current_Ratio = x_Axis_ratio[i]
+            if current_Ratio != 0 :
+                for j in range(0, 30):
+                    if current_Ratio == (x_Axis_ratio[j]):
+                        count = count + 1
+                if (ratioVsCount_Index < 30 ):
+                    ratioVsCount[ratioVsCount_Index][0] = current_Ratio
+                    ratioVsCount[ratioVsCount_Index][1] = count
+                    ratioVsCount_Index = ratioVsCount_Index + 1
 
-    # select the ratio which has the max frequency
-    max_count = 0
-    for i in range(0, 30):
-        count = ratioVsCount[i][1]
-        if (max_count < count):
-            max_count = count
-            if ((ratioVsCount[i][0] > 1)):
-                ratio_Of_XAxis = ratioVsCount[i][0]
+        # select the ratio which has the max frequency
+        max_count = 0
+        for i in range(0, 30):
+            count = ratioVsCount[i][1]
+            if (max_count < count):
+                max_count = count
+                if ((ratioVsCount[i][0] > 1)):
+                    ratio_Of_XAxis = ratioVsCount[i][0]
 
-    ratio_X_Axis_Value = ratio_Of_XAxis
+        ratio_X_Axis_Value = ratio_Of_XAxis
 
 # Identify Y axis ratio
+    if y_Axis_Number_Index > 1: 
+        for i in range(0, 30):
+            num = number = y_Axis_Number[i][0]
+            y = y_Axis_Number[i][1]
+            # print(" Number  YYYYYYYYY   :  " + str(num) + " x cor " + str(y))
+            haveDuplicate = False
+            if number != 0 and y != 0:
+                for j in range (0,30):
+                    number_dup = numberOf_Yaxis_remove_Duplicates[j][0]
+                    y_dup = numberOf_Yaxis_remove_Duplicates[j][1]
+                    if number_dup == number and (y >= y_dup - 3 and y <= y_dup + 3):
+                        haveDuplicate = True
+            if haveDuplicate != True:
+                numberOf_Yaxis_remove_Duplicates[numberOf_Yaxis_remove_Duplicates_Index][0] = number
+                numberOf_Yaxis_remove_Duplicates[numberOf_Yaxis_remove_Duplicates_Index][1] = y
+                numberOf_Yaxis_remove_Duplicates_Index = numberOf_Yaxis_remove_Duplicates_Index + 1
+            
+
+        # get The ratio and stotre in a array
+        for i in range(0, 30):
+            # number = numberOf_Yaxis[i][0]
+            # y = numberOf_Yaxis[i][1]
+            number =  numberOf_Yaxis_remove_Duplicates[i][0]                                                #*******
+            y =  numberOf_Yaxis_remove_Duplicates[i][1]                                                      #*******
+            # print("  Y number ermove ---" + str(number) + str(" Y coordinate "+ str(y)))
+            if number != 0 and pixcelForTicMark_Y != 0 and y !=0 : 
+                print(" Y : " + str(y))
+
+                for i in range(origin_X - 15 , origin_X + 15):
+                    for j in range(y - 5, y +5):
+                        if(i > 0 and i < width and j > 0 and j < height ): 
+                            allLines[j,i] = (255, 255, 255)
+                            MofologyImg_2[j,i] = (0, 255, 0)
+                            cdstP[j,i] = (255, 255, 255)  
+                print(" origin_Y : " + str(origin_Y))
+                print(" pixcelForTicMark_Y : " + str(pixcelForTicMark_Y))                                #*******
+                numberOf_TicMarks = int(round((y - origin_Y )/pixcelForTicMark_Y))
+                print(" Number of Tic Marks " + str(numberOf_TicMarks))
+                if numberOf_TicMarks != 0:
+                    ratio = int(round(number/numberOf_TicMarks))
+                    # print("  ratio ----- ---" + str(ratio))
+                    if y_Axis_ratio_Index < 30:
+                        if (ratio < 0):
+                            y_Axis_ratio[y_Axis_ratio_Index] = ratio*(-1)
+                        else:
+                            y_Axis_ratio[y_Axis_ratio_Index] = ratio
+                        y_Axis_ratio_Index = y_Axis_ratio_Index + 1 
+    
+        ratioVsCount = [[0] * 2 for i in range(30)]
+        ratioVsCount_Index = 0
+
+        # get the frequency of each ratio
+        for i in range(0, 30):
+            count = 0
+            # print(" Y Axis Ratios ===" + str(y_Axis_ratio[i]))
+            current_Ratio = y_Axis_ratio[i]
+            if current_Ratio != 0 :
+                for j in range(0, 30):
+                    if current_Ratio == (y_Axis_ratio[j]):
+                        count = count + 1
+                if (ratioVsCount_Index < 30 ):
+                    ratioVsCount[ratioVsCount_Index][0] = current_Ratio
+                    ratioVsCount[ratioVsCount_Index][1] = count
+                    ratioVsCount_Index = ratioVsCount_Index + 1
+
+        # select the ratio which has the max frequency
+        max_count = 0
+        for i in range(0, 30):
+            count = ratioVsCount[i][1]
+            if (max_count < count):
+                max_count = count
+                if ((ratioVsCount[i][0] > 1)):
+                    ratio_Of_YAxis = ratioVsCount[i][0]
+
+        ratio_Y_Axis_Value = ratio_Of_YAxis
+
+        print(" X axis Ratio + "+ str(ratio_X_Axis_Value) + " Y axis Ratio + " + str(ratio_Y_Axis_Value))
 
 
 
@@ -2139,6 +2240,10 @@ def identify_X_Axis_Ratio():
     ratio_Of_XAxis = 1
     x_Axis_ratio = np.arange(30) # ratio of number of X axis 
 
+    numberOf_Xaxis_remove_Duplicates = [[0] * 2 for i in range(30)] # 0 - number 1 Y coordinate  # numbers which are relate to Y Axis
+    numberOf_Xaxis_remove_Duplicates_Index = 0 
+
+
     x_Axis_ratio_Index = 0
     for j in range(0, 30):
         x_Axis_ratio[j] = 0
@@ -2149,11 +2254,31 @@ def identify_X_Axis_Ratio():
         x = numberOf_Xaxis[i][1]
         #print(" Xnumber---" + str(number) + str(" X coordinate "+ str(x)))
 
-    # get The ratio and stotre in a array
     for i in range(0, 30):
         number = numberOf_Xaxis[i][0]
         x = numberOf_Xaxis[i][1]
-        if number != 0 and pixcelForTicMark_X != 0:
+        haveDuplicate = False
+        if number != 0 and x != 0:
+            for j in range (0,30):
+                number_dup = numberOf_Xaxis_remove_Duplicates[j][0]
+                x_dup = numberOf_Xaxis_remove_Duplicates[j][1]
+                if number_dup == number and (x >= x_dup - 3 and x <= x_dup + 3):
+                    haveDuplicate = True
+        if haveDuplicate != True:
+            numberOf_Xaxis_remove_Duplicates[numberOf_Xaxis_remove_Duplicates_Index][0] = number
+            numberOf_Xaxis_remove_Duplicates[numberOf_Xaxis_remove_Duplicates_Index][1] = x
+            numberOf_Xaxis_remove_Duplicates_Index = numberOf_Xaxis_remove_Duplicates_Index + 1
+                
+
+
+
+
+    # get The ratio and stotre in a array
+    for i in range(0, 30):
+        number = numberOf_Xaxis_remove_Duplicates[i][0]
+        x = numberOf_Xaxis_remove_Duplicates[i][1]
+        haveDuplicate = False
+        if number != 0 and x != 0 and pixcelForTicMark_X != 0:
             numberOf_TicMarks = int(round((x - origin_X )/pixcelForTicMark_X))
             if numberOf_TicMarks != 0:
                 ratio = int(round(number/numberOf_TicMarks))
@@ -2193,8 +2318,6 @@ def identify_X_Axis_Ratio():
     ratio_X_Axis_Value = ratio_Of_XAxis
 
     # print(" Ratio Of Number on X Axis = "+str(ratio_Of_XAxis))
-
-
 
 
 def identify_Y_Axis_Ratio():
@@ -2278,30 +2401,6 @@ def identify_Y_Axis_Ratio():
                 ratio_Of_YAxis = ratioVsCount[i][0]
 
     ratio_Y_Axis_Value = ratio_Of_YAxis
-
-    # print(" Ratio_Of numbers on Y Axis = "+str(ratio_Of_YAxis))
-
-    # for i in range(0 , 20):
-    #     num = numberOf_Xaxis[i][0]
-    #     x_cor = numberOf_Xaxis[i][1]
-    #     count = 0
-    #     if ( (num != 0) and (x_cor != 0)):
-    #         print(" Number --> " + str(num)+ " Coordinate -->" + str(x_cor))
-    #         cv.rectangle(srcTemplate, (x_cor, origin_Y), (x_cor + 10, origin_Y + 10), (0, 150, 150), 2)
-    #         for j in range(0 , 20):
-    #             num1 = numberOf_Xaxis[j][0]
-    #             x_cor1 = numberOf_Xaxis[j][1]
-    #             if (num == num1) and ( x_cor >= x_cor1-10) and ( x_cor <= x_cor1+10):
-    #                 count = count + 1
-    #     numberOf_Xaxis[i][2] = count  
-
-    #     for i in range(0 , 20):
-    #         num = numberOf_Xaxis[i][0]
-    #         x_cor = numberOf_Xaxis[i][1]
-    #         count = numberOf_Xaxis[i][2]
-    #         if ( (num != 0) and (x_cor != 0)):
-    #             print(" Number --> " + str(num)+ " Coordinate -->" + str(x_cor) + " Count --> "+ str(count))
-
 
 def main(argv):
     
@@ -2473,7 +2572,7 @@ def main(argv):
         if ratio_Y_Axis_Value == 1 :
             identify_Y_Axis_Ratio()
         
-        # print (" Origin Y " + str(origin_Y))
+        print (" Origin Y " + str(origin_Y))
         print(" Ratio Of Number on X Axis = "+str(ratio_X_Axis_Value))
         print(" Ratio Of Number on Y Axis = "+str(ratio_Y_Axis_Value))
         print(" number of pixcles  on X axis " + str(pixcelForTicMark_X))
