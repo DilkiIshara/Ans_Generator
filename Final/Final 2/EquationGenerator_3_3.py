@@ -2383,7 +2383,7 @@ def identify_Y_Axis_Ratio():
     # get the frequency of each ratio
     for i in range(0, 30):
         count = 0
-        # print(" Y Axis Ratios ===" + str(y_Axis_ratio[i]))
+        print(" Y Axis Ratios ===" + str(y_Axis_ratio[i]))
         current_Ratio = y_Axis_ratio[i]
         if current_Ratio != 0 :
             for j in range(0, 30):
