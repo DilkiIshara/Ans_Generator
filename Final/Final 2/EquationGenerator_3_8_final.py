@@ -778,8 +778,7 @@ def draw_X_Axis():
         for h in range(0, len(linesP)):
             l = X_arr[h][1] 
             if l == maxlength_X  or l >= maxlength_X*0.8: 
-                sameLine = sameLine + 1
-    print(" Same Lines : " + str(sameLine))
+                sameLine = sameLine + 1 
 
     if (sameLine > 1): 
         if passfromTem_X != True:
@@ -898,7 +897,7 @@ def find_X_Axis():
                 min_XAxis_Ycordinate = min_X_axis_array[i][0] 
     
     
-    print(" Max Count  5555: " + str(maxCount))
+  
 
     if ( maxCount == 1):
         if passfromTem_X == True:
@@ -918,8 +917,7 @@ def find_X_Axis():
   
     if(pixcelForTicMark_Y != 0):
         half_pixcelForTicMark_Y = pixcelForTicMark_Y/2 
-    
-    print(" half_pixcelForTicMark_Y " + str (half_pixcelForTicMark_Y))
+     
     
     # identify all the legthly lane which are near
     count = 0
@@ -928,9 +926,9 @@ def find_X_Axis():
         X_axis_Y_cordinate = arr[h][1]
         length_Of_X_Axis = X_arr[h][1]   
         if ((X_axis_Y_cordinate <= (min_XAxis_Ycordinate + half_pixcelForTicMark_Y)) and (X_axis_Y_cordinate >= (min_XAxis_Ycordinate-half_pixcelForTicMark_Y))) :      
-            print(" car      ///////////////")
+          
             if ((length_Of_X_Axis == maxlength_X) or (length_Of_X_Axis > (maxlength_X - (maxlength_X*0.4)))) : 
-                print(" print " + str(X_axis_Y_cordinate))
+             
                 found = True
                 count = count + 1
                 X_axis_cordinate = h 
@@ -994,7 +992,7 @@ def find_Y_Axis():
     global maxlength_Y
     global Y_axis_cordinate
     global pixcelForTicMark_Y 
-    global passfromTem_Y, cdstP
+    global passfromTem_Y
  
     half_pixcelForTicMark_X = 10
     minLen_Y_Axis = maxlength_Y
@@ -1071,7 +1069,7 @@ def find_Y_Axis():
     
     # identify verical line which is near to shortest line
     # print (" Count 8888 " + str(maxlength_Y))
-    print (" Count 8888 " + str(min_YAxis_Xcordinate))
+    
     count = 0
     found = False
     for h in range(0, len(linesP)):
@@ -1080,6 +1078,7 @@ def find_Y_Axis():
         if ((Y_axis_X_cordinate <= (min_YAxis_Xcordinate + half_pixcelForTicMark_X)) and (Y_axis_X_cordinate >= (min_YAxis_Xcordinate - half_pixcelForTicMark_X)) and (Y_axis_X_cordinate != 0)) :         
             if ((length_Of_Y_Axis == maxlength_Y) or (length_Of_Y_Axis > maxlength_Y - (maxlength_Y * 0.4))):
                 found = True
+                # print (" Count 8888 " + str(count))
                 Y_axis_cordinate = h 
                 count = count + 1 
 
@@ -1092,12 +1091,11 @@ def find_Y_Axis():
                 if ((length_Of_Y_Axis == maxlength_Y) or (length_Of_Y_Axis > maxlength_Y - (maxlength_Y * 0.4))):
                     found = True
                     Y_axis_cordinate = h  
-                    
                     count = count + 1
     
-    for j in range(0, 350):
-        for k in range(min_YAxis_Xcordinate, min_YAxis_Xcordinate + 25):
-            cdstP[j,k] = (255, 5, 25)  
+    for j in range(0, 100):
+        for k in range(min_YAxis_Xcordinate, min_YAxis_Xcordinate + 5):
+            cdstP[j,k] = (255, 255, 255)  
 
 
     # get the left side line as Y axis
@@ -2489,14 +2487,14 @@ def identify_Y_AXis_UsingTempalte_Matching():
             if (len == maxlength_Y) or (len >= maxlength_Y - (maxlength_Y * 0.4)):     
                 if ((x_coordnate_of_Y_Axis <= x + (pixcelForTicMark_X)) and ( x_coordnate_of_Y_Axis >= x - (pixcelForTicMark_X)) and (x_coordnate_of_Y_Axis != 0)):     
                     Y_axis_cordinate = h 
-                    # print (" check 3333")
+                    print (" check 3333")
                     count = count + 1
                     # found_Y = True
                     # return found_Y
         if count > 1:
             passfromTem_Y = True
             find_Y_Axis()
-            # print(" fROM tEMPLATE TO SHORT y")
+            print(" fROM tEMPLATE TO SHORT y")
         elif count ==  1:
             found_Y = True 
             return found_Y 
