@@ -15,7 +15,7 @@ filename = None
 result = "" 
 linesP = cv.HoughLinesP(None, 1, np.pi / 180, 25, None, 10, 10)  
 numberOf_Horizontal = numberOf_Vertical = numberOf_Graph = rows = reduce = 0
-maxlength_X = maxlength_Y = maxlength_Graph = min_YAxis_Xcordinate = min_XAxis_Ycordinate = 0
+maxlength_X = maxlength_Y = maxlength_Graph = 0
 X_axis_cordinate = Y_axis_cordinate = graph_cordinate = -1
 arr = None             # 0-x1 1-Y1 2-x2 3-y2
 X_arr = Y_arr = None   # 0-a  1-length 2-arrIndex
@@ -781,30 +781,9 @@ def draw_X_Axis():
                 sameLine = sameLine + 1 
 
     if (sameLine > 1): 
-
         if passfromTem_X != True:
-            
-            print(" Same lines X " + str(sameLine))
             passfromTem_X = False
             find_X_Axis() 
-        else:
-            found = False
-            for h in range(0, len(linesP)):
-                X_axis_Y_cordinate = arr[h][1]
-                length_Of_X_Axis = X_arr[h][1]   
-                if ((X_axis_Y_cordinate <= (min_XAxis_Ycordinate + (pixcelForTicMark_Y/2))) and (X_axis_Y_cordinate >= (min_XAxis_Ycordinate-(pixcelForTicMark_Y/2)))) :      
-                    if ((length_Of_X_Axis == maxlength_X) or (length_Of_X_Axis > (maxlength_X-(maxlength_X*0.5)))) : 
-                        found = True
-                        print(" Same lines X " + str(sameLine))
-                        X_axis_cordinate = h 
-            if found == False:
-                for h in range(0, len(linesP)):
-                    X_axis_Y_cordinate = arr[h][1]
-                    length_Of_X_Axis = X_arr[h][1]   
-                    if ((X_axis_Y_cordinate <= (min_XAxis_Ycordinate + (pixcelForTicMark_Y))) and (X_axis_Y_cordinate >= (min_XAxis_Ycordinate-(pixcelForTicMark_Y)))) :      
-                        if ((length_Of_X_Axis == maxlength_X) or (length_Of_X_Axis > (maxlength_X-(maxlength_X*0.5)))) : 
-                            print(" Same lines X " + str(sameLine))
-                            X_axis_cordinate = h 
     else :
         found_X = True
         return
@@ -864,7 +843,7 @@ def addMofologyToImage():
 def find_X_Axis():
     global maxlength_X
     global X_axis_cordinate
-    global pixcelForTicMark_X, min_XAxis_Ycordinate
+    global pixcelForTicMark_X 
  
     half_pixcelForTicMark_Y = 10
     minLen_X_Axis = maxlength_X
@@ -965,7 +944,6 @@ def find_X_Axis():
                     X_axis_cordinate = h 
 
     if (count > 1):
-        print(" Count +++++++++++++++++++++++++++++++++++++++++++++")
         for h in range(0, len(linesP)):
             X_axis_Y_cordinate = arr[h][1]
             length_Of_X_Axis = X_arr[h][1]   
@@ -1005,23 +983,6 @@ def draw_Y_Axis():
         if passfromTem_Y != True:
             passfromTem_Y = False
             find_Y_Axis() 
-        else:
-            found = False
-            for h in range(0, len(linesP)):
-                Y_axis_X_cordinate = arr[h][0]
-                length_Of_Y_Axis = Y_arr[h][1]    
-                if ((Y_axis_X_cordinate <= (min_YAxis_Xcordinate + (pixcelForTicMark_X/2))) and (Y_axis_X_cordinate >= (min_YAxis_Xcordinate - (pixcelForTicMark_X/2)))) :         
-                    if ((length_Of_Y_Axis == maxlength_Y) or (length_Of_Y_Axis > maxlength_Y - (maxlength_Y * 0.5))):      
-                        Y_axis_cordinate = h  
-                        found = True
-            if found == False:
-                for h in range(0, len(linesP)):
-                    Y_axis_X_cordinate = arr[h][0]
-                    length_Of_Y_Axis = Y_arr[h][1]    
-                    if ((Y_axis_X_cordinate <= (min_YAxis_Xcordinate + (pixcelForTicMark_X))) and (Y_axis_X_cordinate >= (min_YAxis_Xcordinate - (pixcelForTicMark_X)))) :         
-                        if ((length_Of_Y_Axis == maxlength_Y) or (length_Of_Y_Axis > maxlength_Y - (maxlength_Y * 0.5))):      
-                            Y_axis_cordinate = h  
-
     else: 
         found_Y = True
         return
@@ -1031,7 +992,7 @@ def find_Y_Axis():
     global maxlength_Y
     global Y_axis_cordinate
     global pixcelForTicMark_Y 
-    global passfromTem_Y, min_YAxis_Xcordinate
+    global passfromTem_Y
  
     half_pixcelForTicMark_X = 10
     minLen_Y_Axis = maxlength_Y
@@ -1117,7 +1078,7 @@ def find_Y_Axis():
         if ((Y_axis_X_cordinate <= (min_YAxis_Xcordinate + half_pixcelForTicMark_X)) and (Y_axis_X_cordinate >= (min_YAxis_Xcordinate - half_pixcelForTicMark_X)) and (Y_axis_X_cordinate != 0)) :         
             if ((length_Of_Y_Axis == maxlength_Y) or (length_Of_Y_Axis > maxlength_Y - (maxlength_Y * 0.4))):
                 found = True
-                print (" Count 8888 " + str(count))
+                # print (" Count 8888 " + str(count))
                 Y_axis_cordinate = h 
                 count = count + 1 
 
@@ -1132,10 +1093,10 @@ def find_Y_Axis():
                     Y_axis_cordinate = h  
                     count = count + 1
     
-    # for j in range(0, 100):
-    #     for k in range(min_YAxis_Xcordinate, min_YAxis_Xcordinate + 5):
-    #         cdstP[j,k] = (255, 255, 255)  
-    print (" Count 444   77  " + str(count))
+    for j in range(0, 100):
+        for k in range(min_YAxis_Xcordinate, min_YAxis_Xcordinate + 5):
+            cdstP[j,k] = (255, 255, 255)  
+
 
     # get the left side line as Y axis
     if (count > 1):
@@ -1144,7 +1105,7 @@ def find_Y_Axis():
             length_Of_Y_Axis = Y_arr[h][1]    
             if ((Y_axis_X_cordinate <= (min_YAxis_Xcordinate + half_pixcelForTicMark_X)) and (Y_axis_X_cordinate >= (min_YAxis_Xcordinate - half_pixcelForTicMark_X))) :  
                 if ((length_Of_Y_Axis == maxlength_Y or (length_Of_Y_Axis > maxlength_Y - (maxlength_Y * 0.2))) and (Y_axis_X_cordinate < min_YAxis_Xcordinate )) : 
-                    print (" Count 444   77  " + str(count))
+                    # print (" Count 444   77  " + str(count))
                     Y_axis_cordinate = h  
 
     cv.line(cdstP, (arr[Y_axis_cordinate][0], arr[Y_axis_cordinate][1]), (arr[Y_axis_cordinate][2], arr[Y_axis_cordinate][3]), (0,252,0), 2, cv.LINE_AA)
@@ -2238,7 +2199,7 @@ def templateMatching():
 
  
 
-    for i in range(2, 27):
+    for i in range(1, 27):
         curretTemplate = templates[i][0]
         number = templates[i][1]
         tem = cv.imread(curretTemplate)
@@ -2250,7 +2211,6 @@ def templateMatching():
         result = cv.matchTemplate(MofologyImg, template, cv.TM_CCOEFF_NORMED)
         loc = np.where(result >= 0.7)
         for pt in zip(*loc[::-1]):
-            print (" True +++++" + str(number))
             topleft_x = pt[0]
             topleft_y = pt[1]
             bottemRight_x = pt[0] + w
@@ -2319,7 +2279,7 @@ def templateMatching():
     # identify_XAxis_Ratio()
 
 def identify_XAxis_UsingTempalte_Matching(): 
-    global X_axis_cordinate, passfromTem_X
+    global X_axis_cordinate
     found_X = False
     y_coordinates = [[0] * 2 for i in range(30)]  # 0 - Y coordinate 1 - count 
 
@@ -2410,9 +2370,9 @@ def identify_XAxis_UsingTempalte_Matching():
                     # found_X = True 
                     # return found_X 
         if count > 1:
-            passfromTem_X = True
             find_X_Axis()
-            print(" fROM tEMPLATE TO SHORT x")
+            passfromTem_X = True
+            # print(" fROM tEMPLATE TO SHORT x")
         elif count ==  1:
             found_X = True 
             return found_X 
@@ -2665,23 +2625,7 @@ def identify_X_Axis_Ratio():
             if ((ratioVsCount[i][0] >= 1)):
                 ratio_Of_XAxis = ratioVsCount[i][0]
 
-    value_1 = 0
-    value_2 = 0
-    for i in range(0, 30):
-        val = ratioVsCount[i][0]
-        count = ratioVsCount[i][1]
-        if (max_count == count): 
-            value_1 = val
-            break
-    for i in range(0, 30):
-        val = ratioVsCount[i][0]
-        count = ratioVsCount[i][1]
-        if (max_count == count): 
-            if value_1 != val:
-                value_2 = val
-    
-    if max_count > 1 and value_2 == 0:
-          ratio_X_Axis_Value = ratio_Of_XAxis
+    ratio_X_Axis_Value = ratio_Of_XAxis
 
     # print(" Ratio Of Number on X Axis = "+str(ratio_Of_XAxis))
 
@@ -2767,23 +2711,8 @@ def identify_Y_Axis_Ratio():
             if ((ratioVsCount[i][0] >= 1)):
                 ratio_Of_YAxis = ratioVsCount[i][0]
                 # print(" Ratio 88888888" +str(ratio_Of_YAxis))
-    value_1 = 0
-    value_2 = 0
-    for i in range(0, 30):
-        val = ratioVsCount[i][0]
-        count = ratioVsCount[i][1]
-        if (max_count == count): 
-            value_1 = val
-            break
-    for i in range(0, 30):
-        val = ratioVsCount[i][0]
-        count = ratioVsCount[i][1]
-        if (max_count == count): 
-            if value_1 != val:
-                value_2 = val
 
-    if max_count > 1 and value_2 == 0:
-        ratio_Y_Axis_Value = ratio_Of_YAxis
+    ratio_Y_Axis_Value = ratio_Of_YAxis
 
 def main(argv):
     
