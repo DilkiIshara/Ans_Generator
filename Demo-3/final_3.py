@@ -1,7 +1,4 @@
-"""
-@file hough_lines.py
-@brief This program demonstrates line finding with the Hough transform
-"""
+
 import sys
 import math
 import cv2 as cv
